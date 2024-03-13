@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    android:layout_marginTop="150dp"
+    android:layout_marginBottom="80dp"
+    android:layout_marginEnd="20dp"
+    android:layout_marginStart="20dp"
+    android:background="@drawable/stroke_rounding_white">
+
+<!--    <ScrollView-->
+<!--        android:layout_width="fill_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:layout_marginBottom="50dp">-->
+<!--        <LinearLayout-->
+<!--            android:id="@+id/modulelist_layout"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="vertical"-->
+<!--            android:padding="8dp" >-->
+<!--        </LinearLayout>-->
+<!--    </ScrollView>-->
+
+    <LinearLayout
+        android:id="@+id/modulelist_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:orientation="vertical" >
+        <ListView
+            android:id="@+id/myModuleList"
+            android:layout_margin="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/background_rounding_white"
+            android:drawSelectorOnTop="false" />
+    </LinearLayout>
+
+
+</LinearLayout>

@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ConsumptionActivity"
+    android:background="@color/black">
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/consumption"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="25sp"
+        android:textAllCaps="true"
+        android:fontFamily="sans-serif-light"
+        android:padding="5dp"
+        android:layout_marginStart="10dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/tv_w"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/stroke_rounding_white_2"
+        android:text="---w"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="40sp"
+        android:textAllCaps="true"
+        android:textAlignment="center"
+        android:fontFamily="sans-serif-light"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:layout_marginStart="10dp"
+        app:layout_constraintTop_toBottomOf="@id/tv_title"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+
+    <ImageButton
+        android:id="@+id/btn_menu"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_margin="20dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="96dp"
+        android:src="@drawable/ic_menu"
+        android:background="@null"
+        android:scaleType="fitXY"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_ready"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ready"
+        android:textColor="@color/green"
+        android:textStyle="bold"
+        android:textSize="30sp"
+        android:textAllCaps="true"
+        android:fontFamily="sans-serif-medium"
+        android:padding="5dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintTop_toBottomOf="@id/tv_w"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        />
+
+
+    <com.activerecycle.tripgauge.SpeedGraph
+        android:id="@+id/graph_speed"
+        android:layout_width="wrap_content"
+        android:layout_height="320dp"
+        app:layout_constraintTop_toBottomOf="@id/tv_ready"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:speed="23"
+        />
+
+    <TextView
+        android:id="@+id/tv_speed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="120sp"
+        android:fontFamily="sans-serif-black"
+        app:layout_constraintTop_toTopOf="@id/graph_speed"
+        app:layout_constraintBottom_toBottomOf="@id/graph_speed"
+        app:layout_constraintStart_toStartOf="@id/graph_speed"
+        app:layout_constraintEnd_toEndOf="@id/graph_speed"
+        app:layout_constraintHorizontal_bias="0.5"
+        />
+
+    <TextView
+        android:id="@+id/tv_KPH"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="KPH"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="40sp"
+        android:textAllCaps="true"
+        android:fontFamily="sans-serif-medium"
+        app:layout_constraintTop_toBottomOf="@id/graph_speed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        />
+
+    <TextView
+        android:id="@+id/tv_percent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="--%"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="30sp"
+        android:textAllCaps="true"
+        android:fontFamily="sans-serif-medium"
+        android:layout_marginStart="20dp"
+        app:layout_constraintTop_toBottomOf="@id/tv_KPH"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        />
+
+    <TextView
+        android:id="@+id/tv_soc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SOC%"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:textAllCaps="true"
+        android:fontFamily="sans-serif-light"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintBaseline_toBaselineOf="@id/tv_percent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1"
+        />
+
+    <com.activerecycle.tripgauge.BatteryGraph
+        android:id="@+id/graph_battery"
+        android:layout_width="wrap_content"
+        android:layout_height="80dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_percent"
+        app:soc="75"
+        />
+
+    <TextView
+        android:id="@+id/tv_odo"
+        android:layout_width="140dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/stroke_rounding_white"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:text="ODO"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="30sp"
+        android:textAllCaps="true"
+        android:textAlignment="center"
+        android:fontFamily="sans-serif-light"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="15dp"
+        app:layout_constraintTop_toBottomOf="@id/graph_battery"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        />
+
+    <TextView
+        android:id="@+id/tv_distance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="--.--Km"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="30sp"
+        android:fontFamily="sans-serif-light"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="15dp"
+        app:layout_constraintTop_toBottomOf="@id/graph_battery"
+        app:layout_constraintStart_toEndOf="@id/tv_odo"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

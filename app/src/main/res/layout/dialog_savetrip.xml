@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="10dp"
+        android:layout_gravity="center"
+        android:text="The Trip Title : "
+        android:textAlignment="textStart"
+        android:textColor="#384d75"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        tools:ignore="RtlCompat" />
+
+    <EditText
+        android:id="@+id/editText_tripTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_gravity="center"
+        android:background="#eeeeee"
+        android:hint="Write the title of the trip here."
+        android:textColor="@color/black"
+        android:textColorHint="#918c8c"
+        android:maxLines="1"
+        android:padding="10dp"
+        android:singleLine="true"
+        android:textSize="17sp" />
+
+
+</LinearLayout>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme_Dialog" parent="android:Theme.Material.Light.Dialog.Alert">
+        <!-- Customize your theme here. -->
+        <item name="android:colorAccent">#384d75</item>
+        <item name="android:windowMinWidthMajor">95%</item>
+        <item name="android:windowMinWidthMinor">95%</item>
+    </style>
+</resources>
