@@ -41,7 +41,7 @@ import java.util.regex.Pattern;
 public class ConsumptionActivity extends AppCompatActivity {
     static String EXTERNAL_STORAGE_PATH = "";
     static int endOfTrip = 0;
-    static Thread thread;
+    public static Thread thread;
 
     // 앱에서 디바이스에게 주는 데이터
     int speed = 0;
@@ -51,7 +51,7 @@ public class ConsumptionActivity extends AppCompatActivity {
     double tripADistance = 0.0;
     double tripBDistance = 0.0;
     double bef_lat, bef_long;
-    boolean btconnect = true;
+    public static boolean btconnect = false;
 
     // 디바이스로부터 받는 데이터
     int volt = 0; // 전압값 (0~25)
@@ -60,7 +60,7 @@ public class ConsumptionActivity extends AppCompatActivity {
 
     // w = volt * amp;
 
-    TextView tv_title, tv_w, tv_ready, tv_speed, tv_KPH, tv_percent, tv_soc, tv_odo, tv_distance;
+    public static TextView tv_title, tv_w, tv_ready, tv_speed, tv_KPH, tv_percent, tv_soc, tv_odo, tv_distance;
     ImageButton btn_menu;
     SpeedGraph graph_speed;
     BatteryGraph graph_battery;
@@ -114,18 +114,43 @@ public class ConsumptionActivity extends AppCompatActivity {
         // Connect 여부 표시
         if (btconnect) {
             // 블루투스 연결된 상태이면
-            tv_ready.setText("Ready");
+            tv_ready.setText("Connect");
             tv_ready.setTextColor(Color.rgb(146, 208, 80));  //green
 
         } else {
             // 블루투스 연결 안 된 상태이면
-            tv_ready.setText("Connect");
+            tv_ready.setText("Ready");
             tv_ready.setTextColor(Color.rgb(255, 0, 0));  //red
 
-            graph_speed.speed = 99;
-            graph_speed.invalidate();
+//            graph_speed.speed = 99;
+//            graph_speed.invalidate();
 
-            return;  // 아래 내용 무시
+
+            //TODO: 그래프 깜빡깜빡 거리는 애니메이션!
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (!btconnect) {
+                        graph_speed.speed = 99;
+                        graph_speed.invalidate();
+
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        graph_speed.speed = 0;
+                        graph_speed.invalidate();
+
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }).start();
         }
 
         // gps 주행 속도 측정
@@ -198,6 +223,7 @@ public class ConsumptionActivity extends AppCompatActivity {
 
 
 
+        //TODO: 배터리 값 디바이스에서 블루투스로 받아오기!!!!!!!!
         // 배터리
         soc = 75;
 
@@ -304,7 +330,10 @@ public class ConsumptionActivity extends AppCompatActivity {
                 }
             }
         });
-        thread.start();
+
+        if (btconnect) {
+            thread.start();
+        }
         
     }
 

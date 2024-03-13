@@ -1,5 +1,7 @@
 package com.activerecycle.tripgauge.bluetooth;
 
+import static com.activerecycle.tripgauge.ConsumptionActivity.tv_ready;
+
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -23,6 +25,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 
 import com.activerecycle.tripgauge.ConnectionActivity;
+import com.activerecycle.tripgauge.ConsumptionActivity;
 import com.activerecycle.tripgauge.SettingsActivity;
 import com.activerecycle.tripgauge.TripLogActivity;
 
@@ -74,6 +77,12 @@ public class ListOfScansActivity extends AppCompatActivity {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                //TODO: Click한 직후가 아니라, 연결이 확인이 되면!!!
+                ConsumptionActivity.btconnect = true;
+                tv_ready.setText("Connect");
+                tv_ready.setTextColor(Color.rgb(146, 208, 80));  //green
+                ConsumptionActivity.thread.start();
+
                 view.setBackgroundResource(R.drawable.background_rounding_green);
                 TextView textView1 = (TextView) view.findViewById(R.id.text1);
                 TextView textView2 = (TextView) view.findViewById(R.id.tv_connected);
