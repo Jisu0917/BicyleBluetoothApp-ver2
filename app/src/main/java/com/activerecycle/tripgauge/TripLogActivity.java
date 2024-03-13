@@ -222,7 +222,7 @@ public class TripLogActivity extends AppCompatActivity {
         }
 
         graph_log.maxW = dbHelper.getMaxW(tableId);
-        if (graph_log.maxW != -1) {
+        if (graph_log.maxW != -1 && graph_log.maxW != -2) {
             graph_log.map = dbHelper.getTripLogW(dataMap, tableId);
             graph_log.invalidate();
 
@@ -242,8 +242,18 @@ public class TripLogActivity extends AppCompatActivity {
             tv_used_wh.setText(usedWh + "Wh");
             tv_dist_km.setText(ddist + "KM");
             tv_avrpwr_w.setText(avrpwr + "W");
-        } else {
+        } else if (graph_log.maxW == -1) {
             graph_log.setVisibility(View.INVISIBLE);
+
+            tv_untitled.setText("Untitled");
+            tv_date.setText("----.--.--");
+            tv_used_wh.setText("--Wh");
+            tv_dist_km.setText("--KM");
+            tv_avrpwr_w.setText("--W");
+        } else if (graph_log.maxW == -2) {
+            // bt not connected
+            // == 실시간 그래프 그릴 수 없음.
+            graph_log.setVisibility(View.VISIBLE);
 
             tv_untitled.setText("Untitled");
             tv_date.setText("----.--.--");

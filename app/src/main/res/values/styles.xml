@@ -8,14 +8,23 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <!-- 앱 전체에 걸쳐 적용되는 테마 -->
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+
+        <item name="android:textViewStyle">@style/customTextViewFontStyle</item>
+        <item name="android:buttonStyle">@style/customButtonFontStyle</item>
+        <item name="android:editTextStyle">@style/customEditTextFontStyle</item>
+        <item name="android:radioButtonStyle">@style/customRadioButtonFontStyle</item>
+        <item name="android:checkboxStyle">@style/customCheckboxFontStyle</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+
 
 <!--    <style name="Theme_Dialog" parent="android:Theme.Material.Light.Dialog.Alert">-->
 <!--        &lt;!&ndash; Customize your theme here. &ndash;&gt;-->

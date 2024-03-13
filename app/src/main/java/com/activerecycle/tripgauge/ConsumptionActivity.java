@@ -42,6 +42,9 @@ public class ConsumptionActivity extends AppCompatActivity {
     static String EXTERNAL_STORAGE_PATH = "";
     static int endOfTrip = 0;
     public static Thread thread;
+    public static boolean autoSave = true;
+    public static boolean autoConnect = false;
+
 
     // 앱에서 디바이스에게 주는 데이터
     int speed = 0;
@@ -110,6 +113,10 @@ public class ConsumptionActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        if (autoConnect) {
+            btconnect = true;
+        }
 
         // Connect 여부 표시
         if (btconnect) {
@@ -292,10 +299,19 @@ public class ConsumptionActivity extends AppCompatActivity {
                      * random() 난수 발생 코드는 확인용 코드임.
                      * - 추후 삭제 요망
                      * */
+
                     volt = (int) (Math.random() * 25);
                     amp = (int) (Math.random() * 30);
-                    tv_w.setText(volt * amp + "W");
-                    tv_w.invalidate();
+
+                    Handler mHandler1 = new Handler(Looper.getMainLooper());
+                    mHandler1.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            tv_w.setText(volt * amp + "W");
+                            tv_w.invalidate();
+                        }
+                    }, 0);
+
 
                     dbHelper.insert_TripLog(nowTime, volt, amp);
                     String allLog = dbHelper.getLog();
@@ -312,15 +328,16 @@ public class ConsumptionActivity extends AppCompatActivity {
                     if (endOfTrip == 20) {  //TODO: Trip이 끝나는 기준 ? 디바이스에서 정보 받아오나?
                         System.out.println("##### end Of Trip ! ");
 
-                        Handler mHandler = new Handler(Looper.getMainLooper());
-                        mHandler.postDelayed(new Runnable() {
+                        Handler mHandler2 = new Handler(Looper.getMainLooper());
+                        mHandler2.postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 //showSaveTripDialog(tripLogId, nowTime);
-                                saveTrip(tripId, nowTime);
+                                if (autoSave) {
+                                    saveTrip(tripId, nowTime);
+                                } // else : 저장하지 않고 넘어감
                             }
                         }, 0);
-
 
                         thread.interrupt();
                         break;
@@ -392,6 +409,19 @@ public class ConsumptionActivity extends AppCompatActivity {
         // Trip 기록 개수 20개 넘으면 자동 삭제
         if (tripId + 1 > 20) {
             dbHelper.deleteTrip();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (autoConnect) {
+            btconnect = true;
+
+            tv_ready.setText("Connect");
+            tv_ready.setTextColor(Color.rgb(146, 208, 80));  //green
+            thread.start();
         }
     }
 }

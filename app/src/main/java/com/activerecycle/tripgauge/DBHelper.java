@@ -486,14 +486,17 @@ public class DBHelper extends SQLiteOpenHelper {
         if (tripId >= 1) {
             Map map = getTripLog(tripId);
             ArrayList<Integer> wList = (ArrayList<Integer>) map.get("W");
-            int max = wList.get(0);
-            for (int i = 0; i < wList.size(); i++) {
-                if (wList.get(i) > max) {
-                    max = wList.get(i);
+            if (wList.size() != 0) {
+                int max = wList.get(0);
+                for (int i = 0; i < wList.size(); i++) {
+                    if (wList.get(i) > max) {
+                        max = wList.get(i);
+                    }
                 }
-            }
 
-            return max;
+                return max;
+            } else { return -2;//bt not connected
+            }
         } else return -1;
     }
 

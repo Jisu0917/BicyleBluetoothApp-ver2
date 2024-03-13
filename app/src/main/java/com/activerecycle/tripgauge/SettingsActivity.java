@@ -22,10 +22,18 @@ public class SettingsActivity extends AppCompatActivity {
 
     DBHelper dbHelper;
 
+    boolean s1, s2, s3, s4;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+
+
+        s1 = true;
+        s2 = true;
+        s3 = false;
+        s4 = true;
 
         dbHelper = new DBHelper(SettingsActivity.this, 1);
 
@@ -61,17 +69,87 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
+        switch1.setChecked(s1);
+        switch2.setChecked(s2);
+        switch3.setChecked(s3);
+        switch4.setChecked(s4);
+
+
+        // Warning Sound
         switch1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-//                if (b) { //오른쪽
+//                if (b) { //왼쪽일 때 회색, 오른쪽일 때 lightgreen
 //                    compoundButton.setButtonDrawable(R.drawable.switch_thumb_gray);
 //                } else {
 //                    compoundButton.setButtonDrawable(R.drawable.switch_thumb);
 //                }
+
+                if (b) {
+                    s1 = true;
+                    //TODO: Mediaplayer 경고음 재생
+
+                } else {
+                    s1 = false;
+
+                }
+            }
+        });
+
+        // Auto Save Trip
+        switch2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) { // 오른쪽
+                    s2 = true;
+                    ConsumptionActivity.autoSave = true;
+                    Toast.makeText(getApplicationContext(), "트립을 자동 저장합니다.", Toast.LENGTH_SHORT).show();
+                } else { // 왼쪽
+                    s2 = false;
+                    ConsumptionActivity.autoSave = false;
+                    Toast.makeText(getApplicationContext(), "트립 자동저장을 해제합니다.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        // Auto Connect
+        switch3.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) { // 오른쪽
+                    s3 = true;
+                    ConsumptionActivity.autoConnect = true;
+                    Toast.makeText(getApplicationContext(), "블루투스를 자동 연결합니다.", Toast.LENGTH_SHORT).show();
+                } else { // 왼쪽
+                    s3 = false;
+                    ConsumptionActivity.autoConnect = false;
+                    Toast.makeText(getApplicationContext(), "블루투스 자동연결을 해제합니다.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        // Warning BATT
+        switch4.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) { // 오른쪽
+                    s4 = true;
+                } else { // 왼쪽
+                    s4 = false;
+                }
             }
         });
 
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        switch1.setChecked(s1);
+        switch2.setChecked(s2);
+        switch3.setChecked(s3);
+        switch4.setChecked(s4);
     }
 }

@@ -89,12 +89,13 @@ public class ListOfScansActivity extends AppCompatActivity {
                 textView1.setTextColor(Color.WHITE);
                 textView2.setTextColor(Color.WHITE);
 
+                //TODO: 디바이스로부터 블루투스로 데이터 받고, 받은 데이터로 처리하는 부분 코딩!!
 
-                final Intent intent = new Intent(ListOfScansActivity.this, HM10CommunicationActivity.class);
-                intent.putExtra(StaticResources.EXTRAS_DEVICE_NAME, devices.get(i).getName()); // locally have the position
-                intent.putExtra(StaticResources.EXTRAS_DEVICE_ADDRESS, devices.get(i).getAddress()); // locally have the position
-                // but use the global variable of the array used for the adapter
-                startActivity(intent);
+//                final Intent intent = new Intent(ListOfScansActivity.this, HM10CommunicationActivity.class);
+//                intent.putExtra(StaticResources.EXTRAS_DEVICE_NAME, devices.get(i).getName()); // locally have the position
+//                intent.putExtra(StaticResources.EXTRAS_DEVICE_ADDRESS, devices.get(i).getAddress()); // locally have the position
+//                // but use the global variable of the array used for the adapter
+//                startActivity(intent);
 
             }
         }); // AppCompat needs listview itself to setOnItemClickListener, with the class as a context.
