@@ -3,6 +3,7 @@ package com.activerecycle.tripgauge;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -59,5 +60,18 @@ public class SettingsActivity extends AppCompatActivity {
                 Toast.makeText(SettingsActivity.this, "모든 트립을 삭제했습니다.", Toast.LENGTH_SHORT).show();
             }
         });
+
+        switch1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+//                if (b) { //오른쪽
+//                    compoundButton.setButtonDrawable(R.drawable.switch_thumb_gray);
+//                } else {
+//                    compoundButton.setButtonDrawable(R.drawable.switch_thumb);
+//                }
+            }
+        });
+
+
     }
 }
