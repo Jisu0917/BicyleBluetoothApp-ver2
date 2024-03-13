@@ -1,5 +1,6 @@
 package com.activerecycle.tripgauge;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -9,6 +10,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.activerecycle.tripgauge.bluetooth.R;
@@ -22,18 +24,15 @@ public class SettingsActivity extends AppCompatActivity {
 
     DBHelper dbHelper;
 
-    boolean s1, s2, s3, s4;
+    SharedPreferences preferences;
+    boolean b1, b2, b3, b4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-
-        s1 = true;
-        s2 = true;
-        s3 = false;
-        s4 = true;
+        preferences = getSharedPreferences("Setting Info", MODE_PRIVATE);
 
         dbHelper = new DBHelper(SettingsActivity.this, 1);
 
@@ -46,6 +45,7 @@ public class SettingsActivity extends AppCompatActivity {
         btn_mph = (Button) findViewById(R.id.btn_mph);
         btn_reset = (Button) findViewById(R.id.btn_reset);
         btn_clear = (Button) findViewById(R.id.btn_clear);
+
 
         imgbtn_back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,12 +69,6 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
-        switch1.setChecked(s1);
-        switch2.setChecked(s2);
-        switch3.setChecked(s3);
-        switch4.setChecked(s4);
-
-
         // Warning Sound
         switch1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -86,11 +80,11 @@ public class SettingsActivity extends AppCompatActivity {
 //                }
 
                 if (b) {
-                    s1 = true;
+                    b1 = true;
                     //TODO: Mediaplayer 경고음 재생
 
                 } else {
-                    s1 = false;
+                    b1 = false;
 
                 }
             }
@@ -101,11 +95,13 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) { // 오른쪽
-                    s2 = true;
+                    b2 = true;
+
                     ConsumptionActivity.autoSave = true;
                     Toast.makeText(getApplicationContext(), "트립을 자동 저장합니다.", Toast.LENGTH_SHORT).show();
                 } else { // 왼쪽
-                    s2 = false;
+                    b2 = false;
+
                     ConsumptionActivity.autoSave = false;
                     Toast.makeText(getApplicationContext(), "트립 자동저장을 해제합니다.", Toast.LENGTH_SHORT).show();
                 }
@@ -117,11 +113,13 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) { // 오른쪽
-                    s3 = true;
+                    b3 = true;
+
                     ConsumptionActivity.autoConnect = true;
                     Toast.makeText(getApplicationContext(), "블루투스를 자동 연결합니다.", Toast.LENGTH_SHORT).show();
                 } else { // 왼쪽
-                    s3 = false;
+                    b3 = false;
+
                     ConsumptionActivity.autoConnect = false;
                     Toast.makeText(getApplicationContext(), "블루투스 자동연결을 해제합니다.", Toast.LENGTH_SHORT).show();
                 }
@@ -133,9 +131,11 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) { // 오른쪽
-                    s4 = true;
+                    b4 = true;
+
                 } else { // 왼쪽
-                    s4 = false;
+                    b4 = false;
+
                 }
             }
         });
@@ -143,13 +143,31 @@ public class SettingsActivity extends AppCompatActivity {
 
     }
 
+    //Preferences에서 꺼내오는 메소드
+    private void getPreferences(){
+        switch1.setChecked(preferences.getBoolean("s1", true));
+        switch2.setChecked(preferences.getBoolean("s2", false));
+        switch3.setChecked(preferences.getBoolean("s3", true));
+        switch4.setChecked(preferences.getBoolean("s4", true));
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        SharedPreferences.Editor editor = preferences.edit();  //Editor를 preferences에 쓰겠다고 연결
+        editor.putBoolean("s1", b1);  //putString(KEY,VALUE)
+        editor.putBoolean("s2", b2);  //putString(KEY,VALUE)
+        editor.putBoolean("s3", b3);  //putString(KEY,VALUE)
+        editor.putBoolean("s4", b4);  //putString(KEY,VALUE)
+
+        editor.commit();  //항상 commit & apply 를 해주어야 저장이 된다.
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
 
-        switch1.setChecked(s1);
-        switch2.setChecked(s2);
-        switch3.setChecked(s3);
-        switch4.setChecked(s4);
+        getPreferences();
     }
 }
