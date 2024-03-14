@@ -9,31 +9,32 @@
     android:layout_marginStart="20dp"
     android:background="@drawable/stroke_rounding_white">
 
-<!--    <ScrollView-->
-<!--        android:layout_width="fill_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:layout_marginBottom="50dp">-->
-<!--        <LinearLayout-->
-<!--            android:id="@+id/modulelist_layout"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:orientation="vertical"-->
-<!--            android:padding="8dp" >-->
-<!--        </LinearLayout>-->
-<!--    </ScrollView>-->
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="50dp">
+        <LinearLayout
+            android:id="@+id/modulelist_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp" >
+        </LinearLayout>
+    </ScrollView>
 
     <LinearLayout
-        android:id="@+id/modulelist_layout"
+        android:id="@+id/modulelist_layout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@null"
+        android:visibility="gone"
         android:orientation="vertical" >
         <ListView
             android:id="@+id/myModuleList"
-            android:layout_margin="5dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/background_rounding_white"
+            android:visibility="gone"
             android:drawSelectorOnTop="false" />
     </LinearLayout>
 

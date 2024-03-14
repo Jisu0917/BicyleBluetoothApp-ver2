@@ -3,7 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/background_rounding_white">
+    android:background="@drawable/background_rounding_white"
+    android:clickable="true"
+    android:id="@+id/container">
 
 
     <LinearLayout

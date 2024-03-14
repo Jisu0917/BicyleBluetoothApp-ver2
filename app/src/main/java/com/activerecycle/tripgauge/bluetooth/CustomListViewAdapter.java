@@ -25,7 +25,7 @@ import java.util.Locale;
 
 public class CustomListViewAdapter extends ArrayAdapter {
 
-    List<CustomBluetoothDeviceWrapper> m_list;
+    public List<CustomBluetoothDeviceWrapper> m_list;
 
     public CustomListViewAdapter(@NonNull Context context, int layoutId,
                                  List<CustomBluetoothDeviceWrapper> underLyingList) {
@@ -42,33 +42,11 @@ public class CustomListViewAdapter extends ArrayAdapter {
         TextView customText1 = customView.findViewById(R.id.text1);
         TextView customText2 = customView.findViewById(R.id.text2);
         TextView customText3 = customView.findViewById(R.id.text3);
-
         TextView customText4 = (TextView) customView.findViewById(R.id.tv_connected);
 
         customText1.setText(device.getName());
         customText2.setText(device.getAddress());
         customText3.setText(Integer.toString(device.getRssi()));
-
-        if (isSelectedItem(device.getAddress())) {
-            customView.setBackgroundResource(R.drawable.background_rounding_green);
-            customText1.setTextColor(Color.WHITE);
-            customText4.setTextColor(Color.WHITE);
-            customText4.setText("Connected");
-
-            ConsumptionActivity.btconnect = true;
-            tv_ready.setText("Connect");
-            tv_ready.setTextColor(Color.rgb(146, 208, 80));  //green
-        } else {
-            customView.setBackgroundResource(R.drawable.background_rounding_white);
-            customText1.setTextColor(Color.BLACK);
-            customText4.setTextColor(Color.rgb(146, 208, 80));  //green
-            customText4.setText("Available to connect");
-
-            ConsumptionActivity.btconnect = false;
-            tv_ready.setText("Ready");
-            tv_ready.setTextColor(Color.rgb(255, 0, 0));  //red
-
-        }
 
         return customView;
     }
@@ -96,9 +74,7 @@ public class CustomListViewAdapter extends ArrayAdapter {
                 m_list.add(device);
         }
 
-
     }
-
 
     @Nullable
     @Override
@@ -106,8 +82,4 @@ public class CustomListViewAdapter extends ArrayAdapter {
         return m_list.get(position);
     }
 
-    public boolean isSelectedItem(String address) {
-        String addr = ListOfScansActivity.preferences.getString("address", "");
-        return address.equals(addr);
-    }
 }
