@@ -428,7 +428,6 @@ public class TripLogActivity extends AppCompatActivity {
 
         int tripId = dbHelper.get_latestTripId();
 
-        //TODO: insert가 아니라 Update !!
 //        if (tripName == null) { tripName = "Untitled"; }
         if (dbHelper.getAvgPwrW(tripId) == -999 || dbHelper.getUsedW(tripId) == -999 || dbHelper.getMaxW(tripId) == -2) return;
         dbHelper.update_TripSTATS(tripId, nowTime, dbHelper.getMaxW(tripId), dbHelper.getUsedW(tripId), (int)(ConsumptionActivity.totalDistance * 1000), dbHelper.getAvgPwrW(tripId));

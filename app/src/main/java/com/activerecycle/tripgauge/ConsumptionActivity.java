@@ -58,14 +58,14 @@ public class ConsumptionActivity extends AppCompatActivity {
     // 디바이스로부터 받는 데이터
     static int volt = 0; // 전압값 (0~25)
     static int amp = 0; // 전류값 (0~30)
-    int soc = 0;  // 배터리 잔량
+    static int soc = 0;  // 배터리 잔량
 
     // w = volt * amp;
 
     public static TextView tv_title, tv_w, tv_ready, tv_speed, tv_KPH, tv_percent, tv_soc, tv_odo, tv_distance;
     ImageButton btn_menu;
     SpeedGraph graph_speed;
-    BatteryGraph graph_battery;
+    static BatteryGraph graph_battery;
 
     // DBHelper
     static DBHelper dbHelper;
@@ -123,12 +123,23 @@ public class ConsumptionActivity extends AppCompatActivity {
             public void onClick(View view) {
                 btconnect = !btconnect;  //Toggle
                 if (btconnect) {
-                    tv_ready.setText("Connect");
+                    tv_ready.setText("Ready");
                     tv_ready.setTextColor(Color.rgb(146, 208, 80));  //green
                     startThread();
+
+
                 } else {
-                    tv_ready.setText("Ready");
+                    tv_ready.setText("Connect");
                     tv_ready.setTextColor(Color.rgb(255, 0, 0));  //red
+
+                    tv_w.setText("0W");
+                    tv_distance.setText("00.00 Km");
+
+                    // 배터리
+                    soc = 0;
+                    graph_battery.soc = soc;
+                    graph_battery.invalidate();
+                    tv_percent.setText("00%");
 
                     //TODO: 그래프 깜빡깜빡 거리는 애니메이션!
                     new Thread(new Runnable() {
@@ -163,16 +174,30 @@ public class ConsumptionActivity extends AppCompatActivity {
         // Connect 여부 표시
         if (btconnect) {
             // 블루투스 연결된 상태이면
-            tv_ready.setText("Connect");
+            tv_ready.setText("Ready");
             tv_ready.setTextColor(Color.rgb(146, 208, 80));  //green
+
+
+            //TODO: 배터리 값 디바이스에서 블루투스로 받아오기!!!!!!!!
+            // 받아오는 배터리 값 달라질 때마다 graph_battery.invalidate();
+            soc = 10;
+            graph_battery.soc = soc;
+            graph_battery.invalidate();
+            tv_percent.setText(soc+"%");
 
         } else {
             // 블루투스 연결 안 된 상태이면
-            tv_ready.setText("Ready");
+            tv_ready.setText("Connect");
             tv_ready.setTextColor(Color.rgb(255, 0, 0));  //red
 
-//            graph_speed.speed = 99;
-//            graph_speed.invalidate();
+            tv_w.setText("0W");
+            tv_distance.setText("00.00 Km");
+
+            // 배터리
+            soc = 0;
+            graph_battery.soc = soc;
+            graph_battery.invalidate();
+            tv_percent.setText("00%");
 
 
             //TODO: 그래프 깜빡깜빡 거리는 애니메이션!
@@ -272,15 +297,6 @@ public class ConsumptionActivity extends AppCompatActivity {
 
 
 
-        //TODO: 배터리 값 디바이스에서 블루투스로 받아오기!!!!!!!!
-        // 배터리
-        soc = 75;
-
-        graph_battery.soc = soc;
-        // 받아오는 배터리 값 달라질 때마다 graph_battery.invalidate();
-        tv_percent.setText(soc+"%");
-
-
         // ODO
         tv_odo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -351,12 +367,20 @@ public class ConsumptionActivity extends AppCompatActivity {
                     volt = (int) (Math.random() * 25);
                     amp = (int) (Math.random() * 30);
 
+
+                    //TODO: 배터리 값 디바이스에서 블루투스로 받아오기!!!!!!!!
+                    soc = (int) (Math.random() * 100);
+                    graph_battery.soc = soc;
+
                     Handler mHandler1 = new Handler(Looper.getMainLooper());
                     mHandler1.postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             tv_w.setText(volt * amp + "W");
                             tv_w.invalidate();
+
+                            tv_percent.setText(soc+"%");
+                            graph_battery.invalidate();
                         }
                     }, 0);
 
@@ -440,7 +464,6 @@ public class ConsumptionActivity extends AppCompatActivity {
 
     private static void saveTrip(int tripId, String nowTime) {
 
-        //TODO: insert가 아니라 Update !!
 //        if (tripName == null) { tripName = "Untitled"; }
         if (dbHelper.getAvgPwrW(tripId) == -999 || dbHelper.getUsedW(tripId) == -999 || dbHelper.getMaxW(tripId) == -2) return;
         dbHelper.update_TripSTATS(tripId, nowTime, dbHelper.getMaxW(tripId), dbHelper.getUsedW(tripId), (int)(totalDistance * 1000), dbHelper.getAvgPwrW(tripId));

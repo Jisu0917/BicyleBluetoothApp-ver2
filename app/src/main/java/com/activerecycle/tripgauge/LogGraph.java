@@ -10,6 +10,7 @@ import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Shader;
+import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -161,10 +162,13 @@ public class LogGraph extends View {
         paint.setStrokeWidth(4f);
         canvas.drawRoundRect(200, TOP, getWidth() - 60, BOTTOM, 25f, 25f, paint);
 
+        Typeface typeface = Typeface.createFromAsset(getResources().getAssets(), "gmarket_sans_bold.ttf");
+
         // 0 그리기
         Paint txtPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        txtPaint.setTypeface(typeface);
         txtPaint.setColor(Color.WHITE);
-        txtPaint.setTextSize(50f);
+        txtPaint.setTextSize(46f);
         txtPaint.setTextAlign(Paint.Align.RIGHT);
         canvas.drawText("0", 150, getHeight() - 50, txtPaint);
 
@@ -189,7 +193,8 @@ public class LogGraph extends View {
         canvas.drawPath(path, linePaint);
 
         // Consumption Log 글씨 넣기
-        txtPaint.setTextSize(60f);
+        txtPaint.setTextSize(55f);
+
         canvas.drawText("CONSUMPTION LOG", getWidth() - 80, 180, txtPaint);
     }
 
