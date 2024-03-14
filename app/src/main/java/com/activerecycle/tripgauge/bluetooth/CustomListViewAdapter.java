@@ -1,6 +1,10 @@
 package com.activerecycle.tripgauge.bluetooth;
 
+import static com.activerecycle.tripgauge.ConsumptionActivity.startThread;
+import static com.activerecycle.tripgauge.ConsumptionActivity.tv_ready;
+
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +13,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.activerecycle.tripgauge.ConsumptionActivity;
 
 import java.util.List;
 import java.util.Locale;
@@ -37,9 +43,32 @@ public class CustomListViewAdapter extends ArrayAdapter {
         TextView customText2 = customView.findViewById(R.id.text2);
         TextView customText3 = customView.findViewById(R.id.text3);
 
+        TextView customText4 = (TextView) customView.findViewById(R.id.tv_connected);
+
         customText1.setText(device.getName());
         customText2.setText(device.getAddress());
         customText3.setText(Integer.toString(device.getRssi()));
+
+        if (isSelectedItem(device.getAddress())) {
+            customView.setBackgroundResource(R.drawable.background_rounding_green);
+            customText1.setTextColor(Color.WHITE);
+            customText4.setTextColor(Color.WHITE);
+            customText4.setText("Connected");
+
+            ConsumptionActivity.btconnect = true;
+            tv_ready.setText("Connect");
+            tv_ready.setTextColor(Color.rgb(146, 208, 80));  //green
+        } else {
+            customView.setBackgroundResource(R.drawable.background_rounding_white);
+            customText1.setTextColor(Color.BLACK);
+            customText4.setTextColor(Color.rgb(146, 208, 80));  //green
+            customText4.setText("Available to connect");
+
+            ConsumptionActivity.btconnect = false;
+            tv_ready.setText("Ready");
+            tv_ready.setTextColor(Color.rgb(255, 0, 0));  //red
+
+        }
 
         return customView;
     }
@@ -61,7 +90,7 @@ public class CustomListViewAdapter extends ArrayAdapter {
         if (device != null && device.getName().toLowerCase(Locale.ROOT).contains("arduino")
                 || device.getName().toLowerCase(Locale.ROOT).contains("recycle")
                 || device.getName().toLowerCase(Locale.ROOT).contains("ble")
-                || device.getName().toLowerCase(Locale.ROOT).contains("i"))
+                || device.getName().toLowerCase(Locale.ROOT).contains("unknown"))
 
         {
                 m_list.add(device);
@@ -75,5 +104,10 @@ public class CustomListViewAdapter extends ArrayAdapter {
     @Override
     public CustomBluetoothDeviceWrapper getItem(int position) {
         return m_list.get(position);
+    }
+
+    public boolean isSelectedItem(String address) {
+        String addr = ListOfScansActivity.preferences.getString("address", "");
+        return address.equals(addr);
     }
 }

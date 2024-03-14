@@ -390,7 +390,11 @@ public class ConsumptionActivity extends AppCompatActivity {
                                 graph_battery.invalidate();
                             } else {
                                 tv_percent.setText(soc + "%");
-                                tv_percent.setTextColor(Color.rgb(146, 208, 80));
+                                if (soc > 10) {
+                                    tv_percent.setTextColor(Color.rgb(146, 208, 80));
+                                } else {
+                                    tv_percent.setTextColor(Color.RED);
+                                }
                                 tv_ready.setText("Ready");
                                 tv_ready.setTextColor(Color.rgb(146, 208, 80));
                                 graph_battery.invalidate();

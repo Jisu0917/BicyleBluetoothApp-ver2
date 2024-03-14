@@ -7,6 +7,7 @@ import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.AdaptiveIconDrawable;
@@ -61,9 +62,14 @@ public class ListOfScansActivity extends AppCompatActivity {
     ImageButton btn_menu, btn_reload;
     Button btn_settings, btn_trip;
 
+    public static SharedPreferences preferences;
+    String address = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        preferences = getSharedPreferences("Connect Info", MODE_PRIVATE);
 
         CheckBleHardware();
 
@@ -85,6 +91,10 @@ public class ListOfScansActivity extends AppCompatActivity {
                 //TODO: Click한 직후가 아니라, 연결이 확인이 되면!!!
                 TextView textView1 = (TextView) view.findViewById(R.id.text1);
                 TextView textView2 = (TextView) view.findViewById(R.id.tv_connected);
+                TextView tv_address = (TextView) view.findViewById(R.id.text2);
+
+                address = tv_address.getText().toString();
+
                 if (textView2.getText().toString().toLowerCase(Locale.ROOT).equals("available to connect")) {
 
                     view.setBackgroundResource(R.drawable.background_rounding_green);
@@ -123,7 +133,6 @@ public class ListOfScansActivity extends AppCompatActivity {
         adapter = new CustomListViewAdapter(this, R.layout.row, devices);
         // to TextView, not sure why context: this is needed
         lv.setAdapter(adapter); // set the list view to inflate with the adapter.
-
 
         // 블루투스 디바이스 스캔
         BleScanServices.scanForDevices(true,mLeScanCallback);
@@ -184,11 +193,87 @@ public class ListOfScansActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+    //Preferences에서 꺼내오는 메소드
+    private void getPreferences(){
+        address = preferences.getString("address", "");
+        if (address != null && !address.equals("")) {
+            ListView listView = findViewById(R.id.myModuleList);
+            View connectedView = listView.findViewWithTag(address);
+            TextView textView1 = (TextView) connectedView.findViewById(R.id.text1);
+            TextView textView2 = (TextView) connectedView.findViewById(R.id.tv_connected);
 
-        //BleScanServices.scanForDevices(true,mLeScanCallback);
+            if (textView2.getText().toString().toLowerCase(Locale.ROOT).equals("available to connect")) {
+
+                connectedView.setBackgroundResource(R.drawable.background_rounding_green);
+                textView1.setTextColor(Color.WHITE);
+                textView2.setTextColor(Color.WHITE);
+                textView2.setText("Connected");
+
+                ConsumptionActivity.btconnect = true;
+                tv_ready.setText("Connect");
+                tv_ready.setTextColor(Color.rgb(146, 208, 80));  //green
+
+                startThread();
+
+            } else if (textView2.getText().toString().toLowerCase(Locale.ROOT).equals("connected")) {
+                connectedView.setBackgroundResource(R.drawable.background_rounding_white);
+                textView1.setTextColor(Color.BLACK);
+                textView2.setTextColor(Color.rgb(146, 208, 80));  //green
+                textView2.setText("Available to connect");
+
+                ConsumptionActivity.btconnect = false;
+                tv_ready.setText("Ready");
+                tv_ready.setTextColor(Color.rgb(255, 0, 0));  //red
+
+            }
+        }
+        else return;
+
+    }
+
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//
+//        getPreferences();
+//        //BleScanServices.scanForDevices(true,mLeScanCallback);
+//    }
+//
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//
+//        getPreferences();
+//    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        SharedPreferences.Editor editor = preferences.edit();  //Editor를 preferences에 쓰겠다고 연결
+        editor.putString("address", address);
+
+        editor.commit();  //항상 commit & apply 를 해주어야 저장이 된다.
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        SharedPreferences.Editor editor = preferences.edit();  //Editor를 preferences에 쓰겠다고 연결
+        editor.putString("address", address);
+
+        editor.commit();  //항상 commit & apply 를 해주어야 저장이 된다.
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        SharedPreferences.Editor editor = preferences.edit();  //Editor를 preferences에 쓰겠다고 연결
+        editor.putString("address", address);
+
+        editor.commit();  //항상 commit & apply 를 해주어야 저장이 된다.
     }
 //
 //
