@@ -379,8 +379,22 @@ public class ConsumptionActivity extends AppCompatActivity {
                             tv_w.setText(volt * amp + "W");
                             tv_w.invalidate();
 
-                            tv_percent.setText(soc+"%");
-                            graph_battery.invalidate();
+
+                            if (soc <= 5) {
+                                // 배터리가 5% 이하이면 LOW BAT 표시
+                                tv_percent.setText("LOW%");
+                                tv_percent.setTextColor(Color.RED);
+                                tv_ready.setText("LOW BAT");
+                                tv_ready.setTextColor(Color.RED);
+                                graph_battery.soc = 2;
+                                graph_battery.invalidate();
+                            } else {
+                                tv_percent.setText(soc + "%");
+                                tv_percent.setTextColor(Color.rgb(146, 208, 80));
+                                tv_ready.setText("Ready");
+                                tv_ready.setTextColor(Color.rgb(146, 208, 80));
+                                graph_battery.invalidate();
+                            }
                         }
                     }, 0);
 
