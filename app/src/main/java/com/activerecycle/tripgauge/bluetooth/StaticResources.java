@@ -6,7 +6,7 @@ package com.activerecycle.tripgauge.bluetooth;
 
 public class StaticResources {
 
-    public static final String UNIQUE_PACKAGE_NAME = "com.example.bluetooth.le";
+    public static final String UNIQUE_PACKAGE_NAME = "com.activerecycle.tripgauge";
 
     public static final String EXTRAS_DEVICE_NAME = "DEVICE_NAME";
     public static final String EXTRAS_DEVICE_ADDRESS = "DEVICE_ADDRESS";

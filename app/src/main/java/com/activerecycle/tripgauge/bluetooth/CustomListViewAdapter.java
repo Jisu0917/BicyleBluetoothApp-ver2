@@ -59,7 +59,11 @@ public class CustomListViewAdapter extends ArrayAdapter {
 //        }
 
         if (device != null && device.getName().toLowerCase(Locale.ROOT).contains("arduino")
-                || device.getName().toLowerCase(Locale.ROOT).contains("recycle")) {
+                || device.getName().toLowerCase(Locale.ROOT).contains("recycle")
+                || device.getName().toLowerCase(Locale.ROOT).contains("ble")
+                || device.getName().toLowerCase(Locale.ROOT).contains("i"))
+
+        {
                 m_list.add(device);
         }
 

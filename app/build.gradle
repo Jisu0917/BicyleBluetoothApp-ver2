@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 33
     defaultConfig {
-        applicationId "com.example.bluetooth.le"
+        applicationId "com.activerecycle.tripgauge"
         minSdkVersion 26 // BluetoothAdapter (at least, for LE) requires API = 18, from 2013
         targetSdkVersion 33 // Easiest to program with the latest SDK.
         versionCode 1

@@ -40,8 +40,7 @@ import java.util.regex.Pattern;
 
 public class ConsumptionActivity extends AppCompatActivity {
     static String EXTERNAL_STORAGE_PATH = "";
-    static int endOfTrip = 0;
-    public static Thread thread;
+    static int saveFlagOfLog = 0;
     public static boolean autoSave = true;
     public static boolean autoConnect = false;
 
@@ -50,15 +49,15 @@ public class ConsumptionActivity extends AppCompatActivity {
     int speed = 0;
     double previousLat = 0.0; // 이전 위도
     double previousLon = 0.0; // 이전 경도
-    double totalDistance = 0.0; // 총 이동 거리
+    static double totalDistance = 0.0; // 총 이동 거리
     double tripADistance = 0.0;
     double tripBDistance = 0.0;
     double bef_lat, bef_long;
     public static boolean btconnect = false;
 
     // 디바이스로부터 받는 데이터
-    int volt = 0; // 전압값 (0~25)
-    int amp = 0; // 전류값 (0~30)
+    static int volt = 0; // 전압값 (0~25)
+    static int amp = 0; // 전류값 (0~30)
     int soc = 0;  // 배터리 잔량
 
     // w = volt * amp;
@@ -69,9 +68,9 @@ public class ConsumptionActivity extends AppCompatActivity {
     BatteryGraph graph_battery;
 
     // DBHelper
-    DBHelper dbHelper;
-    String tripName;
-    int tripId;
+    static DBHelper dbHelper;
+    static String tripName;
+    static int tripId;
 
     static Map dataMap = new HashMap();
 
@@ -117,6 +116,49 @@ public class ConsumptionActivity extends AppCompatActivity {
         if (autoConnect) {
             btconnect = true;
         }
+
+        //TODO: 임시로 만든 버튼!!
+        tv_ready.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                btconnect = !btconnect;  //Toggle
+                if (btconnect) {
+                    tv_ready.setText("Connect");
+                    tv_ready.setTextColor(Color.rgb(146, 208, 80));  //green
+                    startThread();
+                } else {
+                    tv_ready.setText("Ready");
+                    tv_ready.setTextColor(Color.rgb(255, 0, 0));  //red
+
+                    //TODO: 그래프 깜빡깜빡 거리는 애니메이션!
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            while (!btconnect) {
+                                graph_speed.speed = 99;
+                                graph_speed.invalidate();
+
+                                try {
+                                    Thread.sleep(1000);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+
+                                graph_speed.speed = 0;
+                                graph_speed.invalidate();
+
+                                try {
+                                    Thread.sleep(1000);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }).start();
+                }
+                Toast.makeText(ConsumptionActivity.this, "BT connect Toggle Activate...", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         // Connect 여부 표시
         if (btconnect) {
@@ -271,9 +313,13 @@ public class ConsumptionActivity extends AppCompatActivity {
             }
         });
 
+        startThread();
+
+    }
+
+    public static void startThread() {
 
         final TripLogActivity tripLogActivity = new TripLogActivity();
-
 
         // 로그 db에 기록
         final long[] mNow = new long[1];
@@ -281,14 +327,13 @@ public class ConsumptionActivity extends AppCompatActivity {
         final SimpleDateFormat mFormat = new SimpleDateFormat("yyyy.MM.dd hh:mm:ss");
         mFormat.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
 
-
-        endOfTrip = 0;
+        saveFlagOfLog = 0;
         tripId = dbHelper.init_TripSTATS();
-        // 5초마다 실행
-        thread = new Thread(new Runnable() {
+        // 2초마다 실행
+        new Thread(new Runnable() {
             @Override
             public void run() {
-                while (true) {
+                while (btconnect) {
                     // 수행할 작업
                     mNow[0] = System.currentTimeMillis();
                     mDate[0] = new Date(mNow[0]);
@@ -299,7 +344,7 @@ public class ConsumptionActivity extends AppCompatActivity {
                      * random() 난수 발생 코드는 확인용 코드임.
                      * - 추후 삭제 요망
                      * */
-
+                    //TODO: 블루투스로 디바이스로부터 값을 받아와야함!!!
                     volt = (int) (Math.random() * 25);
                     amp = (int) (Math.random() * 30);
 
@@ -313,45 +358,41 @@ public class ConsumptionActivity extends AppCompatActivity {
                     }, 0);
 
 
-                    dbHelper.insert_TripLog(nowTime, volt, amp);
-                    String allLog = dbHelper.getLog();
-                    System.out.println(allLog);
-
-                    tripLogActivity.showCurrentTrip(dbHelper);
-
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(2000);  //2초에 한 번씩 화면에 W를 업데이트
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
 
-                    if (endOfTrip == 20) {  //TODO: Trip이 끝나는 기준 ? 디바이스에서 정보 받아오나?
-                        System.out.println("##### end Of Trip ! ");
-
+                    // 10초 단위로 로그를 저장함
+                    if (saveFlagOfLog % 5 == 0) {  //TODO: Trip이 끝나는 기준 ? 디바이스에서 정보 받아오나?
                         Handler mHandler2 = new Handler(Looper.getMainLooper());
                         mHandler2.postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 //showSaveTripDialog(tripLogId, nowTime);
                                 if (autoSave) {
-                                    saveTrip(tripId, nowTime);
+
+                                    dbHelper.insert_TripLog(nowTime, volt, amp);
+                                    //String allLog = dbHelper.getLog();
+                                    //System.out.println(allLog);
+
+                                    tripLogActivity.showCurrentTrip(dbHelper);
                                 } // else : 저장하지 않고 넘어감
                             }
                         }, 0);
+                    }
+                    saveFlagOfLog += 1;
 
-                        thread.interrupt();
+                    if (!btconnect) {
+
+                        // 블루투스 연결이 끊어지면 트립을 저장하고 스레드를 끝냄.
+                        saveTrip(tripId, nowTime);
                         break;
                     }
-
-                    endOfTrip += 1;
                 }
             }
-        });
-
-        if (btconnect) {
-            thread.start();
-        }
-        
+        }).start();
     }
 
 
@@ -394,20 +435,23 @@ public class ConsumptionActivity extends AppCompatActivity {
     }
 
 
-    private void saveTrip(int tripId, String nowTime) {
+    private static void saveTrip(int tripId, String nowTime) {
 
         //TODO: insert가 아니라 Update !!
-        if (tripName == null) { tripName = "Untitled"; }
-        dbHelper.update_TripSTATS(tripId, nowTime, dbHelper.getMaxW(tripId), dbHelper.getUsedW(tripId), 2150, dbHelper.getAvgPwrW(tripId));
+//        if (tripName == null) { tripName = "Untitled"; }
+        if (dbHelper.getAvgPwrW(tripId) == -999 || dbHelper.getUsedW(tripId) == -999 || dbHelper.getMaxW(tripId) == -2) return;
+        dbHelper.update_TripSTATS(tripId, nowTime, dbHelper.getMaxW(tripId), dbHelper.getUsedW(tripId), (int)(totalDistance * 1000), dbHelper.getAvgPwrW(tripId));
+        dbHelper.update_TripName(tripId, "Untitled");
 
-        Toast.makeText(getApplicationContext(), "트립이 저장되었습니다.", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(ConsumptionActivity.this, "트립이 저장되었습니다.", Toast.LENGTH_SHORT).show();
 
         String allTrip = dbHelper.getTripSTATS();
         System.out.println(allTrip);
 
 
         // Trip 기록 개수 20개 넘으면 자동 삭제
-        if (tripId + 1 > 20) {
+        dbHelper.deleteGarbage();  //일단 찌꺼기 로그부터 삭제하고나서 개수 세기
+        if (dbHelper.getProfileCount("TripSTATS") + 1 > 20) {
             dbHelper.deleteTrip();
         }
     }
@@ -415,13 +459,17 @@ public class ConsumptionActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
         if (autoConnect) {
             btconnect = true;
 
             tv_ready.setText("Connect");
             tv_ready.setTextColor(Color.rgb(146, 208, 80));  //green
-            thread.start();
+
+            startThread();
+        }
+
+        if (btconnect) {
+            startThread();
         }
     }
 }

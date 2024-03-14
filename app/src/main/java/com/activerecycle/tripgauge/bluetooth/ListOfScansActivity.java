@@ -1,5 +1,6 @@
 package com.activerecycle.tripgauge.bluetooth;
 
+import static com.activerecycle.tripgauge.ConsumptionActivity.startThread;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_ready;
 
 import android.Manifest;
@@ -31,6 +32,7 @@ import com.activerecycle.tripgauge.TripLogActivity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 
 public class ListOfScansActivity extends AppCompatActivity {
@@ -62,6 +64,7 @@ public class ListOfScansActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         CheckBleHardware();
 
         String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION};
@@ -73,21 +76,39 @@ public class ListOfScansActivity extends AppCompatActivity {
         devices = new ArrayList<>();
 
         setContentView(R.layout.activity_connection); // Set the content to a layout with list view
+
+
         ListView lv = findViewById(R.id.myModuleList); // gets @android:id/list in said activity
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 //TODO: Click한 직후가 아니라, 연결이 확인이 되면!!!
-                ConsumptionActivity.btconnect = true;
-                tv_ready.setText("Connect");
-                tv_ready.setTextColor(Color.rgb(146, 208, 80));  //green
-                ConsumptionActivity.thread.start();
-
-                view.setBackgroundResource(R.drawable.background_rounding_green);
                 TextView textView1 = (TextView) view.findViewById(R.id.text1);
                 TextView textView2 = (TextView) view.findViewById(R.id.tv_connected);
-                textView1.setTextColor(Color.WHITE);
-                textView2.setTextColor(Color.WHITE);
+                if (textView2.getText().toString().toLowerCase(Locale.ROOT).equals("available to connect")) {
+
+                    view.setBackgroundResource(R.drawable.background_rounding_green);
+                    textView1.setTextColor(Color.WHITE);
+                    textView2.setTextColor(Color.WHITE);
+                    textView2.setText("Connected");
+
+                    ConsumptionActivity.btconnect = true;
+                    tv_ready.setText("Connect");
+                    tv_ready.setTextColor(Color.rgb(146, 208, 80));  //green
+
+                    startThread();
+
+                } else if (textView2.getText().toString().toLowerCase(Locale.ROOT).equals("connected")) {
+                    view.setBackgroundResource(R.drawable.background_rounding_white);
+                    textView1.setTextColor(Color.BLACK);
+                    textView2.setTextColor(Color.rgb(146, 208, 80));  //green
+                    textView2.setText("Available to connect");
+
+                    ConsumptionActivity.btconnect = false;
+                    tv_ready.setText("Ready");
+                    tv_ready.setTextColor(Color.rgb(255, 0, 0));  //red
+
+                }
 
                 //TODO: 디바이스로부터 블루투스로 데이터 받고, 받은 데이터로 처리하는 부분 코딩!!
 
@@ -102,6 +123,10 @@ public class ListOfScansActivity extends AppCompatActivity {
         adapter = new CustomListViewAdapter(this, R.layout.row, devices);
         // to TextView, not sure why context: this is needed
         lv.setAdapter(adapter); // set the list view to inflate with the adapter.
+
+
+        // 블루투스 디바이스 스캔
+        BleScanServices.scanForDevices(true,mLeScanCallback);
 
 
 //        Toolbar toolbar = findViewById(R.id.app_bar_list_of_scans); // declare the toolbar.
@@ -159,6 +184,12 @@ public class ListOfScansActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        //BleScanServices.scanForDevices(true,mLeScanCallback);
+    }
 //
 //
 //    public void refresh_Button_Click(View v) {
