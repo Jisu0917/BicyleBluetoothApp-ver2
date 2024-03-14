@@ -301,12 +301,15 @@ public class ConsumptionActivity extends AppCompatActivity {
                 if (tv_odo.getText().equals("ODO")) {
                     totalDistance = 0.0;
                     Toast.makeText(ConsumptionActivity.this, "ODO를 초기화 합니다.", Toast.LENGTH_SHORT).show();
+                    return true;
                 } else if (tv_odo.getText().equals("TRIPA")) {
                     tripADistance = 0.0;
                     Toast.makeText(ConsumptionActivity.this, "TRIP A를 초기화 합니다.", Toast.LENGTH_SHORT).show();
+                    return true;
                 } else if (tv_odo.getText().equals("TRIPB")) {
                     tripBDistance = 0.0;
                     Toast.makeText(ConsumptionActivity.this, "TRIP B를 초기화 합니다.", Toast.LENGTH_SHORT).show();
+                    return true;
                 }
 
                 return false;
