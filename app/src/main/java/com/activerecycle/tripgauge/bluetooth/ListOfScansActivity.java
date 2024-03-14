@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.AdaptiveIconDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -232,14 +233,18 @@ public class ListOfScansActivity extends AppCompatActivity {
                 address = device.getAddress();
                 if ( device.getAddress() != null && !device.getAddress().equals("") ) {
 
+                    Typeface typeface = Typeface.createFromAsset(context.getResources().getAssets(), "gmarket_sans_bold.ttf");
+
                     View customView = layoutInflater.inflate(R.layout.row, null);
                     ((LinearLayout) customView.findViewById(R.id.container)).setTag(deviceName + "#" + address);
                     ((TextView) customView.findViewById(R.id.text1)).setText(deviceName);
+                    ((TextView) customView.findViewById(R.id.text1)).setTypeface(typeface);
 
                     ((LinearLayout) customView.findViewById(R.id.container)).setBackgroundResource(R.drawable.background_rounding_white);
                     ((TextView) customView.findViewById(R.id.text1)).setTextColor(Color.BLACK);
                     ((TextView) customView.findViewById(R.id.tv_connected)).setTextColor(Color.rgb(34, 177, 77));  //green
                     ((TextView) customView.findViewById(R.id.tv_connected)).setText("Available to connect");
+                    ((TextView) customView.findViewById(R.id.tv_connected)).setTypeface(typeface);
 
                     modulelist_layout.addView(customView);
 

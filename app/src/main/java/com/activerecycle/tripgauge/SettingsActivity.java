@@ -65,6 +65,14 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 dbHelper.deleteAllTrip();
+                TripLogActivity.graph_log.maxW = 0;
+                TripLogActivity.graph_log.invalidate();
+                TripLogActivity.tv_untitled.setText("Untitled");
+                TripLogActivity.tv_date.setText("----.--.--");
+                TripLogActivity.tv_used_wh.setText("--Wh");
+                TripLogActivity.tv_dist_km.setText("--KM");
+                TripLogActivity.tv_avrpwr_w.setText("--W");
+
                 Toast.makeText(SettingsActivity.this, "모든 트립을 삭제했습니다.", Toast.LENGTH_SHORT).show();
             }
         });

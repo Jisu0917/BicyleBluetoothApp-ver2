@@ -75,7 +75,7 @@
             android:layout_marginStart="25dp"
             android:layout_marginTop="0dp"
             android:paddingBottom="15dp"
-            android:text="2023.10.25 (CURRENT)"
+            android:text="----.--.--"
             android:textAllCaps="true"
             android:textColor="@color/lightgreen"
             android:textSize="22sp"
@@ -137,35 +137,35 @@
             android:orientation="vertical"
             app:layout_constraintEnd_toStartOf="@+id/ll2"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintHorizontal_weight="1.2"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/graph_log">
 
             <TextView
                 android:id="@+id/tv_used"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:paddingStart="25dp"
-                android:paddingEnd="50dp"
+                android:paddingEnd="30dp"
                 android:text="used"
                 android:textAlignment="textStart"
                 android:textAllCaps="true"
                 android:textColor="@color/lightgreen"
-                android:textSize="19sp"
+                android:textSize="17sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tv_used_wh"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingStart="25dp"
                 android:paddingEnd="50dp"
-                android:text="96Wh"
+                android:text="--Wh"
                 android:textAlignment="textStart"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
-                android:textSize="19sp"
+                android:textSize="17sp"
                 android:textStyle="bold" />
 
         </LinearLayout>
@@ -191,7 +191,7 @@
                 android:textAlignment="textStart"
                 android:textAllCaps="true"
                 android:textColor="@color/lightgreen"
-                android:textSize="19sp"
+                android:textSize="17sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -199,11 +199,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingStart="15dp"
-                android:text="42.12KM"
+                android:text="--KM"
                 android:textAlignment="textStart"
                 android:textAllCaps="true"
                 android:textColor="@color/white"
-                android:textSize="19sp"
+                android:textSize="17sp"
                 android:textStyle="bold" />
 
         </LinearLayout>
@@ -230,7 +230,7 @@
                 android:textAlignment="textStart"
                 android:textAllCaps="true"
                 android:textColor="@color/lightgreen"
-                android:textSize="19sp"
+                android:textSize="17sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -238,11 +238,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingEnd="25dp"
-                android:text="175W"
+                android:text="--W"
                 android:textAlignment="textStart"
                 android:textAllCaps="true"
                 android:textColor="@color/white"
-                android:textSize="19sp"
+                android:textSize="17sp"
                 android:textStyle="bold" />
 
         </LinearLayout>
