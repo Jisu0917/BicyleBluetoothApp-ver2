@@ -221,11 +221,12 @@ public class ListOfScansActivity extends AppCompatActivity {
 
                             //-----------------------------------------------------------------------------//
                             // 연결이 확인되면
-                            pref_address = addr;
-                            System.out.println("OnClick - pref_address : " + pref_address);
 
 
                             if (((TextView) customView.findViewById(R.id.tv_connected)).getText().toString().toLowerCase(Locale.ROOT).equals("available to connect")) {
+
+                                pref_address = addr;
+                                System.out.println("OnClick - pref_address : " + pref_address);
 
                                 ((LinearLayout) customView.findViewById(R.id.container)).setBackgroundResource(R.drawable.background_rounding_green);
                                 ((TextView) customView.findViewById(R.id.text1)).setTextColor(Color.WHITE);
@@ -240,6 +241,10 @@ public class ListOfScansActivity extends AppCompatActivity {
 
 
                             } else if (((TextView) customView.findViewById(R.id.tv_connected)).getText().toString().toLowerCase(Locale.ROOT).equals("connected")) {
+
+                                pref_address = "";
+                                System.out.println("OnClick - pref_address : " + pref_address);
+
                                 ((LinearLayout) customView.findViewById(R.id.container)).setBackgroundResource(R.drawable.background_rounding_white);
                                 ((TextView) customView.findViewById(R.id.text1)).setTextColor(Color.BLACK);
                                 ((TextView) customView.findViewById(R.id.tv_connected)).setTextColor(Color.rgb(34, 177, 77));  //green
