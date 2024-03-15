@@ -8,29 +8,33 @@
 
     <ImageButton
         android:id="@+id/imgbtn_back"
-        android:layout_width="30dp"
-        android:layout_height="40dp"
-        android:layout_marginEnd="8dp"
-        android:src="@drawable/ic_back"
+        android:layout_width="20dp"
+        android:layout_height="30dp"
+        android:layout_marginEnd="6dp"
         android:background="@null"
         android:scaleType="fitXY"
+        android:src="@drawable/ic_back"
         app:layout_constraintBottom_toBottomOf="@id/tv_back"
-        app:layout_constraintEnd_toStartOf="@id/tv_back" />
+        app:layout_constraintEnd_toStartOf="@+id/tv_back"
+        app:layout_constraintHorizontal_bias="0.9"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/tv_back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="60dp"
+        android:layout_marginStart="30dp"
         android:layout_marginTop="20dp"
         android:text="back"
         android:textAllCaps="true"
         android:textColor="@color/white"
-        android:textSize="31sp"
+        android:textSize="26sp"
         android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintStart_toEndOf="@+id/imgbtn_back"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.01" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_title"
@@ -41,7 +45,7 @@
         android:text="Settings"
         android:textAllCaps="false"
         android:textColor="@color/white"
-        android:textSize="38sp"
+        android:textSize="34sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/imgbtn_back" />
@@ -56,7 +60,7 @@
         android:text="Warning sound"
         android:textAllCaps="false"
         android:textColor="@color/white"
-        android:textSize="27sp"
+        android:textSize="23sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_title" />
@@ -70,7 +74,7 @@
         android:text="Beeping When MAX Speed"
         android:textAllCaps="false"
         android:textColor="@color/white"
-        android:textSize="15sp"
+        android:textSize="13sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_settings1" />
@@ -82,8 +86,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="30dp"
-        android:switchMinWidth="50dp"
-        android:switchPadding="8dp"
+        android:switchMinWidth="40dp"
+        android:switchPadding="6dp"
         android:thumb="@drawable/switch_thumb"
         android:track="@drawable/selector_switch"
         app:layout_constraintEnd_toEndOf="parent"
@@ -98,7 +102,7 @@
         android:text="Auto Save TRIP"
         android:textAllCaps="false"
         android:textColor="@color/white"
-        android:textSize="27sp"
+        android:textSize="23sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_settings1_description" />
@@ -112,7 +116,7 @@
         android:text="Save TRIP Log Automatic"
         android:textAllCaps="false"
         android:textColor="@color/white"
-        android:textSize="15sp"
+        android:textSize="13sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_settings2" />
@@ -124,8 +128,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="30dp"
-        android:switchMinWidth="50dp"
-        android:switchPadding="8dp"
+        android:switchMinWidth="40dp"
+        android:switchPadding="6dp"
         android:thumb="@drawable/switch_thumb"
         android:track="@drawable/selector_switch"
         app:layout_constraintEnd_toEndOf="parent"
@@ -140,7 +144,7 @@
         android:text="Auto connect"
         android:textAllCaps="false"
         android:textColor="@color/white"
-        android:textSize="27sp"
+        android:textSize="23sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_settings2_description" />
@@ -154,7 +158,7 @@
         android:text="Auto connect when start"
         android:textAllCaps="false"
         android:textColor="@color/white"
-        android:textSize="15sp"
+        android:textSize="13sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_settings3" />
@@ -166,8 +170,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="30dp"
-        android:switchMinWidth="50dp"
-        android:switchPadding="8dp"
+        android:switchMinWidth="40dp"
+        android:switchPadding="6dp"
         android:thumb="@drawable/switch_thumb"
         android:track="@drawable/selector_switch"
         app:layout_constraintEnd_toEndOf="parent"
@@ -183,7 +187,7 @@
         android:text="Warning BATT"
         android:textAllCaps="false"
         android:textColor="@color/white"
-        android:textSize="27sp"
+        android:textSize="23sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_settings3_description" />
@@ -197,7 +201,7 @@
         android:text="Beeping When Under 5%"
         android:textAllCaps="false"
         android:textColor="@color/white"
-        android:textSize="15sp"
+        android:textSize="13sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_settings4" />
@@ -209,8 +213,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="30dp"
-        android:switchMinWidth="50dp"
-        android:switchPadding="8dp"
+        android:switchMinWidth="40dp"
+        android:switchPadding="6dp"
         android:thumb="@drawable/switch_thumb"
         android:track="@drawable/selector_switch"
         app:layout_constraintEnd_toEndOf="parent"
@@ -228,7 +232,7 @@
         android:text="reset log"
         android:textAllCaps="true"
         android:textColor="@color/black"
-        android:textSize="18sp"
+        android:textSize="14sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/btn_clear"
@@ -247,7 +251,7 @@
         android:text="clear odo"
         android:textAllCaps="true"
         android:textColor="@color/black"
-        android:textSize="18sp"
+        android:textSize="14sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -267,7 +271,7 @@
         android:text="KPH"
         android:textAllCaps="true"
         android:textColor="@color/black"
-        android:textSize="18sp"
+        android:textSize="14sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/btn_reset"
         app:layout_constraintEnd_toStartOf="@+id/btn_null"
@@ -289,11 +293,11 @@
         android:textColor="@color/black"
         android:textSize="18sp"
         android:textStyle="bold"
+        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@id/btn_reset"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_weight="1"
-        app:layout_constraintStart_toEndOf="@+id/btn_mph"
-        android:visibility="invisible"/>
+        app:layout_constraintStart_toEndOf="@+id/btn_mph" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

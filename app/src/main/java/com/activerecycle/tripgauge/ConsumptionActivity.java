@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -83,6 +84,8 @@ public class ConsumptionActivity extends AppCompatActivity {
 
         mContext = getApplicationContext();
 
+        //SettingsActivity.socFlag = SettingsActivity.preferences.getBoolean("s4", true);
+
         // For Record Activity
         String state = Environment.getExternalStorageState();
         if (!state.equals(Environment.MEDIA_MOUNTED)) {
@@ -93,6 +96,7 @@ public class ConsumptionActivity extends AppCompatActivity {
 
 
         dbHelper = new DBHelper(ConsumptionActivity.this, 1);
+
 
         //tv_title = (TextView) findViewById(R.id.tv_title);
         tv_w = (TextView) findViewById(R.id.tv_w);

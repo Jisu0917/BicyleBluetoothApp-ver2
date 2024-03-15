@@ -18,7 +18,7 @@
         android:text="The Trip Title : "
         android:textAlignment="textStart"
         android:textColor="#384d75"
-        android:textSize="18sp"
+        android:textSize="16sp"
         android:textStyle="bold"
         tools:ignore="RtlCompat" />
 
@@ -27,7 +27,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
+        android:layout_marginEnd="14dp"
         android:layout_gravity="center"
         android:background="#eeeeee"
         android:hint="Write the title of the trip here."

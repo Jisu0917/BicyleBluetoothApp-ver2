@@ -26,9 +26,9 @@ public class SettingsActivity extends AppCompatActivity {
 
     DBHelper dbHelper;
 
-    SharedPreferences preferences;
+    public static SharedPreferences preferences;
     boolean b1, b2, b3, b4;
-    public static boolean speedFlag = true, socFlag = true;
+    public static boolean speedFlag, socFlag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,10 +91,10 @@ public class SettingsActivity extends AppCompatActivity {
 //                }
 
                 if (b) {
-                    b1 = true;
+                    //b1 = true;
                     speedFlag = true;
                 } else {
-                    b1 = false;
+                    //b1 = false;
                     speedFlag = false;
                 }
             }
@@ -142,10 +142,10 @@ public class SettingsActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) { // 오른쪽
                     //TODO: 경고음 재생
-                    b4 = true;
+                    //b4 = true;
                     socFlag = true;
                 } else { // 왼쪽
-                    b4 = false;
+                    //b4 = false;
                     socFlag = false;
                 }
             }
@@ -167,10 +167,10 @@ public class SettingsActivity extends AppCompatActivity {
         super.onDestroy();
 
         SharedPreferences.Editor editor = preferences.edit();  //Editor를 preferences에 쓰겠다고 연결
-        editor.putBoolean("s1", b1);  //putString(KEY,VALUE)
+        editor.putBoolean("s1", speedFlag);  //putString(KEY,VALUE)
         editor.putBoolean("s2", b2);  //putString(KEY,VALUE)
         editor.putBoolean("s3", b3);  //putString(KEY,VALUE)
-        editor.putBoolean("s4", b4);  //putString(KEY,VALUE)
+        editor.putBoolean("s4", socFlag);  //putString(KEY,VALUE)
 
         editor.commit();  //항상 commit & apply 를 해주어야 저장이 된다.
     }

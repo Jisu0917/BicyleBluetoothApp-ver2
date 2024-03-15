@@ -8,8 +8,8 @@
 
     <ImageButton
         android:id="@+id/btn_menu"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_margin="20dp"
         android:layout_marginStart="10dp"
         android:src="@drawable/ic_menu_green"
@@ -20,8 +20,8 @@
 
     <ImageButton
         android:id="@+id/btn_reload"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
         android:src="@drawable/ic_reload"
@@ -34,12 +34,11 @@
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginStart="28dp"
         android:text="@string/connection"
         android:textAllCaps="false"
         android:textColor="@color/white"
-        android:textSize="33sp"
+        android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@id/btn_reload"
         app:layout_constraintStart_toStartOf="parent" />
