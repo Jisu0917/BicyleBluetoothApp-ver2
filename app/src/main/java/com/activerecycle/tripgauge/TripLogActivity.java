@@ -184,6 +184,7 @@ public class TripLogActivity extends AppCompatActivity {
 
             if (graph_log != null) {
                 graph_log.invalidate();
+                graph_log.setVisibility(View.VISIBLE);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -223,6 +224,7 @@ public class TripLogActivity extends AppCompatActivity {
         if (graph_log.maxW != -1 && graph_log.maxW != -2) {
             graph_log.map = dbHelper.getTripLogW(dataMap, tableId);
             graph_log.invalidate();
+            graph_log.setVisibility(View.VISIBLE);
 
             Map tripSTATSmap = dbHelper.getTripSTATSbyID(tableId);
             String tripName = (String) tripSTATSmap.get("NAME");
@@ -281,6 +283,17 @@ public class TripLogActivity extends AppCompatActivity {
         System.out.println("**** statList : " + statList);
 
         setTripListView();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (!ConsumptionActivity.btconnect) {
+            graph_log.setVisibility(View.INVISIBLE);
+        } else {
+            graph_log.setVisibility(View.VISIBLE);
+        }
     }
 
     private void setTripListView() {

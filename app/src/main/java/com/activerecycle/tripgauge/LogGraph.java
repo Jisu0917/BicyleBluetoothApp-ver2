@@ -193,9 +193,9 @@ public class LogGraph extends View {
         canvas.drawPath(path, linePaint);
 
         // Consumption Log 글씨 넣기
-        txtPaint.setTextSize(55f);
+        txtPaint.setTextSize(44f);
 
-        canvas.drawText("CONSUMPTION LOG", getWidth() - 80, 180, txtPaint);
+        canvas.drawText("CONSUMPTION LOG", getWidth() - 80, 160, txtPaint);
     }
 
     private float getPointY(float y) {
