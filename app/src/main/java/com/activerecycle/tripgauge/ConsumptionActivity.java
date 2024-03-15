@@ -419,8 +419,8 @@ public class ConsumptionActivity extends AppCompatActivity {
                                 if (autoSave) {
 
                                     dbHelper.insert_TripLog(nowTime, volt, amp);
-                                    String allLog = dbHelper.getLog();
-                                    System.out.println(allLog);
+//                                    String allLog = dbHelper.getLog();
+//                                    System.out.println(allLog);
 
                                     tripLogActivity.showCurrentTrip(dbHelper);
                                 } // else : 저장하지 않고 넘어감

@@ -14,7 +14,9 @@ import android.os.Handler;
 import android.os.Looper;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 
 public class BluetoothScanner {
     private BluetoothAdapter bluetoothAdapter;
@@ -36,18 +38,16 @@ public class BluetoothScanner {
                 // 스캔 결과를 처리하는 로직을 여기에 추가
                 BluetoothDevice device = result.getDevice();
                 // 찾은 디바이스를 처리하거나 저장하는 등의 작업 수행
-                for (BluetoothDevice bluetoothDevice : deviceList) {
-                    if (device != null && device.getAddress().equals(bluetoothDevice.getAddress())) {
-                        return;  //중복이면 저장하지 않고 넘어감.
-                    }
-                }
-
                 if (device != null && device.getName() != null &&
                         ( device.getName().toLowerCase(Locale.ROOT).contains("arduino")
                         || device.getName().toLowerCase(Locale.ROOT).contains("recycle")
                         || device.getName().toLowerCase(Locale.ROOT).contains("ble")
                         || device.getName().toLowerCase(Locale.ROOT).contains("unknown"))
                 ) { deviceList.add(device); }
+
+                // deviceList 중복제거
+                Set<BluetoothDevice> deviceSet = new HashSet<BluetoothDevice>(deviceList);
+                deviceList = new ArrayList<BluetoothDevice>(deviceSet);
             }
 
             @Override
