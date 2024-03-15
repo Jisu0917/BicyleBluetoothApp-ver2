@@ -48,6 +48,10 @@
         <activity
             android:name="com.activerecycle.tripgauge.SettingsActivity"
             android:screenOrientation="portrait"/>
+        <service
+            android:name="com.activerecycle.tripgauge.BeepService"
+            android:enabled="true"
+            android:exported="false" />
     </application>
 
 </manifest>

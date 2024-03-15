@@ -1,5 +1,7 @@
 package com.activerecycle.tripgauge;
 
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
@@ -26,6 +28,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     SharedPreferences preferences;
     boolean b1, b2, b3, b4;
+    public static boolean speedFlag = true, socFlag = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,11 +92,10 @@ public class SettingsActivity extends AppCompatActivity {
 
                 if (b) {
                     b1 = true;
-                    //TODO: Mediaplayer 경고음 재생
-
+                    speedFlag = true;
                 } else {
                     b1 = false;
-
+                    speedFlag = false;
                 }
             }
         });
@@ -139,11 +141,12 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) { // 오른쪽
+                    //TODO: 경고음 재생
                     b4 = true;
-
+                    socFlag = true;
                 } else { // 왼쪽
                     b4 = false;
-
+                    socFlag = false;
                 }
             }
         });

@@ -183,11 +183,11 @@ public class ListOfScansActivity extends AppCompatActivity {
                         ((TextView) customView.findViewById(R.id.tv_connected)).setText("Connected");
                         ((TextView) customView.findViewById(R.id.tv_connected)).setTypeface(typeface);
 
-//                        if (device.getBondState() == BOND_BONDED) {
-//                        /*
-//                         * BondState 정보 :
-//                         * https://developer.android.com/reference/android/bluetooth/BluetoothDevice */
-//                        }
+                        if (device.getBondState() == BOND_BONDED) {
+                        /*
+                         * BondState 정보 :
+                         * https://developer.android.com/reference/android/bluetooth/BluetoothDevice */
+                        }
                     }
                     else {
                         //TODO: background_rounding_white
@@ -216,7 +216,7 @@ public class ListOfScansActivity extends AppCompatActivity {
                             intent.putExtra(StaticResources.EXTRAS_DEVICE_NAME, name);
                             intent.putExtra(StaticResources.EXTRAS_DEVICE_ADDRESS, addr);
                             intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
-                            //context.startActivity(intent);
+                            context.startActivity(intent);
 
 
                             //-----------------------------------------------------------------------------//

@@ -46,7 +46,7 @@ public class ConsumptionActivity extends AppCompatActivity {
 
 
     // 앱에서 디바이스에게 주는 데이터
-    int speed = 0;
+    public static int speed = 0;
     double previousLat = 0.0; // 이전 위도
     double previousLon = 0.0; // 이전 경도
     static double totalDistance = 0.0; // 총 이동 거리
@@ -58,7 +58,7 @@ public class ConsumptionActivity extends AppCompatActivity {
     // 디바이스로부터 받는 데이터
     static int volt = 0; // 전압값 (0~25)
     static int amp = 0; // 전류값 (0~30)
-    static int soc = 0;  // 배터리 잔량
+    public static int soc = 0;  // 배터리 잔량
 
     // w = volt * amp;
 
@@ -74,10 +74,14 @@ public class ConsumptionActivity extends AppCompatActivity {
 
     static Map dataMap = new HashMap();
 
+    static Context mContext;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_consumption);
+
+        mContext = getApplicationContext();
 
         // For Record Activity
         String state = Environment.getExternalStorageState();
@@ -259,6 +263,14 @@ public class ConsumptionActivity extends AppCompatActivity {
                 // 주행 속도
                 speed = (int) location.getSpeed();
 
+
+                //TODO: 속도 MAX 이상 경고음
+                if (SettingsActivity.speedFlag && ConsumptionActivity.speed >= 25) {
+                    //BeepPlayer.playBeep(getApplicationContext());
+                    startService(new Intent(getApplicationContext(), BeepService.class));
+                }
+
+
                 // 주행 속도 화면에 반영
                 graph_speed.speed = speed;
                 graph_speed.invalidate();  //그래프 화면 갱신
@@ -334,7 +346,7 @@ public class ConsumptionActivity extends AppCompatActivity {
 
         startThread();
 
-    }
+    }//end Of Create
 
     public static void startThread() {
 
@@ -372,6 +384,14 @@ public class ConsumptionActivity extends AppCompatActivity {
                     soc = (int) (Math.random() * 100);
                     graph_battery.soc = soc;
 
+
+                    //TODO: 배터리 5% 이하 경고음
+                    if (SettingsActivity.socFlag && ConsumptionActivity.soc <= 5) {
+                        //BeepPlayer.playBeep(getApplicationContext());
+                        mContext.startService(new Intent(mContext, BeepService.class));
+                    }
+
+
                     Handler mHandler1 = new Handler(Looper.getMainLooper());
                     mHandler1.postDelayed(new Runnable() {
                         @Override
@@ -388,6 +408,7 @@ public class ConsumptionActivity extends AppCompatActivity {
                                 tv_ready.setTextColor(Color.RED);
                                 graph_battery.soc = 2;
                                 graph_battery.invalidate();
+
                             } else {
                                 tv_percent.setText(soc + "%");
                                 if (soc > 10) {
@@ -432,6 +453,10 @@ public class ConsumptionActivity extends AppCompatActivity {
                     if (!btconnect) {
 
                         // 블루투스 연결이 끊어지면 트립을 저장하고 스레드를 끝냄.
+
+
+                        tv_percent.setTextColor(Color.WHITE);
+
                         saveTrip(tripId, nowTime);
                         break;
                     }
