@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:background="@drawable/background_rounding_white"
     android:clickable="true"
@@ -11,28 +11,27 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="25dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginTop="15dp"
         android:orientation="horizontal">
 
         <TextView xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/text1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="32sp"
+            android:textSize="27sp"
             android:textStyle="bold"
-            android:text="RECYCLE GEN0"
+            android:text="JDY-00"
             android:gravity="center_vertical"
-            android:minHeight="?android:attr/listPreferredItemHeightSmall"
-            android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
-            android:paddingStart="?android:attr/listPreferredItemPaddingStart"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:textColor="@color/black"
+            />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="right"
-            android:minHeight="?android:attr/listPreferredItemHeightSmall"
-            android:paddingStart="?android:attr/listPreferredItemPaddingStart"
             android:text="RSSI: "
             android:visibility="gone"
             android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -43,10 +42,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="right"
-            android:visibility="gone"
-            android:minHeight="?android:attr/listPreferredItemHeightSmall"
-            android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:visibility="gone"/>
 
 
 
@@ -58,26 +54,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="right"
-        android:visibility="gone"
-        android:minHeight="?android:attr/listPreferredItemHeightSmall"
-        android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
-        android:paddingStart="?android:attr/listPreferredItemPaddingStart"
-        android:textAppearance="?android:attr/textAppearanceSearchResultTitle" />
+        android:visibility="gone"/>
 
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/tv_connected"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="25dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
         android:gravity="center"
         android:layout_gravity="right"
         android:textColor="@color/green"
         android:text="Available to connect"
-        android:textSize="20sp"
+        android:textSize="14sp"
         android:textStyle="bold"
-        android:textAllCaps="true"
-        android:minHeight="?android:attr/listPreferredItemHeightSmall"
-        android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
-        android:paddingStart="?android:attr/listPreferredItemPaddingStart"
-        android:textAppearance="?android:attr/textAppearanceSearchResultTitle" />
+        android:textAllCaps="true" />
 
 </LinearLayout>

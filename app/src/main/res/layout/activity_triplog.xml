@@ -6,248 +6,276 @@
     android:layout_height="match_parent"
     android:background="@color/black">
 
-    <ImageButton
-        android:id="@+id/imgbtn_back"
-        android:layout_width="30dp"
-        android:layout_height="40dp"
-        android:layout_marginEnd="8dp"
-        android:background="@null"
-        android:scaleType="fitXY"
-        android:src="@drawable/ic_back"
-        app:layout_constraintBottom_toBottomOf="@id/tv_back"
-        app:layout_constraintEnd_toStartOf="@id/tv_back" />
-
-    <TextView
-        android:id="@+id/tv_back"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="60dp"
-        android:layout_marginTop="20dp"
-        android:text="back"
-        android:textAllCaps="true"
-        android:textColor="@color/white"
-        android:textSize="31sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.01" />
-
-    <TextView
-        android:id="@+id/tv_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:layout_marginEnd="30dp"
-        android:text="Trip Log"
-        android:textAllCaps="false"
-        android:textColor="@color/white"
-        android:textSize="36sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/container"
-        android:background="@color/black"
-        android:layout_width="wrap_content"
+        android:id="@+id/container1"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="20dp"
+        android:paddingBottom="10dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/imgbtn_back">
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/imgbtn_back"
+            android:layout_width="20dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="8dp"
+            android:background="@null"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_back"
+            app:layout_constraintBottom_toBottomOf="@id/tv_back"
+            app:layout_constraintEnd_toStartOf="@+id/tv_back"
+            app:layout_constraintHorizontal_bias="0.9"
+            app:layout_constraintStart_toStartOf="parent" />
+
         <TextView
-            android:id="@+id/tv_untitled"
+            android:id="@+id/tv_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="25dp"
-            android:layout_marginTop="25dp"
-            android:text="Untitled"
-            android:textAllCaps="false"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="22dp"
+            android:text="back"
+            android:textAllCaps="true"
             android:textColor="@color/white"
-            android:textSize="38sp"
+            android:textSize="26sp"
             android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/tv_title"
+            app:layout_constraintHorizontal_bias="0.1"
+            app:layout_constraintStart_toEndOf="@+id/imgbtn_back"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/tv_date"
+            android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="25dp"
-            android:layout_marginTop="0dp"
-            android:paddingBottom="15dp"
-            android:text="----.--.--"
-            android:textAllCaps="true"
-            android:textColor="@color/lightgreen"
-            android:textSize="22sp"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="30dp"
+            android:text="Trip Log"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="30sp"
             android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_untitled" />
-
-        <ImageButton
-            android:id="@+id/btn_share"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginBottom="20dp"
-            android:background="@null"
-            android:scaleType="fitXY"
-            android:src="@drawable/ic_share"
-            app:layout_constraintBottom_toBottomOf="@id/tv_date"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <View
-            android:id="@+id/view"
-            android:layout_width="match_parent"
-            android:layout_height="5dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="0dp"
-            android:background="@color/white"
-            app:layout_constraintBottom_toBottomOf="@id/tv_date"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <com.activerecycle.tripgauge.LogGraph
-            android:id="@+id/graph_log"
-            android:layout_width="wrap_content"
-            android:layout_height="280dp"
-            android:layout_margin="0dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/view" />
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout><!--end of container1-->
 
 
-<!--    <TextView-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginStart="25dp"-->
-<!--        android:layout_marginTop="0dp"-->
-<!--        android:paddingBottom="15dp"-->
-<!--        android:text="CONSUMPTION LOG"-->
-<!--        android:textAllCaps="true"-->
-<!--        android:textColor="@color/white"-->
-<!--        android:textSize="25sp"-->
-<!--        android:textStyle="bold"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/view" />-->
+    <!-- For ScreenShot Image Container -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@color/black"
+        android:paddingBottom="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/container1">
 
-        <LinearLayout
-            android:id="@+id/ll1"
-            android:layout_width="0dp"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/container2"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintEnd_toStartOf="@+id/ll2"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintHorizontal_weight="1.2"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/graph_log">
+            app:layout_constraintTop_toTopOf="parent"
+            android:paddingBottom="10dp">
 
             <TextView
-                android:id="@+id/tv_used"
-                android:layout_width="match_parent"
+                android:id="@+id/tv_untitled"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:paddingStart="25dp"
-                android:paddingEnd="30dp"
-                android:text="used"
-                android:textAlignment="textStart"
-                android:textAllCaps="true"
-                android:textColor="@color/lightgreen"
-                android:textSize="17sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tv_used_wh"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingStart="25dp"
-                android:paddingEnd="50dp"
-                android:text="--Wh"
-                android:textAlignment="textStart"
+                android:layout_marginStart="25dp"
+                android:text="Untitled"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
-                android:textSize="17sp"
-                android:textStyle="bold" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ll2"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintEnd_toStartOf="@+id/ll3"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintHorizontal_weight="1"
-            app:layout_constraintStart_toEndOf="@+id/ll1"
-            app:layout_constraintTop_toBottomOf="@id/graph_log">
+                android:textSize="32sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/tv_dist"
+                android:id="@+id/tv_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:paddingStart="20dp"
-                android:text="dist"
-                android:textAlignment="textStart"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="0dp"
+                android:paddingBottom="15dp"
+                android:text="----.--.--"
                 android:textAllCaps="true"
                 android:textColor="@color/lightgreen"
-                android:textSize="17sp"
-                android:textStyle="bold" />
+                android:textSize="22sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_untitled" />
 
-            <TextView
-                android:id="@+id/tv_dist_km"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingStart="15dp"
-                android:text="--KM"
-                android:textAlignment="textStart"
-                android:textAllCaps="true"
-                android:textColor="@color/white"
-                android:textSize="17sp"
-                android:textStyle="bold" />
+            <ImageButton
+                android:id="@+id/btn_share"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="20dp"
+                android:background="@null"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_share"
+                app:layout_constraintBottom_toBottomOf="@id/tv_date"
+                app:layout_constraintEnd_toEndOf="parent" />
 
-        </LinearLayout>
+            <View
+                android:id="@+id/view"
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="0dp"
+                android:background="@color/white"
+                app:layout_constraintBottom_toBottomOf="@id/tv_date"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout><!--end of container2-->
 
-
-        <LinearLayout
-            android:id="@+id/ll3"
-            android:layout_width="0dp"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/container3"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintHorizontal_weight="1"
-            app:layout_constraintStart_toEndOf="@+id/ll2"
-            app:layout_constraintTop_toBottomOf="@id/graph_log">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/container2"
+            >
 
-            <TextView
-                android:id="@+id/tv_avrpwr"
+            <com.activerecycle.tripgauge.LogGraph
+                android:id="@+id/graph_log"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:paddingEnd="25dp"
-                android:text="avr.pwr"
-                android:textAlignment="textStart"
-                android:textAllCaps="true"
-                android:textColor="@color/lightgreen"
-                android:textSize="17sp"
-                android:textStyle="bold" />
+                android:layout_height="220dp"
+                android:layout_margin="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/tv_avrpwr_w"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/ll1"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:paddingEnd="25dp"
-                android:text="--W"
-                android:textAlignment="textStart"
-                android:textAllCaps="true"
-                android:textColor="@color/white"
-                android:textSize="17sp"
-                android:textStyle="bold" />
+                android:orientation="vertical"
+                app:layout_constraintEnd_toStartOf="@+id/ll2"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_weight="1.2"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/graph_log">
 
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/tv_used"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:paddingStart="25dp"
+                    android:paddingEnd="30dp"
+                    android:text="used"
+                    android:textAlignment="textStart"
+                    android:textAllCaps="true"
+                    android:textColor="@color/lightgreen"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_used_wh"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="25dp"
+                    android:paddingEnd="50dp"
+                    android:text="--Wh"
+                    android:textAlignment="textStart"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toStartOf="@+id/ll3"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toEndOf="@+id/ll1"
+                app:layout_constraintTop_toBottomOf="@id/graph_log">
+
+                <TextView
+                    android:id="@+id/tv_dist"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:paddingStart="20dp"
+                    android:text="dist"
+                    android:textAlignment="textStart"
+                    android:textAllCaps="true"
+                    android:textColor="@color/lightgreen"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_dist_km"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="15dp"
+                    android:text="--KM"
+                    android:textAlignment="textStart"
+                    android:textAllCaps="true"
+                    android:textColor="@color/white"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/ll3"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toEndOf="@+id/ll2"
+                app:layout_constraintTop_toBottomOf="@id/graph_log">
+
+                <TextView
+                    android:id="@+id/tv_avrpwr"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:paddingEnd="25dp"
+                    android:text="avr.pwr"
+                    android:textAlignment="textStart"
+                    android:textAllCaps="true"
+                    android:textColor="@color/lightgreen"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_avrpwr_w"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingEnd="25dp"
+                    android:text="--W"
+                    android:textAlignment="textStart"
+                    android:textAllCaps="true"
+                    android:textColor="@color/white"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout><!--end of container3-->
+    </androidx.constraintlayout.widget.ConstraintLayout><!--end of ScreenShot container-->
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/container"
+        android:paddingBottom="30dp">
+
+        <include layout="@layout/content_recordlist" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <include layout="@layout/content_recordlist" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout><!--end of Root Layout-->
