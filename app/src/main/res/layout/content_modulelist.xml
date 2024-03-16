@@ -3,10 +3,11 @@
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:layout_height="match_parent"
-    android:layout_marginTop="135dp"
-    android:layout_marginBottom="80dp"
+    android:layout_marginTop="5dp"
+    android:layout_marginBottom="10dp"
     android:layout_marginEnd="20dp"
     android:layout_marginStart="20dp"
+    android:paddingTop="5dp"
     android:background="@drawable/stroke_rounding_white">
 
     <ScrollView

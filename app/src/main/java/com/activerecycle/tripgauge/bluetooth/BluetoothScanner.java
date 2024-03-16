@@ -42,7 +42,7 @@ public class BluetoothScanner {
                         ( device.getName().toLowerCase(Locale.ROOT).contains("arduino")
                         || device.getName().toLowerCase(Locale.ROOT).contains("jdy")
                         || device.getName().toLowerCase(Locale.ROOT).contains("ble")
-                        || device.getName().toLowerCase(Locale.ROOT).contains("unknown"))
+                        || device.getName().toLowerCase(Locale.ROOT).contains(""))
                 ) { deviceList.add(device); }
 
                 // deviceList 중복제거

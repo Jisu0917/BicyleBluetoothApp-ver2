@@ -177,21 +177,21 @@ public class ListOfScansActivity extends AppCompatActivity {
 
                     if (device.getAddress().equals(pref_address)) {
                         //TODO: background_rounding_green
-                        ((LinearLayout) customView.findViewById(R.id.container)).setBackgroundResource(R.drawable.background_rounding_green);
+                        ((LinearLayout) customView.findViewById(R.id.color_contianer)).setBackgroundResource(R.drawable.background_rounding_green);
                         ((TextView) customView.findViewById(R.id.text1)).setTextColor(Color.WHITE);
                         ((TextView) customView.findViewById(R.id.tv_connected)).setTextColor(Color.WHITE);  //green
                         ((TextView) customView.findViewById(R.id.tv_connected)).setText("Connected");
                         ((TextView) customView.findViewById(R.id.tv_connected)).setTypeface(typeface);
 
-                        if (device.getBondState() == BOND_BONDED) {
-                        /*
-                         * BondState 정보 :
-                         * https://developer.android.com/reference/android/bluetooth/BluetoothDevice */
-                        }
+//                        if (device.getBondState() == BOND_BONDED) {
+//                        /*
+//                         * BondState 정보 :
+//                         * https://developer.android.com/reference/android/bluetooth/BluetoothDevice */
+//                        }
                     }
                     else {
                         //TODO: background_rounding_white
-                        ((LinearLayout) customView.findViewById(R.id.container)).setBackgroundResource(R.drawable.background_rounding_white);
+                        ((LinearLayout) customView.findViewById(R.id.color_contianer)).setBackgroundResource(R.drawable.background_rounding_white);
                         ((TextView) customView.findViewById(R.id.text1)).setTextColor(Color.BLACK);
                         ((TextView) customView.findViewById(R.id.tv_connected)).setTextColor(Color.rgb(34, 177, 77));  //green
                         ((TextView) customView.findViewById(R.id.tv_connected)).setText("Available to connect");
@@ -228,7 +228,7 @@ public class ListOfScansActivity extends AppCompatActivity {
                                 pref_address = addr;
                                 System.out.println("OnClick - pref_address : " + pref_address);
 
-                                ((LinearLayout) customView.findViewById(R.id.container)).setBackgroundResource(R.drawable.background_rounding_green);
+                                ((LinearLayout) customView.findViewById(R.id.color_contianer)).setBackgroundResource(R.drawable.background_rounding_green);
                                 ((TextView) customView.findViewById(R.id.text1)).setTextColor(Color.WHITE);
                                 ((TextView) customView.findViewById(R.id.tv_connected)).setTextColor(Color.WHITE);
                                 ((TextView) customView.findViewById(R.id.tv_connected)).setText("Connected");
@@ -245,7 +245,7 @@ public class ListOfScansActivity extends AppCompatActivity {
                                 pref_address = "";
                                 System.out.println("OnClick - pref_address : " + pref_address);
 
-                                ((LinearLayout) customView.findViewById(R.id.container)).setBackgroundResource(R.drawable.background_rounding_white);
+                                ((LinearLayout) customView.findViewById(R.id.color_contianer)).setBackgroundResource(R.drawable.background_rounding_white);
                                 ((TextView) customView.findViewById(R.id.text1)).setTextColor(Color.BLACK);
                                 ((TextView) customView.findViewById(R.id.tv_connected)).setTextColor(Color.rgb(34, 177, 77));  //green
                                 ((TextView) customView.findViewById(R.id.tv_connected)).setText("Available to connect");
