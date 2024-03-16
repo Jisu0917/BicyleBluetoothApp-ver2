@@ -99,12 +99,17 @@ public class BleConnectionService {
                 public void onCharacteristicChanged(BluetoothGatt gatt,
                                                     BluetoothGattCharacteristic characteristic) {
                     byte[] rawData = characteristic.getValue();
+
+                    Log.i("onCharacteristicChanged",
+                            "rawData = " + rawData + ";");
+
                     String txData = new String(rawData).trim(); // toString does not work, but new String()
                     Intent intent = new Intent(StaticResources.BROADCAST_NAME_TX_CHARATERISTIC_CHANGED);
                     intent.putExtra(StaticResources.EXTRAS_TX_DATA, txData);
                     m_context.sendBroadcast(intent);
                     Log.i("onCharacteristicChanged",
                             "TxData = " + txData + ";");
+
                 }
 
             };

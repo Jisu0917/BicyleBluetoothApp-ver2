@@ -33,6 +33,7 @@ import com.activerecycle.tripgauge.bluetooth.ListOfScansActivity;
 import com.activerecycle.tripgauge.bluetooth.R;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -66,7 +67,7 @@ public class ConsumptionActivity extends AppCompatActivity {
     public static TextView tv_title, tv_w, tv_ready, tv_speed, tv_KPH, tv_percent, tv_soc, tv_odo, tv_distance;
     ImageButton btn_menu;
     SpeedGraph graph_speed;
-    static BatteryGraph graph_battery;
+    public static BatteryGraph graph_battery;
 
     // DBHelper
     static DBHelper dbHelper;
@@ -75,7 +76,7 @@ public class ConsumptionActivity extends AppCompatActivity {
 
     static Map dataMap = new HashMap();
 
-    static Context mContext;
+    public static Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -354,13 +355,13 @@ public class ConsumptionActivity extends AppCompatActivity {
 
     public static void startThread() {
 
-        final TripLogActivity tripLogActivity = new TripLogActivity();
+//        final TripLogActivity tripLogActivity = new TripLogActivity();
 
-        // 로그 db에 기록
-        final long[] mNow = new long[1];
-        final Date[] mDate = new Date[1];
-        final SimpleDateFormat mFormat = new SimpleDateFormat("yyyy.MM.dd hh:mm:ss");
-        mFormat.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+//        // 로그 db에 기록
+//        final long[] mNow = new long[1];
+//        final Date[] mDate = new Date[1];
+//        final SimpleDateFormat mFormat = new SimpleDateFormat("yyyy.MM.dd hh:mm:ss");
+//        mFormat.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
 
         saveFlagOfLog = 0;
         tripId = dbHelper.init_TripSTATS();
@@ -369,63 +370,63 @@ public class ConsumptionActivity extends AppCompatActivity {
             @Override
             public void run() {
                 while (btconnect) {
-                    // 수행할 작업
-                    mNow[0] = System.currentTimeMillis();
-                    mDate[0] = new Date(mNow[0]);
-                    final String nowTime = mFormat.format(mDate[0]);
+//                    // 수행할 작업
+//                    mNow[0] = System.currentTimeMillis();
+//                    mDate[0] = new Date(mNow[0]);
+//                    final String nowTime = mFormat.format(mDate[0]);
 
                     // W 표시
                     /*
                      * random() 난수 발생 코드는 확인용 코드임.
                      * - 추후 삭제 요망
                      * */
-                    //TODO: 블루투스로 디바이스로부터 값을 받아와야함!!!
-                    volt = (int) (Math.random() * 25);
-                    amp = (int) (Math.random() * 30);
+//                    //TODO: 블루투스로 디바이스로부터 값을 받아와야함!!!
+//                    volt = (int) (Math.random() * 25);
+//                    amp = (int) (Math.random() * 30);
+//
+//
+//                    //TODO: 배터리 값 디바이스에서 블루투스로 받아오기!!!!!!!!
+//                    soc = (int) (Math.random() * 100);
+//                    graph_battery.soc = soc;
 
 
-                    //TODO: 배터리 값 디바이스에서 블루투스로 받아오기!!!!!!!!
-                    soc = (int) (Math.random() * 100);
-                    graph_battery.soc = soc;
+//                    //TODO: 배터리 5% 이하 경고음
+//                    if (SettingsActivity.socFlag && ConsumptionActivity.soc <= 5) {
+//                        //BeepPlayer.playBeep(getApplicationContext());
+//                        mContext.startService(new Intent(mContext, BeepService.class));
+//                    }
 
 
-                    //TODO: 배터리 5% 이하 경고음
-                    if (SettingsActivity.socFlag && ConsumptionActivity.soc <= 5) {
-                        //BeepPlayer.playBeep(getApplicationContext());
-                        mContext.startService(new Intent(mContext, BeepService.class));
-                    }
-
-
-                    Handler mHandler1 = new Handler(Looper.getMainLooper());
-                    mHandler1.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            tv_w.setText(volt * amp + "W");
-                            tv_w.invalidate();
-
-
-                            if (soc <= 5) {
-                                // 배터리가 5% 이하이면 LOW BAT 표시
-                                tv_percent.setText("LOW%");
-                                tv_percent.setTextColor(Color.RED);
-                                tv_ready.setText("LOW BAT");
-                                tv_ready.setTextColor(Color.RED);
-                                graph_battery.soc = 2;
-                                graph_battery.invalidate();
-
-                            } else {
-                                tv_percent.setText(soc + "%");
-                                if (soc > 10) {
-                                    tv_percent.setTextColor(Color.rgb(146, 208, 80));
-                                } else {
-                                    tv_percent.setTextColor(Color.RED);
-                                }
-                                tv_ready.setText("Ready");
-                                tv_ready.setTextColor(Color.rgb(146, 208, 80));
-                                graph_battery.invalidate();
-                            }
-                        }
-                    }, 0);
+//                    Handler mHandler1 = new Handler(Looper.getMainLooper());
+//                    mHandler1.postDelayed(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            tv_w.setText(volt * amp + "W");
+//                            tv_w.invalidate();
+//
+//
+//                            if (soc <= 5) {
+//                                // 배터리가 5% 이하이면 LOW BAT 표시
+//                                tv_percent.setText("LOW%");
+//                                tv_percent.setTextColor(Color.RED);
+//                                tv_ready.setText("LOW BAT");
+//                                tv_ready.setTextColor(Color.RED);
+//                                graph_battery.soc = 2;
+//                                graph_battery.invalidate();
+//
+//                            } else {
+//                                tv_percent.setText(soc + "%");
+//                                if (soc > 10) {
+//                                    tv_percent.setTextColor(Color.rgb(146, 208, 80));
+//                                } else {
+//                                    tv_percent.setTextColor(Color.RED);
+//                                }
+//                                tv_ready.setText("Ready");
+//                                tv_ready.setTextColor(Color.rgb(146, 208, 80));
+//                                graph_battery.invalidate();
+//                            }
+//                        }
+//                    }, 0);
 
 
                     try {
@@ -434,24 +435,24 @@ public class ConsumptionActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
 
-                    // 10초 단위로 로그를 저장함
-                    if (saveFlagOfLog % 5 == 0) {  //TODO: Trip이 끝나는 기준 ? 디바이스에서 정보 받아오나?
-                        Handler mHandler2 = new Handler(Looper.getMainLooper());
-                        mHandler2.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                //showSaveTripDialog(tripLogId, nowTime);
-                                if (autoSave) {
-
-                                    dbHelper.insert_TripLog(nowTime, volt, amp);
-//                                    String allLog = dbHelper.getLog();
-//                                    System.out.println(allLog);
-
-                                    tripLogActivity.showCurrentTrip(dbHelper);
-                                } // else : 저장하지 않고 넘어감
-                            }
-                        }, 0);
-                    }
+//                    // 10초 단위로 로그를 저장함
+//                    if (saveFlagOfLog % 5 == 0) {  //TODO: Trip이 끝나는 기준 ? 디바이스에서 정보 받아오나?
+//                        Handler mHandler2 = new Handler(Looper.getMainLooper());
+//                        mHandler2.postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                //showSaveTripDialog(tripLogId, nowTime);
+//                                if (autoSave) {
+//
+////                                    dbHelper.insert_TripLog(nowTime, volt, amp);
+////                                    String allLog = dbHelper.getLog();
+////                                    System.out.println(allLog);
+//
+////                                    tripLogActivity.showCurrentTrip(dbHelper);
+//                                } // else : 저장하지 않고 넘어감
+//                            }
+//                        }, 0);
+//                    }
                     saveFlagOfLog += 1;
 
                     if (!btconnect) {
@@ -461,6 +462,8 @@ public class ConsumptionActivity extends AppCompatActivity {
 
                         tv_percent.setTextColor(Color.WHITE);
 
+                        LocalDate currentDate = LocalDate.now();
+                        String nowTime = currentDate.toString();
                         saveTrip(tripId, nowTime);
                         break;
                     }

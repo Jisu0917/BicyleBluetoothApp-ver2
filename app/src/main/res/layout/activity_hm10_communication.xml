@@ -51,4 +51,12 @@
         android:scaleType="fitCenter"
         android:src="@drawable/ic_launcher_background" />
 
+    <TextView
+        android:id="@+id/tv_what_do_u_saying"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/random_image"
+        android:text="voltvalue=--/ampvalue=--/socvalue=--"
+        android:textSize="18sp"/>
+
 </LinearLayout>

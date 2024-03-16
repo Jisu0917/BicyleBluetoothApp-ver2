@@ -22,8 +22,9 @@ public class StaticResources {
             UNIQUE_PACKAGE_NAME + ".tx_characteristic_changed";
 
     public static String CLIENT_CHARACTERISTIC_CONFIGURATION_DESCRIPTOR =
-            "FFE1";
-            //"00002902-0000-1000-8000-00805f9b34fb";
+            //"FFE0";
+            //"FFE1";
+            "00002902-0000-1000-8000-00805f9b34fb";
     public static String HM10_CONFIG = "0000ffe0-0000-1000-8000-00805f9b34fb";
     public static String HM10_SERIAL_DATA = "0000ffe1-0000-1000-8000-00805f9b34fb";
     public static String HM10_MANUFAC_NAME = "00002a29-0000-1000-8000-00805f9b34fb";

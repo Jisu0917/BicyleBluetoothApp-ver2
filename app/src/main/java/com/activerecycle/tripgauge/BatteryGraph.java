@@ -13,7 +13,7 @@ import androidx.annotation.Nullable;
 
 public class BatteryGraph extends View {
 
-    int soc;
+    public int soc;
 
     public BatteryGraph(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
