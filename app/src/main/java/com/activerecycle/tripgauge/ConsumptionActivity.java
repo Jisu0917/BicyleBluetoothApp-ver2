@@ -51,7 +51,7 @@ public class ConsumptionActivity extends AppCompatActivity {
     public static int speed = 0;
     double previousLat = 0.0; // 이전 위도
     double previousLon = 0.0; // 이전 경도
-    static double totalDistance = 0.0; // 총 이동 거리
+    public static double totalDistance = 0.0; // 총 이동 거리
     double tripADistance = 0.0;
     double tripBDistance = 0.0;
     double bef_lat, bef_long;
@@ -66,13 +66,13 @@ public class ConsumptionActivity extends AppCompatActivity {
 
     public static TextView tv_title, tv_w, tv_ready, tv_speed, tv_KPH, tv_percent, tv_soc, tv_odo, tv_distance;
     ImageButton btn_menu;
-    SpeedGraph graph_speed;
+    public static SpeedGraph graph_speed;
     public static BatteryGraph graph_battery;
 
     // DBHelper
     static DBHelper dbHelper;
     static String tripName;
-    static int tripId;
+//    static int tripId;
 
     static Map dataMap = new HashMap();
 
@@ -126,76 +126,76 @@ public class ConsumptionActivity extends AppCompatActivity {
             btconnect = true;
         }
 
-        //TODO: 임시로 만든 버튼!!
-        tv_ready.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                btconnect = !btconnect;  //Toggle
-                if (btconnect) {
-                    tv_ready.setText("Ready");
-                    tv_ready.setTextColor(Color.rgb(146, 208, 80));  //green
-                    startThread();
-
-
-                } else {
-                    tv_ready.setText("Connect");
-                    tv_ready.setTextColor(Color.rgb(255, 0, 0));  //red
-
-                    tv_w.setText("0W");
-                    tv_distance.setText("00.00 Km");
-
-                    // 배터리
-                    soc = 0;
-                    graph_battery.soc = soc;
-                    graph_battery.invalidate();
-                    tv_percent.setText("00%");
-
-                    //TODO: 그래프 깜빡깜빡 거리는 애니메이션!
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            while (!btconnect) {
-                                graph_speed.speed = 99;
-                                graph_speed.invalidate();
-
-                                try {
-                                    Thread.sleep(1000);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-
-                                graph_speed.speed = 0;
-                                graph_speed.invalidate();
-
-                                try {
-                                    Thread.sleep(1000);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                    }).start();
-                }
-                Toast.makeText(ConsumptionActivity.this, "BT connect Toggle Activate...", Toast.LENGTH_SHORT).show();
-            }
-        });
+//        //TODO: 임시로 만든 버튼!!
+//        tv_ready.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                btconnect = !btconnect;  //Toggle
+//                if (btconnect) {
+//                    tv_ready.setText("Ready");
+//                    tv_ready.setTextColor(Color.rgb(146, 208, 80));  //green
+//                    startThread();
+//
+//
+//                } else {
+//                    tv_ready.setText("Connect");
+//                    tv_ready.setTextColor(Color.rgb(255, 0, 0));  //red
+//
+//                    tv_w.setText("0W");
+//                    tv_distance.setText("00.00 Km");
+//
+//                    // 배터리
+//                    soc = 0;
+//                    graph_battery.soc = soc;
+//                    graph_battery.invalidate();
+//                    tv_percent.setText("00%");
+//
+//                    //TODO: 그래프 깜빡깜빡 거리는 애니메이션!
+//                    new Thread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            while (!btconnect) {
+//                                graph_speed.speed = 99;
+//                                graph_speed.invalidate();
+//
+//                                try {
+//                                    Thread.sleep(1000);
+//                                } catch (InterruptedException e) {
+//                                    e.printStackTrace();
+//                                }
+//
+//                                graph_speed.speed = 0;
+//                                graph_speed.invalidate();
+//
+//                                try {
+//                                    Thread.sleep(1000);
+//                                } catch (InterruptedException e) {
+//                                    e.printStackTrace();
+//                                }
+//                            }
+//                        }
+//                    }).start();
+//                }
+//                Toast.makeText(ConsumptionActivity.this, "BT connect Toggle Activate...", Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
         // Connect 여부 표시
-        if (btconnect) {
-            // 블루투스 연결된 상태이면
-            tv_ready.setText("Ready");
-            tv_ready.setTextColor(Color.rgb(146, 208, 80));  //green
-
-
-            //TODO: 배터리 값 디바이스에서 블루투스로 받아오기!!!!!!!!
-            // 받아오는 배터리 값 달라질 때마다 graph_battery.invalidate();
-            soc = 10;
-            graph_battery.soc = soc;
-            graph_battery.invalidate();
-            tv_percent.setText(soc+"%");
-
-        } else {
-            // 블루투스 연결 안 된 상태이면
+//        if (btconnect) {
+//            // 블루투스 연결된 상태이면
+//            tv_ready.setText("Ready");
+//            tv_ready.setTextColor(Color.rgb(146, 208, 80));  //green
+//
+//
+//            //TODO: 배터리 값 디바이스에서 블루투스로 받아오기!!!!!!!!
+//            // 받아오는 배터리 값 달라질 때마다 graph_battery.invalidate();
+//            soc = 10;
+//            graph_battery.soc = soc;
+//            graph_battery.invalidate();
+//            tv_percent.setText(soc+"%");
+//
+//        } else {
+            //TODO: 블루투스 연결 되기 전, 초기 상태일 때!
             tv_ready.setText("Connect");
             tv_ready.setTextColor(Color.rgb(255, 0, 0));  //red
 
@@ -234,7 +234,7 @@ public class ConsumptionActivity extends AppCompatActivity {
                     }
                 }
             }).start();
-        }
+//        }
 
         // gps 주행 속도 측정
         final LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -364,7 +364,7 @@ public class ConsumptionActivity extends AppCompatActivity {
 //        mFormat.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
 
         saveFlagOfLog = 0;
-        tripId = dbHelper.init_TripSTATS();
+//        tripId = dbHelper.init_TripSTATS();
         // 2초마다 실행
         new Thread(new Runnable() {
             @Override
@@ -460,11 +460,11 @@ public class ConsumptionActivity extends AppCompatActivity {
                         // 블루투스 연결이 끊어지면 트립을 저장하고 스레드를 끝냄.
 
 
-                        tv_percent.setTextColor(Color.WHITE);
-
-                        LocalDate currentDate = LocalDate.now();
-                        String nowTime = currentDate.toString();
-                        saveTrip(tripId, nowTime);
+//                        tv_percent.setTextColor(Color.WHITE);
+//
+//                        LocalDate currentDate = LocalDate.now();
+//                        String nowTime = currentDate.toString();
+//                        saveTrip(tripId, nowTime);
                         break;
                     }
                 }
@@ -502,7 +502,7 @@ public class ConsumptionActivity extends AppCompatActivity {
 
                 tripName = String.valueOf(editText.getText());
 
-                saveTrip(tripId, nowTime);
+                //saveTrip(tripId, nowTime);
 
             }
         });
@@ -512,25 +512,25 @@ public class ConsumptionActivity extends AppCompatActivity {
     }
 
 
-    private static void saveTrip(int tripId, String nowTime) {
-
-//        if (tripName == null) { tripName = "Untitled"; }
-        if (dbHelper.getAvgPwrW(tripId) == -999 || dbHelper.getUsedW(tripId) == -999 || dbHelper.getMaxW(tripId) == -2) return;
-        dbHelper.update_TripSTATS(tripId, nowTime, dbHelper.getMaxW(tripId), dbHelper.getUsedW(tripId), (int)(totalDistance * 1000), dbHelper.getAvgPwrW(tripId));
-        dbHelper.update_TripName(tripId, "Untitled");
-
-        //Toast.makeText(ConsumptionActivity.this, "트립이 저장되었습니다.", Toast.LENGTH_SHORT).show();
-
-        String allTrip = dbHelper.getTripSTATS();
-        System.out.println(allTrip);
-
-
-        // Trip 기록 개수 20개 넘으면 자동 삭제
-        dbHelper.deleteGarbage();  //일단 찌꺼기 로그부터 삭제하고나서 개수 세기
-        if (dbHelper.getProfileCount("TripSTATS") + 1 > 20) {
-            dbHelper.deleteTrip();
-        }
-    }
+//    private static void saveTrip(int tripId, String nowTime) {
+//
+////        if (tripName == null) { tripName = "Untitled"; }
+//        if (dbHelper.getAvgPwrW(tripId) == -999 || dbHelper.getUsedW(tripId) == -999 || dbHelper.getMaxW(tripId) == -2) return;
+//        dbHelper.update_TripSTATS(tripId, nowTime, dbHelper.getMaxW(tripId), dbHelper.getUsedW(tripId), (int)(totalDistance * 1000), dbHelper.getAvgPwrW(tripId));
+//        dbHelper.update_TripName(tripId, "Untitled");
+//
+//        //Toast.makeText(ConsumptionActivity.this, "트립이 저장되었습니다.", Toast.LENGTH_SHORT).show();
+//
+//        String allTrip = dbHelper.getTripSTATS();
+//        System.out.println(allTrip);
+//
+//
+//        // Trip 기록 개수 20개 넘으면 자동 삭제
+//        dbHelper.deleteGarbage();  //일단 찌꺼기 로그부터 삭제하고나서 개수 세기
+//        if (dbHelper.getProfileCount("TripSTATS") + 1 > 20) {
+//            dbHelper.deleteTrip();
+//        }
+//    }
 
     @Override
     protected void onResume() {

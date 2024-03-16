@@ -2,6 +2,8 @@ package com.activerecycle.tripgauge.bluetooth;
 
 import static com.activerecycle.tripgauge.ConsumptionActivity.autoSave;
 import static com.activerecycle.tripgauge.ConsumptionActivity.graph_battery;
+import static com.activerecycle.tripgauge.ConsumptionActivity.soc;
+import static com.activerecycle.tripgauge.ConsumptionActivity.tv_distance;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_percent;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_ready;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_w;
@@ -51,7 +53,9 @@ public class HM10CommunicationActivity extends AppCompatActivity {
     private final String LIST_NAME = "NAME";
     private final String LIST_UUID = "UUID";
 
-    DBHelper dbHelper;
+    static DBHelper dbHelper;
+    static int tripId;
+
     TripLogActivity tripLogActivity;
 
     @Override
@@ -123,8 +127,73 @@ public class HM10CommunicationActivity extends AppCompatActivity {
                     final String connection = intent.getStringExtra(StaticResources.EXTRAS_CONNECTION_STATE);
 //                    textSerialConnection.setText(connection);
                     tv_what_do_u_saying.setText(connection);
-                    // connection : Connected
-                    //TODO : 연결되었을 때!
+                    // connection : EXTRAS_CONNECTION_STATE
+                    //TODO : 연결되었을 때! connection = CONNECTION_STATE_CONNECTED = "Connected
+                    // 또는 연결 중일 때! connection = CONNECTION_STATE_CONNECTING = "Connecting"
+                    // 또는 연결이 끊겼을 때! connection = CONNECTION_STATE_DISCONNECTED = "Disconnected"
+
+                    if (connection.equals(StaticResources.CONNECTION_STATE_CONNECTED)) {
+
+
+                    }
+
+
+                    //TODO : 연결이 끊어졌을 때
+                    // 1) DB에 트립 저장
+                    // 2) 원호 그래프 깜빡이는 애니메이션, 배터리 00%
+                    if (connection.equals(StaticResources.CONNECTION_STATE_DISCONNECTED)) {
+                        tv_percent.setTextColor(Color.WHITE);
+
+                        LocalDate currentDate = LocalDate.now();
+                        String nowTime = currentDate.toString();
+                        saveTrip(tripId, nowTime);
+
+                        // 블루투스 연결 안 된 상태이면
+                        tv_ready.setText("Connect");
+                        tv_ready.setTextColor(Color.rgb(255, 0, 0));  //red
+
+                        tv_w.setText("0W");
+                        tv_distance.setText("00.00 Km");
+
+                        // 배터리
+                        soc = 0;
+                        graph_battery.soc = soc;
+                        graph_battery.invalidate();
+                        tv_percent.setText("00%");
+
+
+                        //TODO: 그래프 깜빡깜빡 거리는 애니메이션!
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                while (true) {
+                                    ConsumptionActivity.graph_speed.speed = 99;
+                                    ConsumptionActivity.graph_speed.invalidate();
+
+                                    try {
+                                        Thread.sleep(1000);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    ConsumptionActivity.graph_speed.speed = 0;
+                                    ConsumptionActivity.graph_speed.invalidate();
+
+                                    // 1초에 한 번 깜빡임
+                                    try {
+                                        Thread.sleep(1000);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    if (connection.equals(StaticResources.CONNECTION_STATE_CONNECTED)) {
+                                        break;
+                                    }
+                                }
+                            }
+                        }).start();
+
+                    }
 
 
                     break;
@@ -138,6 +207,13 @@ public class HM10CommunicationActivity extends AppCompatActivity {
                     // serial : "Communication Characteristic Found"
                     //TODO : 브로드캐스트 서비스를 찾았을 때!
                     ConsumptionActivity.btconnect = true;
+                    //TODO : -- DB - TripSTATS 테이블 row 하나 생성
+                    tripId = dbHelper.init_TripSTATS();
+
+                    tv_ready.setText("Ready");
+                    tv_ready.setTextColor(Color.rgb(146, 208, 80));  //green
+
+
 
                     break;
                 case StaticResources.BROADCAST_NAME_TX_CHARATERISTIC_CHANGED:
@@ -210,6 +286,25 @@ public class HM10CommunicationActivity extends AppCompatActivity {
     };
 
 
+    private static void saveTrip(int tripId, String nowTime) {
+
+//        if (tripName == null) { tripName = "Untitled"; }
+        if (dbHelper.getAvgPwrW(tripId) == -999 || dbHelper.getUsedW(tripId) == -999 || dbHelper.getMaxW(tripId) == -2) return;
+        dbHelper.update_TripSTATS(tripId, nowTime, dbHelper.getMaxW(tripId), dbHelper.getUsedW(tripId), (int)(ConsumptionActivity.totalDistance * 1000), dbHelper.getAvgPwrW(tripId));
+        dbHelper.update_TripName(tripId, "Untitled");
+
+        //Toast.makeText(ConsumptionActivity.this, "트립이 저장되었습니다.", Toast.LENGTH_SHORT).show();
+
+        String allTrip = dbHelper.getTripSTATS();
+        System.out.println(allTrip);
+
+
+        // Trip 기록 개수 20개 넘으면 자동 삭제
+        dbHelper.deleteGarbage();  //일단 찌꺼기 로그부터 삭제하고나서 개수 세기
+        if (dbHelper.getProfileCount("TripSTATS") + 1 > 20) {
+            dbHelper.deleteTrip();
+        }
+    }
 
 
 

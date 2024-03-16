@@ -15,7 +15,7 @@ public class SpeedGraph extends View {
         super(context, attrs);
     }
 
-    int speed;
+    public int speed;
     int sweepAngle;
     int maxAngle;
 
