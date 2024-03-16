@@ -57,6 +57,9 @@ public class HM10CommunicationActivity extends AppCompatActivity {
     static int tripId;
 
     TripLogActivity tripLogActivity;
+    
+    private int countFlag;
+    int volt, amp , soc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -209,10 +212,14 @@ public class HM10CommunicationActivity extends AppCompatActivity {
                     ConsumptionActivity.btconnect = true;
                     //TODO : -- DB - TripSTATS 테이블 row 하나 생성
                     tripId = dbHelper.init_TripSTATS();
+                    countFlag = 0;
+
+                    volt = 0; amp = 0; soc = 10;
 
                     tv_ready.setText("Ready");
                     tv_ready.setTextColor(Color.rgb(146, 208, 80));  //green
 
+                    
 
 
                     break;
@@ -224,14 +231,23 @@ public class HM10CommunicationActivity extends AppCompatActivity {
                             "TxData = " + txData + ";");
                     tv_what_do_u_saying.setText(txData);
 
-                    // txData : voltvalue=00/ampvalue=00/socvalue=00
+                    // txData : v=00/a=00/s=00
                     try {
-                        String voltStr = txData.split("/")[0].split("=")[1];
-                        int volt = Integer.parseInt(voltStr);
-                        String ampStr = txData.split("/")[1].split("=")[1];
-                        int amp = Integer.parseInt(ampStr);
-                        String socStr = txData.split("/")[2].split("=")[1];
-                        int soc = Integer.parseInt(socStr);
+                        String voltStr = txData.split("/")[0];
+                        String v = voltStr.split("=")[0];
+                        if (v.equals("v")) {
+                            volt = Integer.parseInt(voltStr.split("=")[1]);
+                        }
+                        String ampStr = txData.split("/")[1];
+                        String a = ampStr.split("=")[0];
+                        if (a.equals("a")) {
+                            amp = Integer.parseInt(voltStr.split("=")[1]);
+                        }
+                        String socStr = txData.split("/")[2];
+                        String s = socStr.split("=")[0];
+                        if (s.equals("s")) {
+                            soc = Integer.parseInt(voltStr.split("=")[1]);
+                        }
 
                         //TODO: 배터리 5% 이하 경고음 ------ 소리가 안 남 !
                         // --- SettingsActivity.socFlag && 때문이었음 ! 빼니까 소리 잘 남.
@@ -264,17 +280,20 @@ public class HM10CommunicationActivity extends AppCompatActivity {
                             graph_battery.soc = soc;
                             graph_battery.invalidate();
                         }
-
+                        
                         if (autoSave) {
-                            LocalDate currentDate = LocalDate.now();
-                            String nowTime = currentDate.toString();
-                            dbHelper.insert_TripLog(nowTime, volt, amp);
-                            //------------------확인을 위한 출력 코드-------------//
-                            String allLog = dbHelper.getLog();
-                            System.out.println(allLog);
-                            //------------------확인을 위한 출력 코드-------------//
+                            countFlag++;
+                            if (countFlag % 5 == 0) {  //5번마다 (10초 단위로) 로그를 저장함
+                                LocalDate currentDate = LocalDate.now();
+                                String nowTime = currentDate.toString();
+                                dbHelper.insert_TripLog(nowTime, volt, amp);
+                                //------------------확인을 위한 출력 코드-------------//
+                                String allLog = dbHelper.getLog();
+                                System.out.println(allLog);
+                                //------------------확인을 위한 출력 코드-------------//
 
-                            tripLogActivity.showCurrentTrip(dbHelper);  //실시간 그래프 보여주기
+                                tripLogActivity.showCurrentTrip(dbHelper);  //실시간 그래프 보여주기
+                            }
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
