@@ -17,7 +17,7 @@
         android:layout_gravity="center"
         android:text="The Trip Title : "
         android:textAlignment="textStart"
-        android:textColor="#384d75"
+        android:textColor="@color/black"
         android:textSize="16sp"
         android:textStyle="bold"
         tools:ignore="RtlCompat" />
