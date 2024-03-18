@@ -13,7 +13,8 @@ public class BeepService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        toneGenerator = new ToneGenerator(AudioManager.STREAM_ALARM, ToneGenerator.MAX_VOLUME);
+        //toneGenerator = new ToneGenerator(AudioManager.STREAM_ALARM, ToneGenerator.MAX_VOLUME);
+        toneGenerator = new ToneGenerator(AudioManager.STREAM_ALARM, 50);
     }
 
     @Override

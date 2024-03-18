@@ -11,6 +11,7 @@ import static com.activerecycle.tripgauge.ConsumptionActivity.tv_w;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.bluetooth.BluetoothGattCharacteristic;
@@ -61,6 +62,8 @@ public class HM10CommunicationActivity extends AppCompatActivity {
     private int countFlag;
     int volt, amp , soc;
 
+    public static SharedPreferences preferences;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -101,6 +104,10 @@ public class HM10CommunicationActivity extends AppCompatActivity {
         dbHelper = new DBHelper(HM10CommunicationActivity.this, 1);
 
         tv_what_do_u_saying = (TextView) findViewById(R.id.tv_what_do_u_saying);
+
+
+        preferences = getSharedPreferences("Setting Info", MODE_PRIVATE);
+
     }
 
 
@@ -249,11 +256,8 @@ public class HM10CommunicationActivity extends AppCompatActivity {
                             soc = Integer.parseInt(voltStr.split("=")[1]);
                         }
 
-                        //TODO: 배터리 5% 이하 경고음 ------ 소리가 안 남 !
-                        // --- SettingsActivity.socFlag && 때문이었음 ! 빼니까 소리 잘 남.
-                        // ------ 근데 그럼 플래그 처리를 어떻게 하지? preference? 이미 perference에서 가져온건데?
-                        if (soc <= 5) {//SettingsActivity.socFlag && 
-                            //BeepPlayer.playBeep(getApplicationContext());
+                        //TODO: 배터리 5% 이하 경고음
+                        if (soc <= 5 && preferences.getBoolean("s4", true)) {//SettingsActivity.socFlag &&
                             startService(new Intent(getApplicationContext(), BeepService.class));
                         }
                         tv_w.setText(volt * amp + "W");
