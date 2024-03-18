@@ -25,6 +25,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.FileProvider;
 
 import com.activerecycle.tripgauge.bluetooth.R;
 
@@ -152,11 +153,12 @@ public class TripLogActivity extends AppCompatActivity {
                     output.flush();
                     output.close();
 
+                    Uri fileUri = FileProvider.getUriForFile(TripLogActivity.this, "com.activerecycle.tripgauge.fileprovider", file);
 
                     Intent intent = new Intent(Intent.ACTION_SEND);
-                    Uri uri = Uri.parse(file.getPath());
+                    //Uri uri = Uri.parse(file.getPath());
                     intent.setType("image/*");
-                    intent.putExtra(Intent.EXTRA_STREAM, uri);
+                    intent.putExtra(Intent.EXTRA_STREAM, fileUri);
                     startActivity(Intent.createChooser(intent, "Share img"));
 
                     //Toast.makeText(TripLogActivity.this, "이미지를 공유했습니다.", Toast.LENGTH_SHORT).show();
