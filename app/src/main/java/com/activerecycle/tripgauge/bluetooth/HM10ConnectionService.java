@@ -1,8 +1,8 @@
 package com.activerecycle.tripgauge.bluetooth;
 
 import static com.activerecycle.tripgauge.ConsumptionActivity.autoSave;
+import static com.activerecycle.tripgauge.ConsumptionActivity.blinkThread;
 import static com.activerecycle.tripgauge.ConsumptionActivity.graph_battery;
-import static com.activerecycle.tripgauge.ConsumptionActivity.startThread;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_distance;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_percent;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_ready;
@@ -187,9 +187,15 @@ public class HM10ConnectionService extends Service {
                         View customView = layoutInflater.inflate(R.layout.row, null);
 
                         SharedPreferences.Editor editor = device_preferences.edit();  //Editor를 preferences에 쓰겠다고 연결
+                        if (settings_preferences.getBoolean("s3", true)) {
+                            editor.putString("last_address", m_deviceAddress);
+                            editor.putString("last_name", mDeviceName);
+                        }
                         editor.putString("address", "");
                         editor.putString("name", "");
                         editor.commit();
+
+
 
                         ListOfScansActivity.setDeviceListView(context);
 
@@ -199,7 +205,7 @@ public class HM10ConnectionService extends Service {
                         ((TextView) customView.findViewById(R.id.tv_connected)).setText("Available to connect");
 
                         ConsumptionActivity.btconnect = false;
-                        tv_ready.setText("Ready");
+                        tv_ready.setText("Connect");
                         tv_ready.setTextColor(Color.rgb(255, 0, 0));  //red
 
                         //stopSelf();
@@ -216,7 +222,7 @@ public class HM10ConnectionService extends Service {
                     // serial : "Communication Characteristic Found"
                     //TODO : 브로드캐스트 서비스를 찾았을 때!
                     ConsumptionActivity.btconnect = true;
-                    ConsumptionActivity.blinkThread.interrupt();
+                    blinkThread.interrupt();
 
                     //TODO : -- DB - TripSTATS 테이블 row 하나 생성
                     tripId = dbHelper.init_TripSTATS();
@@ -235,7 +241,11 @@ public class HM10ConnectionService extends Service {
                     editor.putString("name", mDeviceName);
                     editor.commit();
 
-                    ListOfScansActivity.setDeviceListView(context);
+                    try {
+                        ListOfScansActivity.setDeviceListView(context);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
 //                    LayoutInflater layoutInflater = LayoutInflater.from(context);
 //                    View customView = layoutInflater.inflate(R.layout.row, null);
@@ -249,7 +259,7 @@ public class HM10ConnectionService extends Service {
 //                    tv_ready.setText("Connect");
 //                    tv_ready.setTextColor(Color.rgb(34, 177, 77));  //green
 
-                    startThread();
+//                    startThread();
 
 //                    customView.setOnClickListener(new View.OnClickListener() {
 //                        @Override
@@ -264,7 +274,7 @@ public class HM10ConnectionService extends Service {
                 case StaticResources.BROADCAST_NAME_TX_CHARATERISTIC_CHANGED:
                     final String txData = intent.getStringExtra(StaticResources.EXTRAS_TX_DATA);
 //                    final String txData = "Tx data received from HM10";
-                    Toast.makeText(context, txData, Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(context, txData, Toast.LENGTH_SHORT).show();
                     Log.i("Broadcast Received",
                             "TxData = " + txData + ";");
 //                    tv_what_do_u_saying.setText(txData);

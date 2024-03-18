@@ -31,17 +31,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-         <activity android:name="com.activerecycle.tripgauge.bluetooth.HM10CommunicationActivity"
-             android:screenOrientation="portrait"
-             />
         <activity android:name="com.activerecycle.tripgauge.bluetooth.ListOfScansActivity"/>
 
         <activity android:name="com.activerecycle.tripgauge.ConsumptionActivity"
             android:screenOrientation="portrait"/>
-        <activity
-            android:name="com.activerecycle.tripgauge.ConnectionActivity"
-            android:screenOrientation="portrait"
-            />
         <activity
             android:name="com.activerecycle.tripgauge.TripLogActivity"
             android:screenOrientation="portrait"/>

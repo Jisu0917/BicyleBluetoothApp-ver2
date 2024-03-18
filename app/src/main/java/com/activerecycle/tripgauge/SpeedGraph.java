@@ -19,7 +19,7 @@ public class SpeedGraph extends View {
     int sweepAngle;
     int maxAngle;
 
-    boolean btconnect = false;
+    boolean btconnected = false;
 
     @Override
     protected void onDraw(android.graphics.Canvas canvas) {
@@ -28,9 +28,9 @@ public class SpeedGraph extends View {
         if (speed == 99) {
             // 블루투스 연결 안 된 상태를 나타냄
             sweepAngle = 3;
-            btconnect = false;
+            btconnected = false;
         } else {
-            btconnect = true;
+            btconnected = true;
             sweepAngle = 260 * speed / 30;
         }
         maxAngle = 260 * 25 / 30;
@@ -55,7 +55,7 @@ public class SpeedGraph extends View {
         rect.set(screenWidth/2 - 400, 30, screenWidth/2 + 400, 780);
         canvas.drawArc(rect, 140, 260, false, pnt_gray);
 
-        if (!btconnect) {
+        if (!btconnected) {
             Paint pnt_red = new Paint();
             pnt_red.setStrokeWidth(50f);
             pnt_red.setColor(Color.rgb(255, 0, 0));

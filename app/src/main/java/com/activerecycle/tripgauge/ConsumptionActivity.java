@@ -1,7 +1,10 @@
 package com.activerecycle.tripgauge;
 
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+
 import android.Manifest;
 import android.app.AlertDialog;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -30,8 +33,11 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.activerecycle.tripgauge.bluetooth.BleConnectionService;
+import com.activerecycle.tripgauge.bluetooth.BluetoothScanner;
+import com.activerecycle.tripgauge.bluetooth.HM10ConnectionService;
 import com.activerecycle.tripgauge.bluetooth.ListOfScansActivity;
 import com.activerecycle.tripgauge.bluetooth.R;
+import com.activerecycle.tripgauge.bluetooth.StaticResources;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -45,7 +51,7 @@ public class ConsumptionActivity extends AppCompatActivity {
     static String EXTERNAL_STORAGE_PATH = "";
     static int saveFlagOfLog = 0;
     public static boolean autoSave = true;
-    public static boolean autoConnect = false;
+    public static boolean autoConnect;
 
 
     // 앱에서 디바이스에게 주는 데이터
@@ -80,6 +86,8 @@ public class ConsumptionActivity extends AppCompatActivity {
     static Map dataMap = new HashMap();
 
     public static Context mContext;
+
+    SharedPreferences device_preferences, settings_preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,120 +133,72 @@ public class ConsumptionActivity extends AppCompatActivity {
             }
         });
 
+        settings_preferences = getSharedPreferences("Setting Info", MODE_PRIVATE);
+        device_preferences = getSharedPreferences("Device Info", MODE_PRIVATE);
+        String connectedAddress = device_preferences.getString("last_address", "");
+        String connectedName = device_preferences.getString("last_name", "");
+        autoConnect = !connectedAddress.equals("") && settings_preferences.getBoolean("s3", true);
+        System.out.println("connectedAddress: " + connectedAddress + ", autoConnect: " + autoConnect);
+
         if (autoConnect) {
-            btconnect = true;
+            Toast.makeText(mContext, "AutoConnect Mode...", Toast.LENGTH_SHORT).show();
+//            BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+//            BluetoothScanner bluetoothScanner = new BluetoothScanner(bluetoothAdapter, getApplicationContext());
+//            bluetoothScanner.startScan(2000);
+            try {
+                final Intent intent = new Intent(getApplicationContext(), HM10ConnectionService.class);
+                intent.putExtra(StaticResources.EXTRAS_DEVICE_NAME, connectedName);
+                intent.putExtra(StaticResources.EXTRAS_DEVICE_ADDRESS, connectedAddress);
+                intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
+                startService(intent);
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(mContext, "Failed to AutoConnect...", Toast.LENGTH_SHORT).show();
+            }
         }
 
-//        //TODO: 임시로 만든 버튼!!
-//        tv_ready.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                btconnect = !btconnect;  //Toggle
-//                if (btconnect) {
-//                    tv_ready.setText("Ready");
-//                    tv_ready.setTextColor(Color.rgb(146, 208, 80));  //green
-//                    startThread();
-//
-//
-//                } else {
-//                    tv_ready.setText("Connect");
-//                    tv_ready.setTextColor(Color.rgb(255, 0, 0));  //red
-//
-//                    tv_w.setText("0W");
-//                    tv_distance.setText("00.00 Km");
-//
-//                    // 배터리
-//                    soc = 0;
-//                    graph_battery.soc = soc;
-//                    graph_battery.invalidate();
-//                    tv_percent.setText("00%");
-//
-//                    //TODO: 그래프 깜빡깜빡 거리는 애니메이션!
-//                    new Thread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            while (!btconnect) {
-//                                graph_speed.speed = 99;
-//                                graph_speed.invalidate();
-//
-//                                try {
-//                                    Thread.sleep(1000);
-//                                } catch (InterruptedException e) {
-//                                    e.printStackTrace();
-//                                }
-//
-//                                graph_speed.speed = 0;
-//                                graph_speed.invalidate();
-//
-//                                try {
-//                                    Thread.sleep(1000);
-//                                } catch (InterruptedException e) {
-//                                    e.printStackTrace();
-//                                }
-//                            }
-//                        }
-//                    }).start();
-//                }
-//                Toast.makeText(ConsumptionActivity.this, "BT connect Toggle Activate...", Toast.LENGTH_SHORT).show();
-//            }
-//        });
 
+        //TODO: 블루투스 연결 되기 전, 초기 상태일 때!
         // Connect 여부 표시
-//        if (btconnect) {
-//            // 블루투스 연결된 상태이면
-//            tv_ready.setText("Ready");
-//            tv_ready.setTextColor(Color.rgb(146, 208, 80));  //green
-//
-//
-//            //TODO: 배터리 값 디바이스에서 블루투스로 받아오기!!!!!!!!
-//            // 받아오는 배터리 값 달라질 때마다 graph_battery.invalidate();
-//            soc = 10;
-//            graph_battery.soc = soc;
-//            graph_battery.invalidate();
-//            tv_percent.setText(soc+"%");
-//
-//        } else {
-            //TODO: 블루투스 연결 되기 전, 초기 상태일 때!
-            tv_ready.setText("Connect");
-            tv_ready.setTextColor(Color.rgb(255, 0, 0));  //red
+        tv_ready.setText("Connect");
+        tv_ready.setTextColor(Color.rgb(255, 0, 0));  //red
 
-            tv_w.setText("0W");
-            tv_distance.setText("00.00 Km");
+        tv_w.setText("0W");
+        tv_distance.setText("00.00 Km");
 
-            // 배터리
-            soc = 0;
-            graph_battery.soc = soc;
-            graph_battery.invalidate();
-            tv_percent.setText("00%");
+        // 배터리
+        soc = 0;
+        graph_battery.soc = soc;
+        graph_battery.invalidate();
+        tv_percent.setText("00%");
 
 
-            //TODO: 그래프 깜빡깜빡 거리는 애니메이션!
-            blinkThread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    while (!btconnect) {
-                        graph_speed.speed = 99;
-                        graph_speed.invalidate();
+        //TODO: 그래프 깜빡깜빡 거리는 애니메이션!
+        blinkThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (!btconnect) {
+                    graph_speed.speed = 99;
+                    graph_speed.invalidate();
 
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
 
-                        graph_speed.speed = 0;
-                        graph_speed.invalidate();
+                    graph_speed.speed = 0;
+                    graph_speed.invalidate();
 
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
                 }
-            });
-            blinkThread.start();
-//        }
+            }
+        });
+        blinkThread.start();
 
         // gps 주행 속도 측정
         final LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -353,128 +313,8 @@ public class ConsumptionActivity extends AppCompatActivity {
             }
         });
 
-        startThread();
-
     }//end Of Create
 
-    public static void startThread() {
-
-//        final TripLogActivity tripLogActivity = new TripLogActivity();
-
-//        // 로그 db에 기록
-//        final long[] mNow = new long[1];
-//        final Date[] mDate = new Date[1];
-//        final SimpleDateFormat mFormat = new SimpleDateFormat("yyyy.MM.dd hh:mm:ss");
-//        mFormat.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
-
-        saveFlagOfLog = 0;
-//        tripId = dbHelper.init_TripSTATS();
-        // 2초마다 실행
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (btconnect) {
-//                    // 수행할 작업
-//                    mNow[0] = System.currentTimeMillis();
-//                    mDate[0] = new Date(mNow[0]);
-//                    final String nowTime = mFormat.format(mDate[0]);
-
-                    // W 표시
-                    /*
-                     * random() 난수 발생 코드는 확인용 코드임.
-                     * - 추후 삭제 요망
-                     * */
-//                    //TODO: 블루투스로 디바이스로부터 값을 받아와야함!!!
-//                    volt = (int) (Math.random() * 25);
-//                    amp = (int) (Math.random() * 30);
-//
-//
-//                    //TODO: 배터리 값 디바이스에서 블루투스로 받아오기!!!!!!!!
-//                    soc = (int) (Math.random() * 100);
-//                    graph_battery.soc = soc;
-
-
-//                    //TODO: 배터리 5% 이하 경고음
-//                    if (SettingsActivity.socFlag && ConsumptionActivity.soc <= 5) {
-//                        //BeepPlayer.playBeep(getApplicationContext());
-//                        mContext.startService(new Intent(mContext, BeepService.class));
-//                    }
-
-
-//                    Handler mHandler1 = new Handler(Looper.getMainLooper());
-//                    mHandler1.postDelayed(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            tv_w.setText(volt * amp + "W");
-//                            tv_w.invalidate();
-//
-//
-//                            if (soc <= 5) {
-//                                // 배터리가 5% 이하이면 LOW BAT 표시
-//                                tv_percent.setText("LOW%");
-//                                tv_percent.setTextColor(Color.RED);
-//                                tv_ready.setText("LOW BAT");
-//                                tv_ready.setTextColor(Color.RED);
-//                                graph_battery.soc = 2;
-//                                graph_battery.invalidate();
-//
-//                            } else {
-//                                tv_percent.setText(soc + "%");
-//                                if (soc > 10) {
-//                                    tv_percent.setTextColor(Color.rgb(146, 208, 80));
-//                                } else {
-//                                    tv_percent.setTextColor(Color.RED);
-//                                }
-//                                tv_ready.setText("Ready");
-//                                tv_ready.setTextColor(Color.rgb(146, 208, 80));
-//                                graph_battery.invalidate();
-//                            }
-//                        }
-//                    }, 0);
-
-
-                    try {
-                        Thread.sleep(2000);  //2초에 한 번씩 화면에 W를 업데이트
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
-//                    // 10초 단위로 로그를 저장함
-//                    if (saveFlagOfLog % 5 == 0) {  //TODO: Trip이 끝나는 기준 ? 디바이스에서 정보 받아오나?
-//                        Handler mHandler2 = new Handler(Looper.getMainLooper());
-//                        mHandler2.postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                //showSaveTripDialog(tripLogId, nowTime);
-//                                if (autoSave) {
-//
-////                                    dbHelper.insert_TripLog(nowTime, volt, amp);
-////                                    String allLog = dbHelper.getLog();
-////                                    System.out.println(allLog);
-//
-////                                    tripLogActivity.showCurrentTrip(dbHelper);
-//                                } // else : 저장하지 않고 넘어감
-//                            }
-//                        }, 0);
-//                    }
-                    saveFlagOfLog += 1;
-
-                    if (!btconnect) {
-
-                        // 블루투스 연결이 끊어지면 트립을 저장하고 스레드를 끝냄.
-
-
-//                        tv_percent.setTextColor(Color.WHITE);
-//
-//                        LocalDate currentDate = LocalDate.now();
-//                        String nowTime = currentDate.toString();
-//                        saveTrip(tripId, nowTime);
-                        break;
-                    }
-                }
-            }
-        }).start();
-    }
 
 
     private void showSaveTripDialog(final String nowTime) {
@@ -539,18 +379,6 @@ public class ConsumptionActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (autoConnect) {
-            btconnect = true;
-
-            tv_ready.setText("Connect");
-            tv_ready.setTextColor(Color.rgb(146, 208, 80));  //green
-
-            startThread();
-        }
-
-        if (btconnect) {
-            startThread();
-        }
     }
 
     @Override
@@ -562,6 +390,10 @@ public class ConsumptionActivity extends AppCompatActivity {
 
         SharedPreferences preferences = getSharedPreferences("Device Info", MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();  //Editor를 preferences에 쓰겠다고 연결
+        if (settings_preferences.getBoolean("s3", true)) {
+            editor.putString("last_address", device_preferences.getString("address", ""));
+            editor.putString("last_name", device_preferences.getString("name", ""));
+        }
         editor.putString("address", "");
         editor.putString("name", "");
 

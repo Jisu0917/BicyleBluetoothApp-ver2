@@ -1,10 +1,8 @@
 package com.activerecycle.tripgauge.bluetooth;
 
-import static android.bluetooth.BluetoothDevice.BOND_BONDED;
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 import static com.activerecycle.tripgauge.ConsumptionActivity.btconnect;
 import static com.activerecycle.tripgauge.ConsumptionActivity.graph_battery;
-import static com.activerecycle.tripgauge.ConsumptionActivity.startThread;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_distance;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_percent;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_ready;
@@ -21,38 +19,25 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.AdaptiveIconDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 
-import com.activerecycle.tripgauge.BeepService;
-import com.activerecycle.tripgauge.ConnectionActivity;
 import com.activerecycle.tripgauge.ConsumptionActivity;
 import com.activerecycle.tripgauge.SettingsActivity;
 import com.activerecycle.tripgauge.TripLogActivity;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TimeZone;
 
 
 public class ListOfScansActivity extends AppCompatActivity {
@@ -61,25 +46,22 @@ public class ListOfScansActivity extends AppCompatActivity {
 
     // BluetoothScanner 인스턴스 생성
     BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-    BluetoothScanner bluetoothScanner;
+    static BluetoothScanner bluetoothScanner;
 
     // Bluetooth LE 스캔 시작 및 지정된 시간 후 중지
-    long scanPeriod = 5000; // 5초 동안 스캔
+    static long scanPeriod = 2000; // 2초 동안 스캔
 
     //---------------------------------------------//
 
     public BleScanServices m_bleScanServices;
-    public List<CustomBluetoothDeviceWrapper> devices;
-    CustomListViewAdapter adapter;
 
     static LinearLayout modulelist_layout;
-    ArrayList<CustomBluetoothDeviceWrapper> moduleList;
     public static ArrayList<BluetoothDevice> deviceList;
 
     ImageButton btn_menu, btn_reload;
     Button btn_settings, btn_trip;
 
-    static SharedPreferences preferences;
+    static SharedPreferences preferences, settings_preferences;
     static String pref_address = "";
 
     Context mContext;
@@ -92,6 +74,8 @@ public class ListOfScansActivity extends AppCompatActivity {
 
         preferences = getSharedPreferences("Device Info", MODE_PRIVATE);
 
+        settings_preferences = getSharedPreferences("Setting Info", MODE_PRIVATE);
+
         bluetoothScanner = new BluetoothScanner(bluetoothAdapter, getApplicationContext());
 
         CheckBleHardware();
@@ -101,8 +85,6 @@ public class ListOfScansActivity extends AppCompatActivity {
         // This will pop up the first time the app is run, to give the app permissions not already given.
         m_bleScanServices = new BleScanServices(this);
         m_bleScanServices.checkBluetoothEnabled(this);
-
-        devices = new ArrayList<>();
 
         setContentView(R.layout.activity_connection); // Set the content to a layout with list view
 
@@ -143,7 +125,6 @@ public class ListOfScansActivity extends AppCompatActivity {
             }
         });
 
-        adapter = new CustomListViewAdapter(this, R.layout.row, devices);
         // 블루투스 디바이스 스캔
         //BleScanServices.scanForDevices(true,mLeScanCallback);
         bluetoothScanner.startScan(scanPeriod);
@@ -194,6 +175,9 @@ public class ListOfScansActivity extends AppCompatActivity {
                 customView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+
+
+                        ConsumptionActivity.btconnect = false;
 
                         HM10ConnectionService.m_bleConnectionService.disconnect();
                         Intent intent1 = new Intent(context, HM10ConnectionService.class);
@@ -257,16 +241,17 @@ public class ListOfScansActivity extends AppCompatActivity {
 
 
                         SharedPreferences.Editor editor = preferences.edit();  //Editor를 preferences에 쓰겠다고 연결
+                        if (settings_preferences.getBoolean("s3", true)) {
+                            editor.putString("last_address", preferences.getString("address", ""));
+                            editor.putString("last_name", preferences.getString("name", ""));
+                        }
                         editor.putString("address", "");
                         editor.putString("name", "");
                         editor.commit();
 
-                        ListOfScansActivity.setDeviceListView(context);
-
-                        ConsumptionActivity.btconnect = false;
-                        tv_ready.setText("Ready");
-                        tv_ready.setTextColor(Color.rgb(255, 0, 0));  //red
-
+                        bluetoothScanner.startScan(scanPeriod);
+                        //getDeviceListInfo(context);
+                        //setDeviceListView(context);
 
                     }
                 });
