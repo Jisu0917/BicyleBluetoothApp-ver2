@@ -29,6 +29,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.activerecycle.tripgauge.bluetooth.BleConnectionService;
 import com.activerecycle.tripgauge.bluetooth.ListOfScansActivity;
 import com.activerecycle.tripgauge.bluetooth.R;
 
@@ -56,6 +57,8 @@ public class ConsumptionActivity extends AppCompatActivity {
     double tripBDistance = 0.0;
     double bef_lat, bef_long;
     public static boolean btconnect = false;
+
+    public static Thread blinkThread;
 
     // 디바이스로부터 받는 데이터
     static int volt = 0; // 전압값 (0~25)
@@ -210,7 +213,7 @@ public class ConsumptionActivity extends AppCompatActivity {
 
 
             //TODO: 그래프 깜빡깜빡 거리는 애니메이션!
-            new Thread(new Runnable() {
+            blinkThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
                     while (!btconnect) {
@@ -233,7 +236,8 @@ public class ConsumptionActivity extends AppCompatActivity {
                         }
                     }
                 }
-            }).start();
+            });
+            blinkThread.start();
 //        }
 
         // gps 주행 속도 측정
@@ -548,4 +552,20 @@ public class ConsumptionActivity extends AppCompatActivity {
             startThread();
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        Intent intent = new Intent(this, BleConnectionService.class);
+        stopService(intent);
+
+        SharedPreferences preferences = getSharedPreferences("Device Info", MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();  //Editor를 preferences에 쓰겠다고 연결
+        editor.putString("address", "");
+        editor.putString("name", "");
+
+        editor.commit();  //항상 commit & apply 를 해주어야 저장이 된다.
+    }
+
 }

@@ -2,22 +2,20 @@ package com.activerecycle.tripgauge.bluetooth;
 
 import static com.activerecycle.tripgauge.ConsumptionActivity.autoSave;
 import static com.activerecycle.tripgauge.ConsumptionActivity.graph_battery;
-import static com.activerecycle.tripgauge.ConsumptionActivity.soc;
 import static com.activerecycle.tripgauge.ConsumptionActivity.startThread;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_distance;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_percent;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_ready;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_w;
 
+import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.Typeface;
-import android.os.Bundle;
-import android.bluetooth.BluetoothGattCharacteristic;
-import android.content.Intent;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,72 +23,54 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import com.activerecycle.tripgauge.BeepService;
 import com.activerecycle.tripgauge.ConsumptionActivity;
 import com.activerecycle.tripgauge.DBHelper;
-import com.activerecycle.tripgauge.SettingsActivity;
 import com.activerecycle.tripgauge.TripLogActivity;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
 
-/**
- * I need to track down where I got this code base from. If from Google Android, it has Apache 2.0 license.
- */
+public class HM10ConnectionService extends Service {
 
-public class HM10CommunicationActivity extends AppCompatActivity {
+    private static final String TAG = "HM10ConnectionService";
 
-    private TextView tv_what_do_u_saying;
-    private TextView mHasSerial;
-    private TextView textSerialConnection;
     private String mDeviceName;
     private String m_deviceAddress;
-    private BleConnectionService m_bleConnectionService;
+    public static BleConnectionService m_bleConnectionService;
     private boolean m_hasSerial;
-    private boolean mConnected = false;
-    private BluetoothGattCharacteristic characteristicTX;
-    private BluetoothGattCharacteristic characteristicRX;
-    private final String LIST_NAME = "NAME";
-    private final String LIST_UUID = "UUID";
 
     static DBHelper dbHelper;
-    static int tripId;
+    public static int tripId;
 
     TripLogActivity tripLogActivity;
-    
+
     private int countFlag;
     int volt, amp , soc;
 
     public static SharedPreferences settings_preferences, device_preferences;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_hm10_communication);
-        final Intent intent = getIntent();
+    public void onCreate() {
+        super.onCreate();
+        Log.d(TAG, "Service created");
+        // 여기에서 필요한 초기화 작업을 수행합니다.
+        tripLogActivity = new TripLogActivity();
+
+        dbHelper = new DBHelper(HM10ConnectionService.this, 1);
+
+        settings_preferences = getSharedPreferences("Setting Info", MODE_PRIVATE);
+        device_preferences = getSharedPreferences("Device Info", MODE_PRIVATE);
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d(TAG, "Service started");
+        // 여기에서 백그라운드 작업을 수행합니다.
         mDeviceName = intent.getStringExtra(StaticResources.EXTRAS_DEVICE_NAME);
         m_deviceAddress = intent.getStringExtra(StaticResources.EXTRAS_DEVICE_ADDRESS);
+        System.out.println("mDeviceName: " + mDeviceName + ", m_deviceAddress: " + m_deviceAddress);
         m_bleConnectionService = new BleConnectionService(this, m_deviceAddress);
 
-//        Toolbar toolbar = findViewById(R.id.app_bar_hm10_communication); // declare the toolbar.
-//        TextView textDeviceName = toolbar.findViewById(R.id.toolbar_device_name);
-//        TextView textDeviceAddress = toolbar.findViewById(R.id.toolbar_device_address);
-
-//        textDeviceName.setText(mDeviceName);
-//        textDeviceAddress.setText(m_deviceAddress);
-//
-//        setSupportActionBar(toolbar); // Make toolbar visible on activity. Xml is very minimalistic
-//        getSupportActionBar().setDisplayShowTitleEnabled(false);
-//
-//        textSerialConnection = findViewById(R.id.bluetooth_serial_cxn_value);
-//        textSerialConnection.setText(StaticResources.CONNECTION_STATE_CONNECTING);
         m_hasSerial = false;
 
         IntentFilter filterMaster =new IntentFilter();
@@ -99,37 +79,30 @@ public class HM10CommunicationActivity extends AppCompatActivity {
         filterMaster.addAction(StaticResources.BROADCAST_NAME_TX_CHARATERISTIC_CHANGED);
         registerReceiver(m_bleBroadcastReceiver, filterMaster);
 
+        // 작업이 완료되면 stopSelf()를 호출하여 서비스를 종료할 수 있습니다.
+        return START_STICKY;
+    }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "Service destroyed");
+        // 리시버 해제
+        if (m_bleBroadcastReceiver != null) {
+            unregisterReceiver(m_bleBroadcastReceiver);
+            m_bleBroadcastReceiver = null;
+            System.out.println("m_bleBroadcastReceiver 해제");
+        }
+    }
 
-        //-------------------------------------------//
-
-
-        tripLogActivity = new TripLogActivity();
-
-        dbHelper = new DBHelper(HM10CommunicationActivity.this, 1);
-
-//        tv_what_do_u_saying = (TextView) findViewById(R.id.tv_what_do_u_saying);
-
-
-        settings_preferences = getSharedPreferences("Setting Info", MODE_PRIVATE);
-        device_preferences = getSharedPreferences("Device Info", MODE_PRIVATE);
-
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 
 
-    public void communication_Button_Click(View v)
-    {
-        m_bleConnectionService.writeToBluetoothSerial(StaticResources.COMMUNICATION_ANDROID_TO_HM10);
 
-    }
-    public void connect_Button_Click(View v)
-    {
-        textSerialConnection.setText(StaticResources.CONNECTION_STATE_CONNECTING);
-        m_bleConnectionService.connect(m_deviceAddress);
-
-    }
-
-    private final BroadcastReceiver m_bleBroadcastReceiver = new BroadcastReceiver() {
+    private BroadcastReceiver m_bleBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent)
         {
@@ -150,32 +123,7 @@ public class HM10CommunicationActivity extends AppCompatActivity {
 
                     //TODO : 연결되었을 때!
                     if (connection.equals(StaticResources.CONNECTION_STATE_CONNECTED)) {
-                        SharedPreferences.Editor editor = device_preferences.edit();  //Editor를 preferences에 쓰겠다고 연결
-                        editor.putString("address", m_deviceAddress);
-                        editor.putString("name", mDeviceName);
-                        editor.commit();
 
-                        LayoutInflater layoutInflater = LayoutInflater.from(context);
-                        View customView = layoutInflater.inflate(R.layout.row, null);
-
-                        ((LinearLayout) customView.findViewById(R.id.color_contianer)).setBackgroundResource(R.drawable.background_rounding_green);
-                        ((TextView) customView.findViewById(R.id.text1)).setTextColor(Color.WHITE);
-                        ((TextView) customView.findViewById(R.id.tv_connected)).setTextColor(Color.WHITE);
-                        ((TextView) customView.findViewById(R.id.tv_connected)).setText("Connected");
-
-                        ConsumptionActivity.btconnect = true;
-                        tv_ready.setText("Connect");
-                        tv_ready.setTextColor(Color.rgb(34, 177, 77));  //green
-
-                        startThread();
-
-                        customView.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                // 연결 해제하기
-
-                            }
-                        });
                     }
 
 
@@ -243,6 +191,8 @@ public class HM10CommunicationActivity extends AppCompatActivity {
                         editor.putString("name", "");
                         editor.commit();
 
+                        ListOfScansActivity.setDeviceListView(context);
+
                         ((LinearLayout) customView.findViewById(R.id.color_contianer)).setBackgroundResource(R.drawable.background_rounding_white);
                         ((TextView) customView.findViewById(R.id.text1)).setTextColor(Color.BLACK);
                         ((TextView) customView.findViewById(R.id.tv_connected)).setTextColor(Color.rgb(34, 177, 77));  //green
@@ -251,12 +201,14 @@ public class HM10CommunicationActivity extends AppCompatActivity {
                         ConsumptionActivity.btconnect = false;
                         tv_ready.setText("Ready");
                         tv_ready.setTextColor(Color.rgb(255, 0, 0));  //red
-                    }
 
+                        //stopSelf();
+                    }
                     break;
+
                 case StaticResources.BROADCAST_NAME_SERVICES_DISCOVERED:
                     final String serial = intent.getStringExtra(StaticResources.EXTRAS_SERVICES_DISCOVERED);
-                    textSerialConnection.setText(serial);
+//                    textSerialConnection.setText(serial);
                     if (serial == StaticResources.SERVICES_DISCOVERY_CHARACTERISTIC_SUCCESS)
                     {
                         m_hasSerial = true;
@@ -264,6 +216,8 @@ public class HM10CommunicationActivity extends AppCompatActivity {
                     // serial : "Communication Characteristic Found"
                     //TODO : 브로드캐스트 서비스를 찾았을 때!
                     ConsumptionActivity.btconnect = true;
+                    ConsumptionActivity.blinkThread.interrupt();
+
                     //TODO : -- DB - TripSTATS 테이블 row 하나 생성
                     tripId = dbHelper.init_TripSTATS();
                     countFlag = 0;
@@ -273,7 +227,37 @@ public class HM10CommunicationActivity extends AppCompatActivity {
                     tv_ready.setText("Ready");
                     tv_ready.setTextColor(Color.rgb(146, 208, 80));  //green
 
-                    
+                    // "A" 문자 보내기 - 연결 확인!
+                    m_bleConnectionService.writeToBluetoothSerial(StaticResources.COMMUNICATION_ANDROID_TO_HM10);
+
+                    SharedPreferences.Editor editor = device_preferences.edit();  //Editor를 preferences에 쓰겠다고 연결
+                    editor.putString("address", m_deviceAddress);
+                    editor.putString("name", mDeviceName);
+                    editor.commit();
+
+                    ListOfScansActivity.setDeviceListView(context);
+
+//                    LayoutInflater layoutInflater = LayoutInflater.from(context);
+//                    View customView = layoutInflater.inflate(R.layout.row, null);
+//
+//                    ((LinearLayout) customView.findViewById(R.id.color_contianer)).setBackgroundResource(R.drawable.background_rounding_green);
+//                    ((TextView) customView.findViewById(R.id.text1)).setTextColor(Color.WHITE);
+//                    ((TextView) customView.findViewById(R.id.tv_connected)).setTextColor(Color.WHITE);
+//                    ((TextView) customView.findViewById(R.id.tv_connected)).setText("Connected");
+//
+//                    ConsumptionActivity.btconnect = true;
+//                    tv_ready.setText("Connect");
+//                    tv_ready.setTextColor(Color.rgb(34, 177, 77));  //green
+
+                    startThread();
+
+//                    customView.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View view) {
+//                            // 연결 해제하기
+//
+//                        }
+//                    });
 
 
                     break;
@@ -295,12 +279,12 @@ public class HM10CommunicationActivity extends AppCompatActivity {
                         String ampStr = txData.split("/")[1];
                         String a = ampStr.split("=")[0];
                         if (a.equals("a")) {
-                            amp = Integer.parseInt(voltStr.split("=")[1]);
+                            amp = Integer.parseInt(ampStr.split("=")[1]);
                         }
                         String socStr = txData.split("/")[2];
                         String s = socStr.split("=")[0];
                         if (s.equals("s")) {
-                            soc = Integer.parseInt(voltStr.split("=")[1]);
+                            soc = Integer.parseInt(socStr.split("=")[1]);
                         }
 
                         //TODO: 배터리 5% 이하 경고음
@@ -331,7 +315,7 @@ public class HM10CommunicationActivity extends AppCompatActivity {
                             graph_battery.soc = soc;
                             graph_battery.invalidate();
                         }
-                        
+
                         if (autoSave) {
                             countFlag++;
                             if (countFlag % 5 == 0) {  //5번마다 (10초 단위로) 로그를 저장함
@@ -356,7 +340,7 @@ public class HM10CommunicationActivity extends AppCompatActivity {
     };
 
 
-    private static void saveTrip(int tripId, String nowTime) {
+    public static void saveTrip(int tripId, String nowTime) {
 
 //        if (tripName == null) { tripName = "Untitled"; }
         if (dbHelper.getAvgPwrW(tripId) == -999 || dbHelper.getUsedW(tripId) == -999 || dbHelper.getMaxW(tripId) == -2) return;
@@ -375,10 +359,4 @@ public class HM10CommunicationActivity extends AppCompatActivity {
             dbHelper.deleteTrip();
         }
     }
-
-
-
-
-
-
 }

@@ -176,4 +176,14 @@ public class BleConnectionService {
 
     }
 
+    // 블루투스 연결 종료 메소드
+    @SuppressLint("MissingPermission")
+    public void disconnect() {
+        if (m_gattServer != null) {
+            m_gattServer.disconnect();
+            m_gattServer.close();
+            m_gattServer = null;
+        }
+    }
+
 }

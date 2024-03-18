@@ -2,8 +2,14 @@ package com.activerecycle.tripgauge.bluetooth;
 
 import static android.bluetooth.BluetoothDevice.BOND_BONDED;
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+import static com.activerecycle.tripgauge.ConsumptionActivity.btconnect;
+import static com.activerecycle.tripgauge.ConsumptionActivity.graph_battery;
 import static com.activerecycle.tripgauge.ConsumptionActivity.startThread;
+import static com.activerecycle.tripgauge.ConsumptionActivity.tv_distance;
+import static com.activerecycle.tripgauge.ConsumptionActivity.tv_percent;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_ready;
+import static com.activerecycle.tripgauge.ConsumptionActivity.tv_w;
+import static com.activerecycle.tripgauge.bluetooth.HM10ConnectionService.saveTrip;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -33,12 +39,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 
+import com.activerecycle.tripgauge.BeepService;
 import com.activerecycle.tripgauge.ConnectionActivity;
 import com.activerecycle.tripgauge.ConsumptionActivity;
 import com.activerecycle.tripgauge.SettingsActivity;
 import com.activerecycle.tripgauge.TripLogActivity;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -162,11 +170,116 @@ public class ListOfScansActivity extends AppCompatActivity {
         //LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         if (deviceList != null) {
+            //TODO: Conneted 된 디바이스 상단 초록색 고정
+            if (!preferences.getString("address", "").equals("") && !preferences.getString("name", "").equals("")) {
+                String connectedAddress = preferences.getString("address", "");
+                String connectedName = preferences.getString("name", "");
+                Typeface typeface = Typeface.createFromAsset(context.getResources().getAssets(), "gmarket_sans_bold.ttf");
+
+                View customView = layoutInflater.inflate(R.layout.row, null);
+                ((LinearLayout) customView.findViewById(R.id.container)).setTag(connectedName + "#" + connectedAddress);
+                ((TextView) customView.findViewById(R.id.text1)).setText(connectedName);
+                ((TextView) customView.findViewById(R.id.text1)).setTypeface(typeface);
+
+                //TODO: background_rounding_green
+                ((LinearLayout) customView.findViewById(R.id.color_contianer)).setBackgroundResource(R.drawable.background_rounding_green);
+                ((TextView) customView.findViewById(R.id.text1)).setTextColor(Color.WHITE);
+                ((TextView) customView.findViewById(R.id.tv_connected)).setTextColor(Color.WHITE);
+                ((TextView) customView.findViewById(R.id.tv_connected)).setText("Connected");
+                ((TextView) customView.findViewById(R.id.tv_connected)).setTypeface(typeface);
+
+
+                modulelist_layout.addView(customView);
+
+                customView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        HM10ConnectionService.m_bleConnectionService.disconnect();
+                        Intent intent1 = new Intent(context, HM10ConnectionService.class);
+                        context.stopService(intent1);
+                        Intent intent2 = new Intent(context, BleConnectionService.class);
+                        context.stopService(intent2);
+
+                        ((LinearLayout) customView.findViewById(R.id.color_contianer)).setBackgroundResource(R.drawable.background_rounding_white);
+                        ((TextView) customView.findViewById(R.id.text1)).setTextColor(Color.BLACK);
+                        ((TextView) customView.findViewById(R.id.tv_connected)).setTextColor(Color.rgb(34, 177, 77));  //green
+                        ((TextView) customView.findViewById(R.id.tv_connected)).setText("Available to connect");
+
+                        //------------------------------------------------------------//
+
+                        tv_percent.setTextColor(Color.WHITE);
+
+                        LocalDate currentDate = LocalDate.now();
+                        String nowTime = currentDate.toString();
+                        saveTrip(HM10ConnectionService.tripId, nowTime);
+
+                        // 블루투스 연결 안 된 상태이면
+                        tv_ready.setText("Connect");
+                        tv_ready.setTextColor(Color.rgb(255, 0, 0));  //red
+
+                        tv_w.setText("0W");
+                        tv_distance.setText("00.00 Km");
+
+                        // 배터리
+                        //soc = 0;
+                        graph_battery.soc = 0;
+                        graph_battery.invalidate();
+                        tv_percent.setText("00%");
+
+
+                        //TODO: 그래프 깜빡깜빡 거리는 애니메이션!
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                while (!btconnect) {
+                                    ConsumptionActivity.graph_speed.speed = 99;
+                                    ConsumptionActivity.graph_speed.invalidate();
+
+                                    try {
+                                        Thread.sleep(1000);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    ConsumptionActivity.graph_speed.speed = 0;
+                                    ConsumptionActivity.graph_speed.invalidate();
+
+                                    // 1초에 한 번 깜빡임
+                                    try {
+                                        Thread.sleep(1000);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        }).start();
+
+
+                        SharedPreferences.Editor editor = preferences.edit();  //Editor를 preferences에 쓰겠다고 연결
+                        editor.putString("address", "");
+                        editor.putString("name", "");
+                        editor.commit();
+
+                        ListOfScansActivity.setDeviceListView(context);
+
+                        ConsumptionActivity.btconnect = false;
+                        tv_ready.setText("Ready");
+                        tv_ready.setTextColor(Color.rgb(255, 0, 0));  //red
+
+
+                    }
+                });
+
+            }
+
+            //TODO: 나머지 스캔된 디바이스 목록 표시
             String deviceName, deviceAddress;
             for (BluetoothDevice device : deviceList) {
                 deviceName = device.getName();
                 deviceAddress = device.getAddress();
-                if ( device.getAddress() != null && !device.getAddress().equals("") ) {
+                if ( device.getAddress() != null && !device.getAddress().equals("")
+                        && !device.getAddress().equals(preferences.getString("address", "")) ) {
 
                     Typeface typeface = Typeface.createFromAsset(context.getResources().getAssets(), "gmarket_sans_bold.ttf");
 
@@ -175,28 +288,13 @@ public class ListOfScansActivity extends AppCompatActivity {
                     ((TextView) customView.findViewById(R.id.text1)).setText(deviceName);
                     ((TextView) customView.findViewById(R.id.text1)).setTypeface(typeface);
 
-                    if (device.getAddress().equals(pref_address)) {
-                        //TODO: background_rounding_green
-                        ((LinearLayout) customView.findViewById(R.id.color_contianer)).setBackgroundResource(R.drawable.background_rounding_green);
-                        ((TextView) customView.findViewById(R.id.text1)).setTextColor(Color.WHITE);
-                        ((TextView) customView.findViewById(R.id.tv_connected)).setTextColor(Color.WHITE);  //green
-                        ((TextView) customView.findViewById(R.id.tv_connected)).setText("Connected");
-                        ((TextView) customView.findViewById(R.id.tv_connected)).setTypeface(typeface);
+                    //TODO: background_rounding_white
+                    ((LinearLayout) customView.findViewById(R.id.color_contianer)).setBackgroundResource(R.drawable.background_rounding_white);
+                    ((TextView) customView.findViewById(R.id.text1)).setTextColor(Color.BLACK);
+                    ((TextView) customView.findViewById(R.id.tv_connected)).setTextColor(Color.rgb(34, 177, 77));  //green
+                    ((TextView) customView.findViewById(R.id.tv_connected)).setText("Available to connect");
+                    ((TextView) customView.findViewById(R.id.tv_connected)).setTypeface(typeface);
 
-//                        if (device.getBondState() == BOND_BONDED) {
-//                        /*
-//                         * BondState 정보 :
-//                         * https://developer.android.com/reference/android/bluetooth/BluetoothDevice */
-//                        }
-                    }
-                    else {
-                        //TODO: background_rounding_white
-                        ((LinearLayout) customView.findViewById(R.id.color_contianer)).setBackgroundResource(R.drawable.background_rounding_white);
-                        ((TextView) customView.findViewById(R.id.text1)).setTextColor(Color.BLACK);
-                        ((TextView) customView.findViewById(R.id.tv_connected)).setTextColor(Color.rgb(34, 177, 77));  //green
-                        ((TextView) customView.findViewById(R.id.tv_connected)).setText("Available to connect");
-                        ((TextView) customView.findViewById(R.id.tv_connected)).setTypeface(typeface);
-                    }
                     modulelist_layout.addView(customView);
 
 
@@ -204,57 +302,58 @@ public class ListOfScansActivity extends AppCompatActivity {
                         @Override
                         public void onClick(View view) {
                             // 연결하기
-                            String tag = (String) customView.findViewById(R.id.container).getTag();
-                            String[] tags = tag.split("#");
-                            String name = tags[0];
-                            String addr = tags[1];
+//                            String tag = (String) customView.findViewById(R.id.container).getTag();
+//                            String[] tags = tag.split("#");
+//                            String name = tags[0];
+//                            String addr = tags[1];
+//
+//                            // 임시, 확인용
+//                            Toast.makeText(context, "name: " + name + ", address: " + addr, Toast.LENGTH_SHORT).show();
 
-                            // 임시, 확인용
-                            Toast.makeText(context, "name: " + name + ", address: " + addr, Toast.LENGTH_SHORT).show();
-
-                            final Intent intent = new Intent(context, HM10CommunicationActivity.class);
-                            intent.putExtra(StaticResources.EXTRAS_DEVICE_NAME, name);
-                            intent.putExtra(StaticResources.EXTRAS_DEVICE_ADDRESS, addr);
+                            final Intent intent = new Intent(context, HM10ConnectionService.class);
+                            intent.putExtra(StaticResources.EXTRAS_DEVICE_NAME, device.getName());
+                            intent.putExtra(StaticResources.EXTRAS_DEVICE_ADDRESS, device.getAddress());
                             intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
-                            context.startActivity(intent);
+//                            context.startActivity(intent);
+                            context.startService(intent);
 
 
-                            //-----------------------------------------------------------------------------//
-                            // 연결이 확인되면
-
-
-                            if (((TextView) customView.findViewById(R.id.tv_connected)).getText().toString().toLowerCase(Locale.ROOT).equals("available to connect")) {
-
-                                pref_address = addr;
-                                System.out.println("OnClick - pref_address : " + pref_address);
-
-                                ((LinearLayout) customView.findViewById(R.id.color_contianer)).setBackgroundResource(R.drawable.background_rounding_green);
-                                ((TextView) customView.findViewById(R.id.text1)).setTextColor(Color.WHITE);
-                                ((TextView) customView.findViewById(R.id.tv_connected)).setTextColor(Color.WHITE);
-                                ((TextView) customView.findViewById(R.id.tv_connected)).setText("Connected");
-
-                                ConsumptionActivity.btconnect = true;
-                                tv_ready.setText("Connect");
-                                tv_ready.setTextColor(Color.rgb(34, 177, 77));  //green
-
-                                startThread();
-
-
-                            } else if (((TextView) customView.findViewById(R.id.tv_connected)).getText().toString().toLowerCase(Locale.ROOT).equals("connected")) {
-
-                                pref_address = "";
-                                System.out.println("OnClick - pref_address : " + pref_address);
-
-                                ((LinearLayout) customView.findViewById(R.id.color_contianer)).setBackgroundResource(R.drawable.background_rounding_white);
-                                ((TextView) customView.findViewById(R.id.text1)).setTextColor(Color.BLACK);
-                                ((TextView) customView.findViewById(R.id.tv_connected)).setTextColor(Color.rgb(34, 177, 77));  //green
-                                ((TextView) customView.findViewById(R.id.tv_connected)).setText("Available to connect");
-
-                                ConsumptionActivity.btconnect = false;
-                                tv_ready.setText("Ready");
-                                tv_ready.setTextColor(Color.rgb(255, 0, 0));  //red
-
-                            }
+//                            //-----------------------------------------------------------------------------//
+//                            // 연결이 확인되면
+//
+//
+//                            if (((TextView) customView.findViewById(R.id.tv_connected)).getText().toString().toLowerCase(Locale.ROOT).equals("available to connect")) {
+//
+//                                pref_address = addr;
+//                                System.out.println("OnClick - pref_address : " + pref_address);
+//
+//                                ((LinearLayout) customView.findViewById(R.id.color_contianer)).setBackgroundResource(R.drawable.background_rounding_green);
+//                                ((TextView) customView.findViewById(R.id.text1)).setTextColor(Color.WHITE);
+//                                ((TextView) customView.findViewById(R.id.tv_connected)).setTextColor(Color.WHITE);
+//                                ((TextView) customView.findViewById(R.id.tv_connected)).setText("Connected");
+//
+//                                ConsumptionActivity.btconnect = true;
+//                                tv_ready.setText("Connect");
+//                                tv_ready.setTextColor(Color.rgb(34, 177, 77));  //green
+//
+//                                startThread();
+//
+//
+//                            } else if (((TextView) customView.findViewById(R.id.tv_connected)).getText().toString().toLowerCase(Locale.ROOT).equals("connected")) {
+//
+//                                pref_address = "";
+//                                System.out.println("OnClick - pref_address : " + pref_address);
+//
+//                                ((LinearLayout) customView.findViewById(R.id.color_contianer)).setBackgroundResource(R.drawable.background_rounding_white);
+//                                ((TextView) customView.findViewById(R.id.text1)).setTextColor(Color.BLACK);
+//                                ((TextView) customView.findViewById(R.id.tv_connected)).setTextColor(Color.rgb(34, 177, 77));  //green
+//                                ((TextView) customView.findViewById(R.id.tv_connected)).setText("Available to connect");
+//
+//                                ConsumptionActivity.btconnect = false;
+//                                tv_ready.setText("Ready");
+//                                tv_ready.setTextColor(Color.rgb(255, 0, 0));  //red
+//
+//                            }
                         }
                     });
                 }
@@ -286,36 +385,41 @@ public class ListOfScansActivity extends AppCompatActivity {
         //BleScanServices.scanForDevices(true,mLeScanCallback);
     }
 
+//    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//
+//        Intent intent = new Intent(this, BleConnectionService.class);
+//        stopService(intent);
+//
+//        SharedPreferences.Editor editor = preferences.edit();  //Editor를 preferences에 쓰겠다고 연결
+//        editor.putString("address", "");
+//        editor.putString("name", "");
+//
+//        editor.commit();  //항상 commit & apply 를 해주어야 저장이 된다.
+//    }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//
+//        SharedPreferences.Editor editor = preferences.edit();  //Editor를 preferences에 쓰겠다고 연결
+//        editor.putString("address", pref_address);
+//
+//        editor.commit();  //항상 commit & apply 를 해주어야 저장이 된다.
+//    }
+//
+//    @Override
+//    protected void onStop() {
+//        super.onStop();
+//
+//        SharedPreferences.Editor editor = preferences.edit();  //Editor를 preferences에 쓰겠다고 연결
+//        editor.putString("address", pref_address);
+//
+//        editor.commit();  //항상 commit & apply 를 해주어야 저장이 된다.
+//    }
+//
 
-        SharedPreferences.Editor editor = preferences.edit();  //Editor를 preferences에 쓰겠다고 연결
-        editor.putString("address", pref_address);
-
-        editor.commit();  //항상 commit & apply 를 해주어야 저장이 된다.
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-        SharedPreferences.Editor editor = preferences.edit();  //Editor를 preferences에 쓰겠다고 연결
-        editor.putString("address", pref_address);
-
-        editor.commit();  //항상 commit & apply 를 해주어야 저장이 된다.
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        SharedPreferences.Editor editor = preferences.edit();  //Editor를 preferences에 쓰겠다고 연결
-        editor.putString("address", pref_address);
-
-        editor.commit();  //항상 commit & apply 를 해주어야 저장이 된다.
-    }
 
 //    private void onClickDevice(View view) {
 //
