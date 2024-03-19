@@ -29,6 +29,7 @@ public class SettingsActivity extends AppCompatActivity {
     public static SharedPreferences preferences;
     boolean b1, b2, b3, b4;
     public static boolean speedFlag, socFlag;
+    public static String distFlag = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +50,6 @@ public class SettingsActivity extends AppCompatActivity {
         btn_reset = (Button) findViewById(R.id.btn_reset);
         btn_clear = (Button) findViewById(R.id.btn_clear);
 
-
         imgbtn_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -61,6 +61,27 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 finish();
+            }
+        });
+
+        btn_mph.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (btn_mph.getText().equals("MPH")) {
+                    distFlag = "Km";
+                    btn_mph.setText("KPH");
+                    ConsumptionActivity.tv_KPH.setText("KPH");
+                    if (!ConsumptionActivity.btconnect) {
+                        ConsumptionActivity.tv_distance.setText("00.00 Km");
+                    }
+                } else {
+                    distFlag = "Mi";
+                    btn_mph.setText("MPH");
+                    ConsumptionActivity.tv_KPH.setText("MPH");
+                    if (!ConsumptionActivity.btconnect) {
+                        ConsumptionActivity.tv_distance.setText("00.00 Mi");
+                    }
+                }
             }
         });
 
@@ -108,12 +129,10 @@ public class SettingsActivity extends AppCompatActivity {
                     b2 = true;
 
                     ConsumptionActivity.autoSave = true;
-                    Toast.makeText(getApplicationContext(), "트립을 자동 저장합니다.", Toast.LENGTH_SHORT).show();
                 } else { // 왼쪽
                     b2 = false;
 
                     ConsumptionActivity.autoSave = false;
-                    Toast.makeText(getApplicationContext(), "트립 자동저장을 해제합니다.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -126,12 +145,10 @@ public class SettingsActivity extends AppCompatActivity {
                     b3 = true;
 
                     ConsumptionActivity.autoConnect = true;
-                    Toast.makeText(getApplicationContext(), "블루투스를 자동 연결합니다.", Toast.LENGTH_SHORT).show();
                 } else { // 왼쪽
                     b3 = false;
 
                     ConsumptionActivity.autoConnect = false;
-                    Toast.makeText(getApplicationContext(), "블루투스 자동연결을 해제합니다.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -160,6 +177,19 @@ public class SettingsActivity extends AppCompatActivity {
         switch2.setChecked(preferences.getBoolean("s2", false));
         switch3.setChecked(preferences.getBoolean("s3", true));
         switch4.setChecked(preferences.getBoolean("s4", true));
+        if (preferences.getString("distFlag", "").equals("Mi")) {
+            btn_mph.setText("MPH");
+            ConsumptionActivity.tv_KPH.setText("MPH");
+            if (!ConsumptionActivity.btconnect) {
+                ConsumptionActivity.tv_distance.setText("00.00 Mi");
+            }
+        } else {
+            btn_mph.setText("KPH");
+            ConsumptionActivity.tv_KPH.setText("KPH");
+            if (!ConsumptionActivity.btconnect) {
+                ConsumptionActivity.tv_distance.setText("00.00 Km");
+            }
+        }
     }
 
     @Override
@@ -171,6 +201,7 @@ public class SettingsActivity extends AppCompatActivity {
         editor.putBoolean("s2", b2);  //putString(KEY,VALUE)
         editor.putBoolean("s3", b3);  //putString(KEY,VALUE)
         editor.putBoolean("s4", socFlag);  //putString(KEY,VALUE)
+        editor.putString("distFlag", distFlag);
 
         editor.commit();  //항상 commit & apply 를 해주어야 저장이 된다.
     }

@@ -167,8 +167,12 @@ public class ConsumptionActivity extends AppCompatActivity {
         tv_ready.setTextColor(Color.rgb(255, 0, 0));  //red
 
         tv_w.setText("0W");
-        tv_distance.setText("00.00 Km");
 
+        if (settings_preferences.getString("distFlag", "").equals("Mi")) {
+            tv_distance.setText("00.00 Mi");
+        } else {
+            tv_distance.setText("00.00 Km");
+        }
         // 배터리
         soc = 0;
         graph_battery.soc = soc;
@@ -225,11 +229,23 @@ public class ConsumptionActivity extends AppCompatActivity {
 
                 // 총 이동 거리 화면에 반영
                 if (tv_odo.getText().equals("ODO")) {
-                    tv_distance.setText(String.format("%.2f", totalDistance) + " Km");
+                    if (settings_preferences.getString("distFlag", "").equals("Mi")) {
+                        tv_distance.setText(String.format("%.2f", totalDistance) + " Mi");
+                    } else {
+                        tv_distance.setText(String.format("%.2f", KPHtoMPH(totalDistance)) + " Km");
+                    }
                 } else if (tv_odo.getText().equals("TRIPA")) {
-                    tv_distance.setText(String.format("%.2f", tripADistance) + " Km");
+                    if (settings_preferences.getString("distFlag", "").equals("Mi")) {
+                        tv_distance.setText(String.format("%.2f", tripADistance) + " Mi");
+                    } else {
+                        tv_distance.setText(String.format("%.2f", KPHtoMPH(tripADistance)) + " Km");
+                    }
                 } else if (tv_odo.getText().equals("TRIPB")) {
-                    tv_distance.setText(String.format("%.2f", tripBDistance) + " Km");
+                    if (settings_preferences.getString("distFlag", "").equals("Mi")) {
+                        tv_distance.setText(String.format("%.2f", tripBDistance) + " Mi");
+                    } else {
+                        tv_distance.setText(String.format("%.2f", KPHtoMPH(tripBDistance)) + " Km");
+                    }
                 }
 
                 // 주행 속도
@@ -316,8 +332,20 @@ public class ConsumptionActivity extends AppCompatActivity {
             }
         });
 
+        if (settings_preferences.getString("distFlag", "").equals("Mi")) {
+            tv_KPH.setText("MPH");
+        } else {
+            tv_KPH.setText("KPH");
+        }
+
     }//end Of Create
 
+
+    private double KPHtoMPH(double KPH) {
+        double MPH = KPH / 1.609;
+
+        return MPH;
+    }
 
 
     private void showSaveTripDialog(final String nowTime) {

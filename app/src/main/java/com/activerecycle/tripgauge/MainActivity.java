@@ -172,8 +172,8 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
             // 처음 실행할 때
             isAppRunning = true;
-            Intent intent = new Intent(MainActivity.this, ConsumptionActivity.class);
-            startActivity(intent);
+//            Intent intent = new Intent(MainActivity.this, ConsumptionActivity.class);
+//            startActivity(intent);
         }
     }
 
