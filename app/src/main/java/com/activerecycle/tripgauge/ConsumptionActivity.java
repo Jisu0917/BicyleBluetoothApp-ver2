@@ -426,7 +426,7 @@ public class ConsumptionActivity extends AppCompatActivity {
         //super.onBackPressed();
         //TODO: 뒤로가기 버튼 눌렀을 때!
         if (btconnect) {
-            showDialog(ConsumptionActivity.this, "Are you sure want to exit?", "확인을 누르면 블루투스 연결이 종료됩니다.");
+            showDialog(ConsumptionActivity.this, "Are you sure want to exit?", "확인을 누르면 앱과 함께 블루투스 연결이 종료됩니다.");
         } else {
             //앱 종료시키기
             moveTaskToBack(true);
@@ -507,10 +507,6 @@ public class ConsumptionActivity extends AppCompatActivity {
                 .setNegativeButton("취소", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
-                        //메인 액티비티로 !!
-                        Intent intent = new Intent(context, MainActivity.class);
-                        intent.putExtra("CONTEXT", "CONSUMPTION");
-                        context.startActivity(intent);
                     }
                 })
                 .show();
