@@ -134,8 +134,9 @@ public class LogGraph extends View {
         Path p = new Path();
         p.setFillType(EVEN_ODD);
 
-        p.moveTo(210, getHeight() - 40);
-        p.lineTo(firstDotX, getPointY(0));
+        //p.moveTo(210, getHeight() - 40);
+        //p.lineTo(firstDotX, getPointY(0));
+        p.moveTo(firstDotX, getPointY(0));
         for (int i = 0; i < n; i++) {
             // 꼭짓점 그리기
             //canvas.drawCircle(firstDotX + dotDistance * i, bottom - (value.get(i) * max / adjustC) + adjustY, 5, dotPaint);
@@ -147,7 +148,7 @@ public class LogGraph extends View {
 
         }
         p.lineTo(firstDotX + dotDistance * (n-1), getPointY(value.get(n-1)));
-        p.lineTo((getWidth() - 60), (getHeight() - 40));
+        p.lineTo((getWidth() - 100), (getHeight() - 40));
         //p.close();
         canvas.drawPath(p, pathPaint);
         canvas.drawPath(p, pathStrokePaint);
