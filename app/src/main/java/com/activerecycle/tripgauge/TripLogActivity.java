@@ -246,7 +246,7 @@ public class TripLogActivity extends AppCompatActivity {
                 tv_untitled.setText(tripName);
                 tv_date.setText(tripDate);
                 tv_used_wh.setText(usedWh + "Wh");
-                tv_dist_km.setText(ddist + "KM");
+                tv_dist_km.setText(String.format("%.2f", ddist) + "KM");
                 tv_avrpwr_w.setText(avrpwr + "W");
             } catch (Exception e) {
                 e.printStackTrace();
