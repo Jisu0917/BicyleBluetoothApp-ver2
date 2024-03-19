@@ -88,7 +88,7 @@
         android:layout_marginEnd="30dp"
         android:switchMinWidth="40dp"
         android:switchPadding="6dp"
-        android:thumb="@drawable/switch_thumb"
+        android:thumb="@drawable/selector_thumb"
         android:track="@drawable/selector_switch"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/tv_settings1" />
@@ -130,7 +130,7 @@
         android:layout_marginEnd="30dp"
         android:switchMinWidth="40dp"
         android:switchPadding="6dp"
-        android:thumb="@drawable/switch_thumb"
+        android:thumb="@drawable/selector_thumb"
         android:track="@drawable/selector_switch"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/tv_settings2" />
@@ -172,7 +172,7 @@
         android:layout_marginEnd="30dp"
         android:switchMinWidth="40dp"
         android:switchPadding="6dp"
-        android:thumb="@drawable/switch_thumb"
+        android:thumb="@drawable/selector_thumb"
         android:track="@drawable/selector_switch"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/tv_settings3" />
@@ -215,7 +215,7 @@
         android:layout_marginEnd="30dp"
         android:switchMinWidth="40dp"
         android:switchPadding="6dp"
-        android:thumb="@drawable/switch_thumb"
+        android:thumb="@drawable/selector_thumb"
         android:track="@drawable/selector_switch"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/tv_settings4" />

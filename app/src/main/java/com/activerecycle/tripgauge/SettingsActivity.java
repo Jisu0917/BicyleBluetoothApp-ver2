@@ -1,7 +1,5 @@
 package com.activerecycle.tripgauge;
 
-import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
@@ -12,7 +10,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.activerecycle.tripgauge.bluetooth.R;
@@ -117,12 +114,6 @@ public class SettingsActivity extends AppCompatActivity {
         switch1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-//                if (b) { //왼쪽일 때 회색, 오른쪽일 때 lightgreen
-//                    compoundButton.setButtonDrawable(R.drawable.switch_thumb_gray);
-//                } else {
-//                    compoundButton.setButtonDrawable(R.drawable.switch_thumb);
-//                }
-
                 if (b) {
                     //b1 = true;
                     speedFlag = true;

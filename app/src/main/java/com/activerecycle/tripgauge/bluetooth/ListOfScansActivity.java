@@ -326,7 +326,11 @@ public class ListOfScansActivity extends AppCompatActivity {
                 });
 
         builder.setNegativeButton("취소", null);
-        builder.show();
+        AlertDialog dialog = builder.show();
+
+        TextView textView = (TextView) dialog.findViewById(android.R.id.message);
+        Typeface typeface = Typeface.createFromAsset(context.getResources().getAssets(), "gmarket_sans_medium.ttf");
+        textView.setTypeface(typeface);
     }
 
 

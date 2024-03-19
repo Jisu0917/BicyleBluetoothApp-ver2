@@ -15,6 +15,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -503,12 +504,12 @@ public class ConsumptionActivity extends AppCompatActivity {
                             context.startActivity(intent);
                         }
                     }
-                })
-                .setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
+                });
+        builder.setNegativeButton("취소", null);
+        AlertDialog dialog = builder.show();
 
-                    }
-                })
-                .show();
+        TextView textView = (TextView) dialog.findViewById(android.R.id.message);
+        Typeface typeface = Typeface.createFromAsset(context.getResources().getAssets(), "gmarket_sans_medium.ttf");
+        textView.setTypeface(typeface);
     }
 }
