@@ -52,7 +52,7 @@ public class SpeedGraph extends View {
         RectF rect = new RectF();
         rect = new RectF();
         int full_length = screenWidth * 75 / 100;
-        rect.set(screenWidth/2 - 400, 30, screenWidth/2 + 400, 780);
+        rect.set(screenWidth/2 - 500, 30, screenWidth/2 + 500, 980);
         canvas.drawArc(rect, 140, 260, false, pnt_gray);
 
         if (!btconnected) {
