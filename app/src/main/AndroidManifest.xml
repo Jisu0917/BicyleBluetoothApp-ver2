@@ -27,7 +27,7 @@
         android:label="@string/app_name"
         android:roundIcon="@drawable/ic_main"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme.NoActionBar">
+        android:theme="@style/Theme.AppCompat.NoActionBar"> <!-- AppTheme.NoActionBar -->
         <activity
             android:name="com.activerecycle.tripgauge.MainActivity"
             android:exported="true"

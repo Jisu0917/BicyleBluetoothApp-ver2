@@ -9,7 +9,7 @@
     </style>
 
     <!-- 앱 전체에 걸쳐 적용되는 테마 -->
-    <style name="AppTheme.NoActionBar">
+    <style name="Theme.AppCompat.NoActionBar"> <!-- AppTheme.NoActionBar -->
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
 
