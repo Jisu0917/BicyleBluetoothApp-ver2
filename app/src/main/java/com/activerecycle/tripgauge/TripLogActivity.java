@@ -104,7 +104,9 @@ public class TripLogActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
+                btn_share.setVisibility(View.INVISIBLE);
                 Bitmap bitmap = getBitmapFromView(container, container.getHeight(), container.getWidth());
+                btn_share.setVisibility(View.VISIBLE);
                 try {
 
                     File directory;

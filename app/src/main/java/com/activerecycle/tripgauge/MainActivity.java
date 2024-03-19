@@ -175,10 +175,6 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, ConsumptionActivity.class);
             startActivity(intent);
         }
-
-
-        //checkAndRequestPermissions();
-        //performRequiredTasks();
     }
 
 
