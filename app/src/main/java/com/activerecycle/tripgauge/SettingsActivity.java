@@ -71,6 +71,7 @@ public class SettingsActivity extends AppCompatActivity {
                     distFlag = "Km";
                     btn_mph.setText("KPH");
                     ConsumptionActivity.tv_KPH.setText("KPH");
+                    ConsumptionActivity.tv_distFlag.setText("Km");
                     if (!ConsumptionActivity.btconnect) {
                         ConsumptionActivity.tv_distance.setText("00.00 Km");
                     }
@@ -78,6 +79,7 @@ public class SettingsActivity extends AppCompatActivity {
                     distFlag = "Mi";
                     btn_mph.setText("MPH");
                     ConsumptionActivity.tv_KPH.setText("MPH");
+                    ConsumptionActivity.tv_distFlag.setText("Mi");
                     if (!ConsumptionActivity.btconnect) {
                         ConsumptionActivity.tv_distance.setText("00.00 Mi");
                     }
@@ -98,6 +100,16 @@ public class SettingsActivity extends AppCompatActivity {
                 TripLogActivity.tv_avrpwr_w.setText("--W");
 
                 Toast.makeText(SettingsActivity.this, "모든 트립을 삭제했습니다.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        btn_clear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ConsumptionActivity.totalDistance = 0.0;
+                if (ConsumptionActivity.tv_odo.getText().toString().equals("ODO")) {
+                    ConsumptionActivity.tv_distance.setText("00.00 " + distFlag);
+                }
             }
         });
 
@@ -180,14 +192,16 @@ public class SettingsActivity extends AppCompatActivity {
         if (preferences.getString("distFlag", "").equals("Mi")) {
             btn_mph.setText("MPH");
             ConsumptionActivity.tv_KPH.setText("MPH");
+            ConsumptionActivity.tv_distFlag.setText("Mi");
             if (!ConsumptionActivity.btconnect) {
-                ConsumptionActivity.tv_distance.setText("00.00 Mi");
+                ConsumptionActivity.tv_distance.setText("00.00");
             }
         } else {
             btn_mph.setText("KPH");
             ConsumptionActivity.tv_KPH.setText("KPH");
+            ConsumptionActivity.tv_distFlag.setText("Km");
             if (!ConsumptionActivity.btconnect) {
-                ConsumptionActivity.tv_distance.setText("00.00 Km");
+                ConsumptionActivity.tv_distance.setText("00.00");
             }
         }
     }

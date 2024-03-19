@@ -6,6 +6,7 @@ import static com.activerecycle.tripgauge.bluetooth.HM10ConnectionService.saveTr
 import static com.activerecycle.tripgauge.bluetooth.HM10ConnectionService.tripId;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
@@ -76,7 +77,7 @@ public class ConsumptionActivity extends AppCompatActivity {
 
     // w = volt * amp;
 
-    public static TextView tv_title, tv_w, tv_ready, tv_speed, tv_KPH, tv_percent, tv_soc, tv_odo, tv_distance;
+    public static TextView tv_title, tv_w, tv_ready, tv_speed, tv_KPH, tv_percent, tv_soc, tv_odo, tv_distance, tv_distFlag;
     ImageButton btn_menu;
     public static SpeedGraph graph_speed;
     public static BatteryGraph graph_battery;
@@ -122,6 +123,7 @@ public class ConsumptionActivity extends AppCompatActivity {
         //tv_soc = (TextView) findViewById(R.id.tv_soc);
         tv_odo = (TextView) findViewById(R.id.tv_odo);
         tv_distance = (TextView) findViewById(R.id.tv_distance);
+        tv_distFlag = (TextView) findViewById(R.id.tv_distFlag);
 
         btn_menu = (ImageButton) findViewById(R.id.btn_menu);
 
@@ -167,11 +169,11 @@ public class ConsumptionActivity extends AppCompatActivity {
         tv_ready.setTextColor(Color.rgb(255, 0, 0));  //red
 
         tv_w.setText("0W");
-
+        tv_distance.setText("00.00");
         if (settings_preferences.getString("distFlag", "").equals("Mi")) {
-            tv_distance.setText("00.00 Mi");
+            tv_distFlag.setText("Mi");
         } else {
-            tv_distance.setText("00.00 Km");
+            tv_distFlag.setText("Km");
         }
         // 배터리
         soc = 0;
@@ -230,21 +232,27 @@ public class ConsumptionActivity extends AppCompatActivity {
                 // 총 이동 거리 화면에 반영
                 if (tv_odo.getText().equals("ODO")) {
                     if (settings_preferences.getString("distFlag", "").equals("Mi")) {
-                        tv_distance.setText(String.format("%.2f", totalDistance) + " Mi");
+                        tv_distance.setText(String.format("%.2f", totalDistance));
+                        tv_distFlag.setText("Mi");
                     } else {
-                        tv_distance.setText(String.format("%.2f", KPHtoMPH(totalDistance)) + " Km");
+                        tv_distance.setText(String.format("%.2f", KPHtoMPH(totalDistance)));
+                        tv_distFlag.setText("Km");
                     }
                 } else if (tv_odo.getText().equals("TRIPA")) {
                     if (settings_preferences.getString("distFlag", "").equals("Mi")) {
-                        tv_distance.setText(String.format("%.2f", tripADistance) + " Mi");
+                        tv_distance.setText(String.format("%.2f", tripADistance));
+                        tv_distFlag.setText("Mi");
                     } else {
-                        tv_distance.setText(String.format("%.2f", KPHtoMPH(tripADistance)) + " Km");
+                        tv_distance.setText(String.format("%.2f", KPHtoMPH(tripADistance)));
+                        tv_distFlag.setText("Km");
                     }
                 } else if (tv_odo.getText().equals("TRIPB")) {
                     if (settings_preferences.getString("distFlag", "").equals("Mi")) {
-                        tv_distance.setText(String.format("%.2f", tripBDistance) + " Mi");
+                        tv_distance.setText(String.format("%.2f", tripBDistance));
+                        tv_distFlag.setText("Mi");
                     } else {
-                        tv_distance.setText(String.format("%.2f", KPHtoMPH(tripBDistance)) + " Km");
+                        tv_distance.setText(String.format("%.2f", KPHtoMPH(tripBDistance)));
+                        tv_distFlag.setText("Km");
                     }
                 }
 
@@ -449,7 +457,7 @@ public class ConsumptionActivity extends AppCompatActivity {
                         context.stopService(intent2);
 
 
-                        if (settings_preferences.getBoolean("s2", true)) {
+                        if (settings_preferences.getBoolean("s2", true)) { // Auto Save Trip
 
                             //TODO: 트립 저장
                             LocalDate currentDate = LocalDate.now();
@@ -459,7 +467,7 @@ public class ConsumptionActivity extends AppCompatActivity {
 
                             //TODO: 마지막으로 연결한 디바이스 정보 저장
                             SharedPreferences.Editor editor = device_preferences.edit();  //Editor를 preferences에 쓰겠다고 연결
-                            if (settings_preferences.getBoolean("s3", true)) {
+                            if (settings_preferences.getBoolean("s3", true)) {// Auto Connect
                                 editor.putString("last_address", device_preferences.getString("address", ""));
                                 editor.putString("last_name", device_preferences.getString("name", ""));
                             }
@@ -477,6 +485,17 @@ public class ConsumptionActivity extends AppCompatActivity {
                         } else {
                             //TODO: #init 으로 되어있는 트립 삭제
                             dbHelper.deleteGarbage();
+
+                            //TODO: 마지막으로 연결한 디바이스 정보 저장
+                            SharedPreferences.Editor editor = device_preferences.edit();  //Editor를 preferences에 쓰겠다고 연결
+                            if (settings_preferences.getBoolean("s3", true)) {// Auto Connect
+                                editor.putString("last_address", device_preferences.getString("address", ""));
+                                editor.putString("last_name", device_preferences.getString("name", ""));
+                            }
+                            editor.putString("address", "");
+                            editor.putString("name", "");
+
+                            editor.commit();  //항상 commit & apply 를 해주어야 저장이 된다.
 
                             //메인 액티비티로 !!
                             Intent intent = new Intent(context, MainActivity.class);
