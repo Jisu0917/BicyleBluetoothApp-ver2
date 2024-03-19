@@ -362,7 +362,7 @@ public class TripLogActivity extends AppCompatActivity {
                 TripLogActivity.this, R.layout.dialog_savetrip, null);
         AlertDialog.Builder dig = new AlertDialog.Builder(TripLogActivity.this, R.style.Theme_Dialog);
         dig.setView(dialogView);
-        dig.setTitle("Revise this trip title!");
+        //dig.setTitle("Revise this trip title!");
 
         Toast.makeText(TripLogActivity.this, "한글, 영문, 숫자만 입력 가능합니다.", Toast.LENGTH_LONG).show();
 

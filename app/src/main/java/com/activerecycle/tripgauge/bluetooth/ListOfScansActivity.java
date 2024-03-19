@@ -7,6 +7,7 @@ import static com.activerecycle.tripgauge.ConsumptionActivity.tv_distance;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_percent;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_ready;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_w;
+import static com.activerecycle.tripgauge.bluetooth.HM10ConnectionService.dbHelper;
 import static com.activerecycle.tripgauge.bluetooth.HM10ConnectionService.saveTrip;
 
 import android.Manifest;
@@ -194,10 +195,16 @@ public class ListOfScansActivity extends AppCompatActivity {
 
                         tv_percent.setTextColor(Color.WHITE);
 
-                        LocalDate currentDate = LocalDate.now();
-                        String now = currentDate.toString();
-                        String nowTime = now.replaceAll("-", ".");
-                        saveTrip(HM10ConnectionService.tripId, nowTime);
+                        if (settings_preferences.getBoolean("s2", true)) {
+                            //TODO: 트립 저장
+                            LocalDate currentDate = LocalDate.now();
+                            String now = currentDate.toString();
+                            String nowTime = now.replaceAll("-", ".");
+                            saveTrip(HM10ConnectionService.tripId, nowTime);
+                        } else {
+                            //TODO: #init 으로 되어있는 트립 삭제
+                            dbHelper.deleteGarbage();
+                        }
 
                         // 블루투스 연결 안 된 상태이면
                         tv_ready.setText("Connect");

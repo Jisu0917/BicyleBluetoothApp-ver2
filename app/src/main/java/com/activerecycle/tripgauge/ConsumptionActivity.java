@@ -2,6 +2,9 @@ package com.activerecycle.tripgauge;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
+import static com.activerecycle.tripgauge.bluetooth.HM10ConnectionService.saveTrip;
+import static com.activerecycle.tripgauge.bluetooth.HM10ConnectionService.tripId;
+
 import android.Manifest;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
@@ -87,7 +90,7 @@ public class ConsumptionActivity extends AppCompatActivity {
 
     public static Context mContext;
 
-    SharedPreferences device_preferences, settings_preferences;
+    static SharedPreferences device_preferences, settings_preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,7 +140,7 @@ public class ConsumptionActivity extends AppCompatActivity {
         device_preferences = getSharedPreferences("Device Info", MODE_PRIVATE);
         String connectedAddress = device_preferences.getString("last_address", "");
         String connectedName = device_preferences.getString("last_name", "");
-        autoConnect = !connectedAddress.equals("") && settings_preferences.getBoolean("s3", true);
+        autoConnect = !connectedAddress.equals("") && settings_preferences.getBoolean("s3", true) && MainActivity.isAppRunning;
         System.out.println("connectedAddress: " + connectedAddress + ", autoConnect: " + autoConnect);
 
         if (autoConnect) {
@@ -379,25 +382,90 @@ public class ConsumptionActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        //TODO: 뒤로가기 버튼 눌렀을 때!
+        if (btconnect) {
+            showDialog(ConsumptionActivity.this, "Are you sure want to exit?", "확인을 누르면 블루투스 연결이 종료됩니다.");
+        } else {
+            //앱 종료시키기
+            moveTaskToBack(true);
+            finish();
+            android.os.Process.killProcess(android.os.Process.myPid());
+        }
+
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
-        Intent intent = new Intent(this, BleConnectionService.class);
-        stopService(intent);
 
-        SharedPreferences preferences = getSharedPreferences("Device Info", MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();  //Editor를 preferences에 쓰겠다고 연결
-        if (settings_preferences.getBoolean("s3", true)) {
-            editor.putString("last_address", device_preferences.getString("address", ""));
-            editor.putString("last_name", device_preferences.getString("name", ""));
-        }
-        editor.putString("address", "");
-        editor.putString("name", "");
-
-        editor.commit();  //항상 commit & apply 를 해주어야 저장이 된다.
     }
 
+    public static void showDialog(Context context, String title, String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(title)
+                .setMessage(message)
+                .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        Toast.makeText(context, "블루투스 연결을 해제합니다.", Toast.LENGTH_SHORT).show();
+                        HM10ConnectionService.m_bleConnectionService.disconnect();
+                        Intent intent1 = new Intent(context, HM10ConnectionService.class);
+                        context.stopService(intent1);
+                        Intent intent2 = new Intent(context, BleConnectionService.class);
+                        context.stopService(intent2);
+
+
+                        if (settings_preferences.getBoolean("s2", true)) {
+
+                            //TODO: 트립 저장
+                            LocalDate currentDate = LocalDate.now();
+                            String now = currentDate.toString();
+                            String nowTime = now.replaceAll("-", ".");
+                            saveTrip(tripId, nowTime);
+
+                            //TODO: 마지막으로 연결한 디바이스 정보 저장
+                            SharedPreferences.Editor editor = device_preferences.edit();  //Editor를 preferences에 쓰겠다고 연결
+                            if (settings_preferences.getBoolean("s3", true)) {
+                                editor.putString("last_address", device_preferences.getString("address", ""));
+                                editor.putString("last_name", device_preferences.getString("name", ""));
+                            }
+                            editor.putString("address", "");
+                            editor.putString("name", "");
+
+                            editor.commit();  //항상 commit & apply 를 해주어야 저장이 된다.
+
+
+                            //메인 액티비티로 !!
+                            Intent intent = new Intent(context, MainActivity.class);
+                            intent.putExtra("CONTEXT", "CONSUMPTION");
+                            context.startActivity(intent);
+
+                        } else {
+                            //TODO: #init 으로 되어있는 트립 삭제
+                            dbHelper.deleteGarbage();
+
+                            //메인 액티비티로 !!
+                            Intent intent = new Intent(context, MainActivity.class);
+                            intent.putExtra("CONTEXT", "CONSUMPTION");
+                            context.startActivity(intent);
+                        }
+                    }
+                })
+                .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        //메인 액티비티로 !!
+                        Intent intent = new Intent(context, MainActivity.class);
+                        intent.putExtra("CONTEXT", "CONSUMPTION");
+                        context.startActivity(intent);
+                    }
+                })
+                .show();
+    }
 }

@@ -1,7 +1,14 @@
 package com.activerecycle.tripgauge;
 
+import static com.activerecycle.tripgauge.bluetooth.HM10ConnectionService.saveTrip;
+import static com.activerecycle.tripgauge.bluetooth.HM10ConnectionService.tripId;
+
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -9,12 +16,30 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import android.text.InputFilter;
+import android.text.Spanned;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
+import com.activerecycle.tripgauge.bluetooth.BleConnectionService;
+import com.activerecycle.tripgauge.bluetooth.HM10ConnectionService;
 import com.activerecycle.tripgauge.bluetooth.R;
+
+import java.time.LocalDate;
+import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_CODE = 100;
+
+    static DBHelper dbHelper;
+
+    static SharedPreferences device_preferences;
+    static SharedPreferences settings_preferences;
+
+    public static boolean isAppRunning;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,6 +47,10 @@ public class MainActivity extends AppCompatActivity {
 
         // 권한을 체크하고 없는 경우 권한을 요청
         checkAndRequestPermissions();
+
+        dbHelper = new DBHelper(MainActivity.this, 1);
+        settings_preferences = getSharedPreferences("Setting Info", MODE_PRIVATE);
+        device_preferences = getSharedPreferences("Device Info", MODE_PRIVATE);
     }
 
     private void checkAndRequestPermissions() {
@@ -113,7 +142,44 @@ public class MainActivity extends AppCompatActivity {
         // 필요한 작업을 수행
         // 이 메서드 내에서만 권한이 허용된 것을 가정하고 작업을 수행
         // 이 메서드를 호출하기 전에는 권한을 허용하는 대화상자가 표시되었을 것임
+        isAppRunning = true;
         Intent intent = new Intent(MainActivity.this, ConsumptionActivity.class);
         startActivity(intent);
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        isAppRunning = false;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        try {
+            // Consumption 액티비티에서 돌아왔을 때
+            Intent intent = getIntent();
+            String context = intent.getStringExtra("CONTEXT");
+            if (context.equals("CONSUMPTION")) {
+                isAppRunning = false;
+                //앱 종료시키기
+                finishAndRemoveTask();
+                moveTaskToBack(true);
+                android.os.Process.killProcess(android.os.Process.myPid());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            // 처음 실행할 때
+            isAppRunning = true;
+            Intent intent = new Intent(MainActivity.this, ConsumptionActivity.class);
+            startActivity(intent);
+        }
+
+
+        //checkAndRequestPermissions();
+        //performRequiredTasks();
+    }
+
+
 }
