@@ -134,7 +134,8 @@ public class HM10ConnectionService extends Service {
                         tv_percent.setTextColor(Color.WHITE);
 
                         LocalDate currentDate = LocalDate.now();
-                        String nowTime = currentDate.toString();
+                        String now = currentDate.toString();
+                        String nowTime = now.replaceAll("-", ".");
                         saveTrip(tripId, nowTime);
 
                         // 블루투스 연결 안 된 상태이면
@@ -330,7 +331,8 @@ public class HM10ConnectionService extends Service {
                             countFlag++;
                             if (countFlag % 5 == 0) {  //5번마다 (10초 단위로) 로그를 저장함
                                 LocalDate currentDate = LocalDate.now();
-                                String nowTime = currentDate.toString();
+                                String now = currentDate.toString();
+                                String nowTime = now.replaceAll("-", ".");
                                 dbHelper.insert_TripLog(nowTime, volt, amp);
                                 //------------------확인을 위한 출력 코드-------------//
                                 String allLog = dbHelper.getLog();

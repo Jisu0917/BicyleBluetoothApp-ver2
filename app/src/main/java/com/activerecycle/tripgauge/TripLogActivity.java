@@ -146,8 +146,6 @@ public class TripLogActivity extends AppCompatActivity {
                         file = new File(directory,filename);
                     }
 
-                    System.out.println("file: " + file);  //TODO: 삭제하기 ( 임시, 확인용 )
-
                     FileOutputStream output = new FileOutputStream(file);
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, output);
                     output.flush();
@@ -211,15 +209,17 @@ public class TripLogActivity extends AppCompatActivity {
                     e.printStackTrace();
                     return;
                 }
-            } else {
-                long mNow = System.currentTimeMillis();
-                Date mDate = new Date(mNow);
-                SimpleDateFormat mFormat = new SimpleDateFormat("yyyy.MM.dd hh:mm:ss");
-                mFormat.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
-                String nowTime = mFormat.format(mDate);
-                //showSaveTripDialog(dbHelper.getTripLogLastId() + 1, nowTime);
-                saveTrip(nowTime);
-                return; }
+            }
+//            else {
+//                // 이게 자꾸 호출됨!!!!
+//                long mNow = System.currentTimeMillis();
+//                Date mDate = new Date(mNow);
+//                SimpleDateFormat mFormat = new SimpleDateFormat("yyyy.MM.dd hh:mm:ss");
+//                mFormat.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+//                String nowTime = mFormat.format(mDate);
+//                //showSaveTripDialog(dbHelper.getTripLogLastId() + 1, nowTime);
+//                saveTrip(nowTime);
+//                return; }
         }
 
         graph_log.maxW = dbHelper.getMaxW(tableId);
@@ -401,43 +401,43 @@ public class TripLogActivity extends AppCompatActivity {
 
     }
 
-    private void showSaveTripDialog(final String nowTime) {
-        View dialogView = (View) View.inflate(
-                TripLogActivity.this, R.layout.dialog_savetrip, null);
-        android.app.AlertDialog.Builder dig = new android.app.AlertDialog.Builder(TripLogActivity.this, R.style.Theme_Dialog);
-        dig.setView(dialogView);
-        dig.setTitle("Save this trip!");
-
-        if ( getApplicationContext().equals(TripLogActivity.this) ) {
-            Toast.makeText(getApplicationContext(), "한글, 영문, 숫자만 입력 가능합니다.", Toast.LENGTH_SHORT).show();
-        }
-        final EditText editText = (EditText) dialogView.findViewById(R.id.editText_tripTitle);
-        editText.setFilters(new InputFilter[]{new InputFilter() {
-            @Override
-            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-                Pattern ps = Pattern.compile("^[a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ :()_+]+$");
-                if (source.equals("") || ps.matcher(source).matches()) {
-                    return source;
-                }
-                return "";
-            }
-        }});
-
-        dig.setNegativeButton("Cancel", null);
-        dig.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                tripName = String.valueOf(editText.getText());
-
-                saveTrip(nowTime);
-
-            }
-        });
-
-        dig.setCancelable(false);
-        dig.show();
-    }
+//    private void showSaveTripDialog(final String nowTime) {
+//        View dialogView = (View) View.inflate(
+//                TripLogActivity.this, R.layout.dialog_savetrip, null);
+//        android.app.AlertDialog.Builder dig = new android.app.AlertDialog.Builder(TripLogActivity.this, R.style.Theme_Dialog);
+//        dig.setView(dialogView);
+//        dig.setTitle("Save this trip!");
+//
+//        if ( getApplicationContext().equals(TripLogActivity.this) ) {
+//            Toast.makeText(getApplicationContext(), "한글, 영문, 숫자만 입력 가능합니다.", Toast.LENGTH_SHORT).show();
+//        }
+//        final EditText editText = (EditText) dialogView.findViewById(R.id.editText_tripTitle);
+//        editText.setFilters(new InputFilter[]{new InputFilter() {
+//            @Override
+//            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+//                Pattern ps = Pattern.compile("^[a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ :()_+]+$");
+//                if (source.equals("") || ps.matcher(source).matches()) {
+//                    return source;
+//                }
+//                return "";
+//            }
+//        }});
+//
+//        dig.setNegativeButton("Cancel", null);
+//        dig.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//
+//                tripName = String.valueOf(editText.getText());
+//
+//                saveTrip(nowTime);
+//
+//            }
+//        });
+//
+//        dig.setCancelable(false);
+//        dig.show();
+//    }
 
     private void saveTrip(String nowTime) {
 

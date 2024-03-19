@@ -195,7 +195,8 @@ public class ListOfScansActivity extends AppCompatActivity {
                         tv_percent.setTextColor(Color.WHITE);
 
                         LocalDate currentDate = LocalDate.now();
-                        String nowTime = currentDate.toString();
+                        String now = currentDate.toString();
+                        String nowTime = now.replaceAll("-", ".");
                         saveTrip(HM10ConnectionService.tripId, nowTime);
 
                         // 블루투스 연결 안 된 상태이면

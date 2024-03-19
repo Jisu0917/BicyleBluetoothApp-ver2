@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/black"
             android:textSize="16sp"
-            android:text="Untitled" />
+            android:text="title" />
 
 
 <!--    &lt;!&ndash;     선 긋기 &ndash;&gt;-->
