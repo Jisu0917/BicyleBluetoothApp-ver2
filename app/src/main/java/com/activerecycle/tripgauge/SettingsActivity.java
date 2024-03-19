@@ -73,7 +73,7 @@ public class SettingsActivity extends AppCompatActivity {
                     ConsumptionActivity.tv_KPH.setText("KPH");
                     ConsumptionActivity.tv_distFlag.setText("Km");
                     if (!ConsumptionActivity.btconnect) {
-                        ConsumptionActivity.tv_distance.setText("00.00 Km");
+                        ConsumptionActivity.tv_distance.setText("00.00");
                     }
                 } else {
                     distFlag = "Mi";
@@ -81,7 +81,7 @@ public class SettingsActivity extends AppCompatActivity {
                     ConsumptionActivity.tv_KPH.setText("MPH");
                     ConsumptionActivity.tv_distFlag.setText("Mi");
                     if (!ConsumptionActivity.btconnect) {
-                        ConsumptionActivity.tv_distance.setText("00.00 Mi");
+                        ConsumptionActivity.tv_distance.setText("00.00");
                     }
                 }
             }
