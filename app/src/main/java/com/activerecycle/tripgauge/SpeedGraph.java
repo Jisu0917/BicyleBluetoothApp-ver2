@@ -1,5 +1,6 @@
 package com.activerecycle.tripgauge;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -7,6 +8,7 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 
 import androidx.annotation.Nullable;
 
@@ -15,11 +17,15 @@ public class SpeedGraph extends View {
         super(context, attrs);
     }
 
+    final int MAX_SPEED = 25;
     public int speed;
     int sweepAngle;
     int maxAngle;
-
+    private ValueAnimator animator;
+    private float sweepingAngle = 0;
     boolean btconnected = false;
+
+    static int previousSpeed = 0;
 
     @Override
     protected void onDraw(android.graphics.Canvas canvas) {
@@ -29,11 +35,12 @@ public class SpeedGraph extends View {
             // 블루투스 연결 안 된 상태를 나타냄
             sweepAngle = 3;
             btconnected = false;
+            previousSpeed = 0;
         } else {
             btconnected = true;
-            sweepAngle = 260 * speed / 30;
+            sweepAngle = getSweepAngle(speed);
         }
-        maxAngle = 260 * 25 / 30;
+        maxAngle = getSweepAngle(MAX_SPEED);
 
 
         //핸드폰 화면크기 가져오기
@@ -64,21 +71,51 @@ public class SpeedGraph extends View {
             canvas.drawArc(rect, 140, sweepAngle, false, pnt_red);
 
         } else {
+            if (speed <= 30) {
+                animator = ValueAnimator.ofFloat(getSweepAngle(previousSpeed), sweepAngle); // 시작 각도와 종료 각도 설정
+            } else {
+                animator = ValueAnimator.ofFloat(getSweepAngle(previousSpeed), getSweepAngle(30)); // 시작 각도와 종료 각도 설정
+            }
+            animator.setDuration(3000); // 애니메이션 지속 시간 설정
+            animator.setInterpolator(new AccelerateDecelerateInterpolator()); // 가속도와 감속도를 조절하는 인터폴레이터 설정
+            animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    sweepingAngle = (float) animation.getAnimatedValue();
+                    invalidate(); // 그래픽을 다시 그리도록 요청
+                }
+            });
+
+
             if (sweepAngle < maxAngle) {
                 Paint pnt_green = new Paint();
                 pnt_green.setStrokeWidth(50f);
                 pnt_green.setColor(Color.rgb(146, 208, 80));
                 pnt_green.setStyle(Paint.Style.STROKE);
 
-                canvas.drawArc(rect, 140, sweepAngle, false, pnt_green);
+                canvas.drawArc(rect, 140, sweepingAngle, false, pnt_green);
+
+                previousSpeed = speed;
+
             } else {
                 Paint pnt_orange = new Paint();
                 pnt_orange.setStrokeWidth(50f);
                 pnt_orange.setColor(Color.rgb(255, 192, 0));
                 pnt_orange.setStyle(Paint.Style.STROKE);
 
-                canvas.drawArc(rect, 140, sweepAngle, false, pnt_orange);
+                canvas.drawArc(rect, 140, sweepingAngle, false, pnt_orange);
+
+                previousSpeed = speed;
             }
         }
+    }
+
+    public void startAnimation() {
+        animator.start();
+    }
+
+    private int getSweepAngle(int speed) {
+
+        return 260 * speed / 30;
     }
 }

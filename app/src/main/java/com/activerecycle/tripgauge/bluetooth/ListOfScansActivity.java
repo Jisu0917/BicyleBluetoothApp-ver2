@@ -277,7 +277,7 @@ public class ListOfScansActivity extends AppCompatActivity {
                         tv_ready.setTextColor(Color.rgb(255, 0, 0));  //red
 
                         tv_w.setText("0W");
-                        tv_distance.setText("00.00 Km");
+                        tv_distance.setText("00.00");
 
                         // 배터리
                         //soc = 0;

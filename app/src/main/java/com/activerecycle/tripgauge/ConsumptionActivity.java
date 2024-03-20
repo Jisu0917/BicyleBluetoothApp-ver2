@@ -234,13 +234,13 @@ public class ConsumptionActivity extends AppCompatActivity {
                 previousLon = currentLon;
 
                 // 주행 속도
-                speed = (int) location.getSpeed();
+                speed = (int) location.getSpeed();// 테스트 : * 10;
                 tv_speed.setText(speed + "");
                 // 주행 속도 화면에 반영
                 graph_speed.speed = speed;
-                graph_speed.invalidate();  //그래프 화면 갱신
+//                graph_speed.invalidate();  //그래프 화면 갱신
+                graph_speed.startAnimation();
 
-                Toast.makeText(mContext, "speed:" + speed, Toast.LENGTH_SHORT).show();
                 if (btconnect && speed > 0)  {
                     HM10ConnectionService.btStartFlag = true;
 
@@ -289,7 +289,8 @@ public class ConsumptionActivity extends AppCompatActivity {
                     tv_speed.setText("0");
                     tv_speed.setTextColor(Color.WHITE);
                     graph_speed.speed = 0;
-                    graph_speed.invalidate();
+//                    graph_speed.invalidate();
+                    graph_speed.startAnimation();
                     tv_KPH.setTextColor(Color.WHITE);
                     tv_distance.setText("00.00");
                 }
