@@ -210,6 +210,8 @@ public class ConsumptionActivity extends AppCompatActivity {
         });
         blinkThread.start();
 
+
+
         // gps 주행 속도 측정
         final LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         final LocationListener gpsLocationListener = new LocationListener() {
@@ -230,57 +232,69 @@ public class ConsumptionActivity extends AppCompatActivity {
                 previousLat = currentLat;
                 previousLon = currentLon;
 
-                // 총 이동 거리 화면에 반영
-                if (tv_odo.getText().equals("ODO")) {
-                    if (settings_preferences.getString("distFlag", "").equals("Mi")) {
-                        tv_distance.setText(String.format("%.2f", totalDistance));
-                        tv_distFlag.setText("Mi");
-                    } else {
-                        tv_distance.setText(String.format("%.2f", KPHtoMPH(totalDistance)));
-                        tv_distFlag.setText("Km");
-                    }
-                } else if (tv_odo.getText().equals("TRIPA")) {
-                    if (settings_preferences.getString("distFlag", "").equals("Mi")) {
-                        tv_distance.setText(String.format("%.2f", tripADistance));
-                        tv_distFlag.setText("Mi");
-                    } else {
-                        tv_distance.setText(String.format("%.2f", KPHtoMPH(tripADistance)));
-                        tv_distFlag.setText("Km");
-                    }
-                } else if (tv_odo.getText().equals("TRIPB")) {
-                    if (settings_preferences.getString("distFlag", "").equals("Mi")) {
-                        tv_distance.setText(String.format("%.2f", tripBDistance));
-                        tv_distFlag.setText("Mi");
-                    } else {
-                        tv_distance.setText(String.format("%.2f", KPHtoMPH(tripBDistance)));
-                        tv_distFlag.setText("Km");
-                    }
-                }
-
                 // 주행 속도
                 speed = (int) location.getSpeed();
+                Toast.makeText(ConsumptionActivity.this, "speed: " + speed, Toast.LENGTH_SHORT).show();
+                if (btconnect && speed > 0)  {
+                    HM10ConnectionService.btStartFlag = true;
+
+                    // 총 이동 거리 화면에 반영
+                    if (tv_odo.getText().equals("ODO")) {
+                        if (settings_preferences.getString("distFlag", "").equals("Mi")) {
+                            tv_distance.setText(String.format("%.2f", totalDistance));
+                            tv_distFlag.setText("Mi");
+                        } else {
+                            tv_distance.setText(String.format("%.2f", KPHtoMPH(totalDistance)));
+                            tv_distFlag.setText("Km");
+                        }
+                    } else if (tv_odo.getText().equals("TRIPA")) {
+                        if (settings_preferences.getString("distFlag", "").equals("Mi")) {
+                            tv_distance.setText(String.format("%.2f", tripADistance));
+                            tv_distFlag.setText("Mi");
+                        } else {
+                            tv_distance.setText(String.format("%.2f", KPHtoMPH(tripADistance)));
+                            tv_distFlag.setText("Km");
+                        }
+                    } else if (tv_odo.getText().equals("TRIPB")) {
+                        if (settings_preferences.getString("distFlag", "").equals("Mi")) {
+                            tv_distance.setText(String.format("%.2f", tripBDistance));
+                            tv_distFlag.setText("Mi");
+                        } else {
+                            tv_distance.setText(String.format("%.2f", KPHtoMPH(tripBDistance)));
+                            tv_distFlag.setText("Km");
+                        }
+                    }
 
 
-                //TODO: 속도 MAX 이상 경고음
-                if (SettingsActivity.speedFlag && ConsumptionActivity.speed >= 25) {
-                    //BeepPlayer.playBeep(getApplicationContext());
-                    startService(new Intent(getApplicationContext(), BeepService.class));
-                }
+                    //TODO: 속도 MAX 이상 경고음
+                    if (SettingsActivity.speedFlag && ConsumptionActivity.speed >= 25) {
+                        //BeepPlayer.playBeep(getApplicationContext());
+                        startService(new Intent(getApplicationContext(), BeepService.class));
+                    }
 
 
-                // 주행 속도 화면에 반영
-                graph_speed.speed = speed;
-                graph_speed.invalidate();  //그래프 화면 갱신
+                    // 주행 속도 화면에 반영
+                    graph_speed.speed = speed;
+                    graph_speed.invalidate();  //그래프 화면 갱신
 
-                tv_speed.setText(speed+"");
+                    tv_speed.setText(speed + "");
 
-                if (speed > 25) {
-                    tv_speed.setTextColor(Color.rgb(255, 192, 0));
-                    tv_KPH.setTextColor(Color.rgb(255, 192, 0));
-                } else {
+                    if (speed > 25) {
+                        tv_speed.setTextColor(Color.rgb(255, 192, 0));
+                        tv_KPH.setTextColor(Color.rgb(255, 192, 0));
+                    } else {
+                        tv_speed.setTextColor(Color.WHITE);
+                        tv_KPH.setTextColor(Color.WHITE);
+                    }
+                } else if (!btconnect) {
+                    tv_speed.setText("0");
                     tv_speed.setTextColor(Color.WHITE);
+                    graph_speed.speed = 0;
+                    graph_speed.invalidate();
                     tv_KPH.setTextColor(Color.WHITE);
+                    tv_distance.setText("00.00");
                 }
+
             }
         };
 

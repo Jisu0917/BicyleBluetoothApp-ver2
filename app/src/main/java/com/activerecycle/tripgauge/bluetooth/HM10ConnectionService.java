@@ -44,6 +44,7 @@ public class HM10ConnectionService extends Service {
 
     TripLogActivity tripLogActivity;
 
+    public static boolean btStartFlag;
     private int countFlag;
     int volt, amp , soc;
 
@@ -209,6 +210,8 @@ public class HM10ConnectionService extends Service {
                         tv_ready.setText("Connect");
                         tv_ready.setTextColor(Color.rgb(255, 0, 0));  //red
 
+                        btStartFlag = false;
+
                         //stopSelf();
                     }
                     break;
@@ -225,15 +228,6 @@ public class HM10ConnectionService extends Service {
                     ConsumptionActivity.btconnect = true;
                     blinkThread.interrupt();
 
-                    //TODO : -- DB - TripSTATS 테이블 row 하나 생성
-                    tripId = dbHelper.init_TripSTATS();
-                    countFlag = 0;
-
-                    volt = 0; amp = 0; soc = 10;
-
-                    tv_ready.setText("Ready");
-                    tv_ready.setTextColor(Color.rgb(146, 208, 80));  //green
-
                     // "A" 문자 보내기 - 연결 확인!
                     m_bleConnectionService.writeToBluetoothSerial(StaticResources.COMMUNICATION_ANDROID_TO_HM10);
 
@@ -242,33 +236,23 @@ public class HM10ConnectionService extends Service {
                     editor.putString("name", mDeviceName);
                     editor.commit();
 
+                    tv_ready.setText("Ready");
+                    tv_ready.setTextColor(Color.rgb(146, 208, 80));  //green
+
                     try {
                         ListOfScansActivity.setDeviceListView(context);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
 
-//                    LayoutInflater layoutInflater = LayoutInflater.from(context);
-//                    View customView = layoutInflater.inflate(R.layout.row, null);
-//
-//                    ((LinearLayout) customView.findViewById(R.id.color_contianer)).setBackgroundResource(R.drawable.background_rounding_green);
-//                    ((TextView) customView.findViewById(R.id.text1)).setTextColor(Color.WHITE);
-//                    ((TextView) customView.findViewById(R.id.tv_connected)).setTextColor(Color.WHITE);
-//                    ((TextView) customView.findViewById(R.id.tv_connected)).setText("Connected");
-//
-//                    ConsumptionActivity.btconnect = true;
-//                    tv_ready.setText("Connect");
-//                    tv_ready.setTextColor(Color.rgb(34, 177, 77));  //green
 
-//                    startThread();
+                    //TODO : -- DB - TripSTATS 테이블 row 하나 생성
+                    tripId = dbHelper.init_TripSTATS();
+                    countFlag = 0;
 
-//                    customView.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View view) {
-//                            // 연결 해제하기
-//
-//                        }
-//                    });
+                    volt = 0;
+                    amp = 0;
+                    soc = 10;
 
 
                     break;
@@ -281,71 +265,73 @@ public class HM10ConnectionService extends Service {
 //                    tv_what_do_u_saying.setText(txData);
 
                     // txData : v=00/a=00/s=00
-                    try {
-                        String voltStr = txData.split("/")[0];
-                        String v = voltStr.split("=")[0];
-                        if (v.equals("v")) {
-                            volt = Integer.parseInt(voltStr.split("=")[1]);
-                        }
-                        String ampStr = txData.split("/")[1];
-                        String a = ampStr.split("=")[0];
-                        if (a.equals("a")) {
-                            amp = Integer.parseInt(ampStr.split("=")[1]);
-                        }
-                        String socStr = txData.split("/")[2];
-                        String s = socStr.split("=")[0];
-                        if (s.equals("s")) {
-                            soc = Integer.parseInt(socStr.split("=")[1]);
-                        }
+                    if (btStartFlag) {
+                        try {
+                            String voltStr = txData.split("/")[0];
+                            String v = voltStr.split("=")[0];
+                            if (v.equals("v")) {
+                                volt = Integer.parseInt(voltStr.split("=")[1]);
+                            }
+                            String ampStr = txData.split("/")[1];
+                            String a = ampStr.split("=")[0];
+                            if (a.equals("a")) {
+                                amp = Integer.parseInt(ampStr.split("=")[1]);
+                            }
+                            String socStr = txData.split("/")[2];
+                            String s = socStr.split("=")[0];
+                            if (s.equals("s")) {
+                                soc = Integer.parseInt(socStr.split("=")[1]);
+                            }
 
-                        //TODO: 배터리 5% 이하 경고음
-                        if (soc <= 5 && settings_preferences.getBoolean("s4", true)) {//SettingsActivity.socFlag &&
-                            startService(new Intent(getApplicationContext(), BeepService.class));
-                        }
-                        tv_w.setText(volt * amp + "W");
-                        tv_w.invalidate();
+                            //TODO: 배터리 5% 이하 경고음
+                            if (soc <= 5 && settings_preferences.getBoolean("s4", true)) {//SettingsActivity.socFlag &&
+                                startService(new Intent(getApplicationContext(), BeepService.class));
+                            }
+                            tv_w.setText(volt * amp + "W");
+                            tv_w.invalidate();
 
-                        if (soc <= 5) {
-                            // 배터리가 5% 이하이면 LOW BAT 표시
-                            tv_percent.setText("LOW%");
-                            tv_percent.setTextColor(Color.RED);
-                            tv_ready.setText("LOW BAT");
-                            tv_ready.setTextColor(Color.RED);
-                            graph_battery.soc = 3;
-                            graph_battery.invalidate();
-
-                        } else {
-                            tv_percent.setText(soc + "%");
-                            if (soc > 10) {
-                                tv_percent.setTextColor(Color.rgb(146, 208, 80));
-                            } else {
+                            if (soc <= 5) {
+                                // 배터리가 5% 이하이면 LOW BAT 표시
+                                tv_percent.setText("LOW%");
                                 tv_percent.setTextColor(Color.RED);
+                                tv_ready.setText("LOW BAT");
+                                tv_ready.setTextColor(Color.RED);
+                                graph_battery.soc = 3;
+                                graph_battery.invalidate();
+
+                            } else {
+                                tv_percent.setText(soc + "%");
+                                if (soc > 10) {
+                                    tv_percent.setTextColor(Color.rgb(146, 208, 80));
+                                } else {
+                                    tv_percent.setTextColor(Color.RED);
+                                }
+                                tv_ready.setText("Ready");
+                                tv_ready.setTextColor(Color.rgb(146, 208, 80));
+                                graph_battery.soc = soc;
+                                graph_battery.invalidate();
                             }
-                            tv_ready.setText("Ready");
-                            tv_ready.setTextColor(Color.rgb(146, 208, 80));
-                            graph_battery.soc = soc;
-                            graph_battery.invalidate();
-                        }
 
-                        if (autoSave) {
-                            countFlag++;
-                            if (countFlag % 5 == 0) {  //5번마다 (10초 단위로) 로그를 저장함
-                                LocalDate currentDate = LocalDate.now();
-                                String now = currentDate.toString();
-                                String nowTime = now.replaceAll("-", ".");
-                                dbHelper.insert_TripLog(nowTime, volt, amp);
-                                //------------------확인을 위한 출력 코드-------------//
-                                String allLog = dbHelper.getLog();
-                                System.out.println(allLog);
-                                //------------------확인을 위한 출력 코드-------------//
+                            if (autoSave) {
+                                countFlag++;
+                                if (countFlag % 5 == 0) {  //5번마다 (10초 단위로) 로그를 저장함
+                                    LocalDate currentDate = LocalDate.now();
+                                    String now = currentDate.toString();
+                                    String nowTime = now.replaceAll("-", ".");
+                                    dbHelper.insert_TripLog(nowTime, volt, amp);
+                                    //------------------확인을 위한 출력 코드-------------//
+                                    String allLog = dbHelper.getLog();
+                                    System.out.println(allLog);
+                                    //------------------확인을 위한 출력 코드-------------//
 
 
-                                tripLogActivity.showCurrentTrip(dbHelper);  //실시간 그래프 보여주기
+                                    tripLogActivity.showCurrentTrip(dbHelper);  //실시간 그래프 보여주기
+                                }
                             }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            System.out.println("printStackTrace - txData: " + txData);
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        System.out.println("printStackTrace - txData: " + txData);
                     }
                     break;
             }
