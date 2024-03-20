@@ -33,11 +33,6 @@ import java.util.regex.Pattern;
 public class MainActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_CODE = 100;
 
-    static DBHelper dbHelper;
-
-    static SharedPreferences device_preferences;
-    static SharedPreferences settings_preferences;
-
     public static boolean isAppRunning;
 
     @Override
@@ -47,10 +42,6 @@ public class MainActivity extends AppCompatActivity {
 
         // 권한을 체크하고 없는 경우 권한을 요청
         checkAndRequestPermissions();
-
-        dbHelper = new DBHelper(MainActivity.this, 1);
-        settings_preferences = getSharedPreferences("Setting Info", MODE_PRIVATE);
-        device_preferences = getSharedPreferences("Device Info", MODE_PRIVATE);
     }
 
     private void checkAndRequestPermissions() {

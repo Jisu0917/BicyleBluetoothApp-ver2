@@ -63,8 +63,8 @@ public class ConsumptionActivity extends AppCompatActivity {
     public static int speed = 0;
     double previousLat = 0.0; // 이전 위도
     double previousLon = 0.0; // 이전 경도
-    public static double totalDistance = 0.0; // 총 이동 거리
-    double tripADistance = 0.0;
+    public static double totalDistance; // 총 이동 거리
+    public static double tripADistance = 0.0;
     double tripBDistance = 0.0;
     double bef_lat, bef_long;
     public static boolean btconnect = false;
@@ -92,7 +92,7 @@ public class ConsumptionActivity extends AppCompatActivity {
 
     public static Context mContext;
 
-    static SharedPreferences device_preferences, settings_preferences;
+    static SharedPreferences odo_preferences, device_preferences, settings_preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,6 +138,9 @@ public class ConsumptionActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        odo_preferences = getSharedPreferences("ODO Info", MODE_PRIVATE);
+        totalDistance = odo_preferences.getFloat("ODO", 0.0f);
 
         settings_preferences = getSharedPreferences("Setting Info", MODE_PRIVATE);
         device_preferences = getSharedPreferences("Device Info", MODE_PRIVATE);
@@ -286,6 +289,7 @@ public class ConsumptionActivity extends AppCompatActivity {
                         tv_KPH.setTextColor(Color.WHITE);
                     }
                 } else if (!btconnect) {
+                    HM10ConnectionService.btStartFlag = false;
                     tv_speed.setText("0");
                     tv_speed.setTextColor(Color.WHITE);
                     graph_speed.speed = 0;
@@ -488,9 +492,12 @@ public class ConsumptionActivity extends AppCompatActivity {
                             }
                             editor.putString("address", "");
                             editor.putString("name", "");
-
                             editor.commit();  //항상 commit & apply 를 해주어야 저장이 된다.
 
+                            SharedPreferences.Editor editor1 = odo_preferences.edit();
+                            editor1.putFloat("ODO", (float) totalDistance);
+                            editor1.commit();
+                            ConsumptionActivity.tripADistance = 0;
 
                             //메인 액티비티로 !!
                             Intent intent = new Intent(context, MainActivity.class);
@@ -509,8 +516,12 @@ public class ConsumptionActivity extends AppCompatActivity {
                             }
                             editor.putString("address", "");
                             editor.putString("name", "");
-
                             editor.commit();  //항상 commit & apply 를 해주어야 저장이 된다.
+
+                            SharedPreferences.Editor editor1 = odo_preferences.edit();
+                            editor1.putFloat("ODO", (float) totalDistance);
+                            editor1.commit();
+                            ConsumptionActivity.tripADistance = 0;
 
                             //메인 액티비티로 !!
                             Intent intent = new Intent(context, MainActivity.class);
@@ -526,4 +537,6 @@ public class ConsumptionActivity extends AppCompatActivity {
         Typeface typeface = Typeface.createFromAsset(context.getResources().getAssets(), "gmarket_sans_medium.ttf");
         textView.setTypeface(typeface);
     }
+
+
 }

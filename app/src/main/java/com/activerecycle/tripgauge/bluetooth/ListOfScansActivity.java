@@ -3,11 +3,13 @@ package com.activerecycle.tripgauge.bluetooth;
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 import static com.activerecycle.tripgauge.ConsumptionActivity.btconnect;
 import static com.activerecycle.tripgauge.ConsumptionActivity.graph_battery;
+import static com.activerecycle.tripgauge.ConsumptionActivity.totalDistance;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_distance;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_percent;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_ready;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_w;
 import static com.activerecycle.tripgauge.bluetooth.HM10ConnectionService.dbHelper;
+import static com.activerecycle.tripgauge.bluetooth.HM10ConnectionService.odo_preferences;
 import static com.activerecycle.tripgauge.bluetooth.HM10ConnectionService.saveTrip;
 
 import android.Manifest;
@@ -322,6 +324,10 @@ public class ListOfScansActivity extends AppCompatActivity {
                         editor.putString("address", "");
                         editor.putString("name", "");
                         editor.commit();
+
+                        SharedPreferences.Editor editor1 = odo_preferences.edit();
+                        editor1.putFloat("ODO", (float) totalDistance);
+                        editor1.commit();
 
                         bluetoothScanner.startScan(scanPeriod);
                         //getDeviceListInfo(context);

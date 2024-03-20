@@ -5,6 +5,7 @@ import static com.activerecycle.tripgauge.ConsumptionActivity.blinkThread;
 import static com.activerecycle.tripgauge.ConsumptionActivity.btconnect;
 import static com.activerecycle.tripgauge.ConsumptionActivity.graph_battery;
 import static com.activerecycle.tripgauge.ConsumptionActivity.speed;
+import static com.activerecycle.tripgauge.ConsumptionActivity.totalDistance;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_KPH;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_distance;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_percent;
@@ -56,7 +57,7 @@ public class HM10ConnectionService extends Service {
     private int countFlag;
     int volt, amp , soc;
 
-    public static SharedPreferences settings_preferences, device_preferences;
+    public static SharedPreferences odo_preferences, settings_preferences, device_preferences;
 
     final int STOP_COUNT_DOWN = 10; //600000 나누기 2000 = 300
     int stopCountDown = STOP_COUNT_DOWN;
@@ -70,6 +71,7 @@ public class HM10ConnectionService extends Service {
 
         dbHelper = new DBHelper(HM10ConnectionService.this, 1);
 
+        odo_preferences = getSharedPreferences("ODO Info", MODE_PRIVATE);
         settings_preferences = getSharedPreferences("Setting Info", MODE_PRIVATE);
         device_preferences = getSharedPreferences("Device Info", MODE_PRIVATE);
     }
@@ -252,6 +254,11 @@ public class HM10ConnectionService extends Service {
                     editor.putString("name", mDeviceName);
                     editor.commit();
 
+                    SharedPreferences.Editor editor1 = odo_preferences.edit();
+                    editor1.putFloat("ODO", (float) totalDistance);
+                    editor1.commit();
+                    ConsumptionActivity.tripADistance = 0;
+
                     tv_ready.setText("Ready");
                     tv_ready.setTextColor(Color.rgb(146, 208, 80));  //green
 
@@ -270,6 +277,7 @@ public class HM10ConnectionService extends Service {
                     amp = 0;
                     soc = 10;
                     stopCountDown = STOP_COUNT_DOWN;
+                    ConsumptionActivity.tripADistance = 0;
 
 
                     break;
@@ -358,6 +366,7 @@ public class HM10ConnectionService extends Service {
                                         System.out.println("stopCountDown == 0 !!!!!!");
 
                                         ConsumptionActivity.btconnect = false;
+                                        btStartFlag = false;
 
                                         HM10ConnectionService.m_bleConnectionService.disconnect();
                                         Intent intent1 = new Intent(context, HM10ConnectionService.class);
@@ -401,6 +410,11 @@ public class HM10ConnectionService extends Service {
                                         graph_battery.invalidate();
                                         tv_percent.setText("00%");
 
+                                        tv_speed.setText("0");
+                                        tv_speed.setTextColor(Color.WHITE);
+                                        tv_KPH.setTextColor(Color.WHITE);
+                                        tv_distance.setText("00.00");
+
 
                                         //TODO: 그래프 깜빡깜빡 거리는 애니메이션!
                                         new Thread(new Runnable() {
@@ -439,6 +453,11 @@ public class HM10ConnectionService extends Service {
                                         editor.putString("name", "");
                                         editor.commit();
 
+                                        editor1 = odo_preferences.edit();
+                                        editor1.putFloat("ODO", (float) totalDistance);
+                                        editor1.commit();
+                                        ConsumptionActivity.tripADistance = 0;
+
                                         bluetoothScanner.startScan(scanPeriod);
                                     }
                                 }
@@ -458,7 +477,7 @@ public class HM10ConnectionService extends Service {
 
 //        if (tripName == null) { tripName = "Untitled"; }
         if (dbHelper.getAvgPwrW(tripId) == -999 || dbHelper.getUsedW(tripId) == -999 || dbHelper.getMaxW(tripId) == -2) return;
-        dbHelper.update_TripSTATS(tripId, nowTime, dbHelper.getMaxW(tripId), dbHelper.getUsedW(tripId), (int)(ConsumptionActivity.totalDistance * 1000), dbHelper.getAvgPwrW(tripId));
+        dbHelper.update_TripSTATS(tripId, nowTime, dbHelper.getMaxW(tripId), dbHelper.getUsedW(tripId), (int)(ConsumptionActivity.tripADistance * 1000), dbHelper.getAvgPwrW(tripId));
         dbHelper.update_TripName(tripId, "Untitled");
 
         //Toast.makeText(ConsumptionActivity.this, "트립이 저장되었습니다.", Toast.LENGTH_SHORT).show();
