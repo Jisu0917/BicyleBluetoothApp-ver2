@@ -32,6 +32,7 @@ import com.activerecycle.tripgauge.bluetooth.R;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -46,7 +47,12 @@ public class TripLogActivity extends AppCompatActivity {
     ConstraintLayout container;
     LinearLayout recordlist_layout;
     ImageButton imgbtn_back, btn_share;
-    static TextView tv_back, tv_untitled, tv_date, tv_used_wh, tv_dist_km, tv_avrpwr_w;
+    static TextView tv_back;
+    static TextView tv_untitled;
+    public static TextView tv_date;
+    static TextView tv_used_wh;
+    static TextView tv_dist_km;
+    static TextView tv_avrpwr_w;
     static LogGraph graph_log;
 
     DBHelper dbHelper;
@@ -75,6 +81,13 @@ public class TripLogActivity extends AppCompatActivity {
         tv_used_wh = (TextView) findViewById(R.id.tv_used_wh);
         tv_dist_km = (TextView) findViewById(R.id.tv_dist_km);
         tv_avrpwr_w = (TextView) findViewById(R.id.tv_avrpwr_w);
+
+        if (ConsumptionActivity.btconnect) {
+            LocalDate currentDate = LocalDate.now();
+            String now = currentDate.toString();
+            String nowTime = now.replaceAll("-", ".");
+            tv_date.setText(nowTime + " (CURRENT)");
+        }
 
         graph_log = (LogGraph) findViewById(R.id.graph_log);
 
@@ -192,10 +205,18 @@ public class TripLogActivity extends AppCompatActivity {
                     public void run() {
                         tv_used_wh.setText(LogGraph.usedW +"Wh");
                         tv_avrpwr_w.setText(LogGraph.avrW + "W");
+                        LocalDate currentDate = LocalDate.now();
+                        String now = currentDate.toString();
+                        String nowTime = now.replaceAll("-", ".");
+                        tv_date.setText(nowTime + " (CURRENT)");
+                        double ddist = ConsumptionActivity.totalDistance;
+                        tv_dist_km.setText(String.format("%.2f", ddist) + "KM");
+                        tv_untitled.setText("Untitled");
                     }
                 });
 
             }
+
         }
     }
 
@@ -297,6 +318,11 @@ public class TripLogActivity extends AppCompatActivity {
             graph_log.setVisibility(View.INVISIBLE);
         } else {
             graph_log.setVisibility(View.VISIBLE);
+
+            LocalDate currentDate = LocalDate.now();
+            String now = currentDate.toString();
+            String nowTime = now.replaceAll("-", ".");
+            tv_date.setText(nowTime + " (CURRENT)");
         }
     }
 

@@ -339,6 +339,7 @@ public class HM10ConnectionService extends Service {
                                 System.out.println(allLog);
                                 //------------------확인을 위한 출력 코드-------------//
 
+
                                 tripLogActivity.showCurrentTrip(dbHelper);  //실시간 그래프 보여주기
                             }
                         }
