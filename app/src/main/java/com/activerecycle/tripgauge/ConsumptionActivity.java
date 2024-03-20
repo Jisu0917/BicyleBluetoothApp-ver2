@@ -234,7 +234,6 @@ public class ConsumptionActivity extends AppCompatActivity {
 
                 // 주행 속도
                 speed = (int) location.getSpeed();
-                Toast.makeText(ConsumptionActivity.this, "speed: " + speed, Toast.LENGTH_SHORT).show();
                 if (btconnect && speed > 0)  {
                     HM10ConnectionService.btStartFlag = true;
 

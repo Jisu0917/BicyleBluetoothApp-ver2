@@ -3,9 +3,11 @@ package com.activerecycle.tripgauge.bluetooth;
 import static com.activerecycle.tripgauge.ConsumptionActivity.autoSave;
 import static com.activerecycle.tripgauge.ConsumptionActivity.blinkThread;
 import static com.activerecycle.tripgauge.ConsumptionActivity.graph_battery;
+import static com.activerecycle.tripgauge.ConsumptionActivity.tv_KPH;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_distance;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_percent;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_ready;
+import static com.activerecycle.tripgauge.ConsumptionActivity.tv_speed;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_w;
 
 import android.app.Service;
@@ -151,6 +153,11 @@ public class HM10ConnectionService extends Service {
                         graph_battery.soc = soc;
                         graph_battery.invalidate();
                         tv_percent.setText("00%");
+
+                        tv_speed.setText("0");
+                        tv_speed.setTextColor(Color.WHITE);
+                        tv_KPH.setTextColor(Color.WHITE);
+                        tv_distance.setText("00.00");
 
 
                         //TODO: 그래프 깜빡깜빡 거리는 애니메이션!
