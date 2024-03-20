@@ -115,7 +115,11 @@ public class SpeedGraph extends View {
     }
 
     public void startAnimation() {
-        animator.start();
+        try {
+            animator.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private int getSweepAngle(int speed) {

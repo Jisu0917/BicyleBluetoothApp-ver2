@@ -294,8 +294,8 @@ public class ConsumptionActivity extends AppCompatActivity {
                     tv_speed.setText("0");
                     tv_speed.setTextColor(Color.WHITE);
                     graph_speed.speed = 0;
-//                    graph_speed.invalidate();
-                    graph_speed.startAnimation();
+                    graph_speed.invalidate();
+//                    graph_speed.startAnimation();
                     tv_KPH.setTextColor(Color.WHITE);
                     tv_distance.setText("00.00");
                 }
