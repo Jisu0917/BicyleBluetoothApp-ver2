@@ -35,7 +35,7 @@ public class SpeedGraph extends View {
             // 블루투스 연결 안 된 상태를 나타냄
             sweepAngle = 3;
             btconnected = false;
-            previousSpeed = 0;
+            previousSpeed = getSpeedByAngle(3);
         } else {
             btconnected = true;
             sweepAngle = getSweepAngle(speed);
@@ -63,12 +63,16 @@ public class SpeedGraph extends View {
         canvas.drawArc(rect, 140, 260, false, pnt_gray);
 
         if (!btconnected) {
+            previousSpeed = getSpeedByAngle(3);
+
             Paint pnt_red = new Paint();
             pnt_red.setStrokeWidth(50f);
             pnt_red.setColor(Color.rgb(255, 0, 0));
             pnt_red.setStyle(Paint.Style.STROKE);
 
             canvas.drawArc(rect, 140, sweepAngle, false, pnt_red);
+
+            previousSpeed = getSpeedByAngle(3);
 
         } else {
             if (speed <= 30) {
@@ -117,5 +121,9 @@ public class SpeedGraph extends View {
     private int getSweepAngle(int speed) {
 
         return 260 * speed / 30;
+    }
+
+    private int getSpeedByAngle(int angle) {
+        return angle * 30 / 260;
     }
 }

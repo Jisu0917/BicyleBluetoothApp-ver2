@@ -242,10 +242,11 @@ public class ConsumptionActivity extends AppCompatActivity {
                 // 주행 속도 화면에 반영
                 graph_speed.speed = speed;
 //                graph_speed.invalidate();  //그래프 화면 갱신
-                graph_speed.startAnimation();
 
                 if (btconnect && speed > 0)  {
                     HM10ConnectionService.btStartFlag = true;
+
+                    graph_speed.startAnimation();
 
                     // 총 이동 거리 화면에 반영
                     if (tv_odo.getText().equals("ODO")) {

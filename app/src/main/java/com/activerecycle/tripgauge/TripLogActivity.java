@@ -209,7 +209,7 @@ public class TripLogActivity extends AppCompatActivity {
                         String now = currentDate.toString();
                         String nowTime = now.replaceAll("-", ".");
                         tv_date.setText(nowTime + " (CURRENT)");
-                        double ddist = ConsumptionActivity.totalDistance;
+                        double ddist = ConsumptionActivity.tripADistance;
                         tv_dist_km.setText(String.format("%.2f", ddist) + "KM");
                         tv_untitled.setText("Untitled");
                     }

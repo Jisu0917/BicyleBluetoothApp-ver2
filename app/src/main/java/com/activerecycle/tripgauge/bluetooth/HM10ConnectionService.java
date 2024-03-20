@@ -198,6 +198,10 @@ public class HM10ConnectionService extends Service {
                                     if (connection.equals(StaticResources.CONNECTION_STATE_CONNECTED)) {
                                         break;
                                     }
+
+                                    if (btconnect) {
+                                        break;
+                                    }
                                 }
                             }
                         }).start();
@@ -216,8 +220,11 @@ public class HM10ConnectionService extends Service {
                         editor.commit();
 
 
-
-                        ListOfScansActivity.setDeviceListView(context);
+                        try {
+                            ListOfScansActivity.setDeviceListView(context);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
 
                         ((LinearLayout) customView.findViewById(R.id.color_contianer)).setBackgroundResource(R.drawable.background_rounding_white);
                         ((TextView) customView.findViewById(R.id.text1)).setTextColor(Color.BLACK);
