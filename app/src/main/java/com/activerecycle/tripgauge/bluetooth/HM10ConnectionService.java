@@ -2,13 +2,19 @@ package com.activerecycle.tripgauge.bluetooth;
 
 import static com.activerecycle.tripgauge.ConsumptionActivity.autoSave;
 import static com.activerecycle.tripgauge.ConsumptionActivity.blinkThread;
+import static com.activerecycle.tripgauge.ConsumptionActivity.btconnect;
 import static com.activerecycle.tripgauge.ConsumptionActivity.graph_battery;
+import static com.activerecycle.tripgauge.ConsumptionActivity.speed;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_KPH;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_distance;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_percent;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_ready;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_speed;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_w;
+import static com.activerecycle.tripgauge.bluetooth.ListOfScansActivity.bluetoothScanner;
+import static com.activerecycle.tripgauge.bluetooth.ListOfScansActivity.mContext;
+import static com.activerecycle.tripgauge.bluetooth.ListOfScansActivity.scanPeriod;
+import static com.activerecycle.tripgauge.bluetooth.ListOfScansActivity.showDialog;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -51,6 +57,9 @@ public class HM10ConnectionService extends Service {
     int volt, amp , soc;
 
     public static SharedPreferences settings_preferences, device_preferences;
+
+    final int STOP_COUNT_DOWN = 10; //600000 나누기 2000 = 300
+    int stopCountDown = STOP_COUNT_DOWN;
 
     @Override
     public void onCreate() {
@@ -260,6 +269,7 @@ public class HM10ConnectionService extends Service {
                     volt = 0;
                     amp = 0;
                     soc = 10;
+                    stopCountDown = STOP_COUNT_DOWN;
 
 
                     break;
@@ -333,6 +343,104 @@ public class HM10ConnectionService extends Service {
 
 
                                     tripLogActivity.showCurrentTrip(dbHelper);  //실시간 그래프 보여주기
+                                }
+                                if (speed > 0) {
+                                    stopCountDown = STOP_COUNT_DOWN;
+                                } else if (speed == 0) {
+                                    /**
+                                     *  속도값이 0인 상태로 10분 이상 유지되면 블루투스 연결 해제
+                                     * */
+                                    stopCountDown--;
+                                    System.out.println("stopCountDown: " + stopCountDown);
+                                    if (stopCountDown < 0) {
+                                        //TODO: 블루투스 연결 해제
+                                        Toast.makeText(context, "10분 이상 주행이 없어 블루투스 연결이 해제되었습니다.", Toast.LENGTH_SHORT).show();
+                                        System.out.println("stopCountDown == 0 !!!!!!");
+
+                                        ConsumptionActivity.btconnect = false;
+
+                                        HM10ConnectionService.m_bleConnectionService.disconnect();
+                                        Intent intent1 = new Intent(context, HM10ConnectionService.class);
+                                        context.stopService(intent1);
+                                        Intent intent2 = new Intent(context, BleConnectionService.class);
+                                        context.stopService(intent2);
+
+                                        LayoutInflater layoutInflater = LayoutInflater.from(context);
+                                        View customView = layoutInflater.inflate(R.layout.row, null);
+
+                                        ((LinearLayout) customView.findViewById(R.id.color_contianer)).setBackgroundResource(R.drawable.background_rounding_white);
+                                        ((TextView) customView.findViewById(R.id.text1)).setTextColor(Color.BLACK);
+                                        ((TextView) customView.findViewById(R.id.tv_connected)).setTextColor(Color.rgb(34, 177, 77));  //green
+                                        ((TextView) customView.findViewById(R.id.tv_connected)).setText("Available to connect");
+
+                                        //------------------------------------------------------------//
+
+                                        tv_percent.setTextColor(Color.WHITE);
+
+                                        if (settings_preferences.getBoolean("s2", true)) {
+                                            //TODO: 트립 저장
+                                            LocalDate currentDate = LocalDate.now();
+                                            String now = currentDate.toString();
+                                            String nowTime = now.replaceAll("-", ".");
+                                            saveTrip(HM10ConnectionService.tripId, nowTime);
+                                        } else {
+                                            //TODO: #init 으로 되어있는 트립 삭제
+                                            dbHelper.deleteGarbage();
+                                        }
+
+                                        // 블루투스 연결 안 된 상태이면
+                                        tv_ready.setText("Connect");
+                                        tv_ready.setTextColor(Color.rgb(255, 0, 0));  //red
+
+                                        tv_w.setText("0W");
+                                        tv_distance.setText("00.00 Km");
+
+                                        // 배터리
+                                        //soc = 0;
+                                        graph_battery.soc = 0;
+                                        graph_battery.invalidate();
+                                        tv_percent.setText("00%");
+
+
+                                        //TODO: 그래프 깜빡깜빡 거리는 애니메이션!
+                                        new Thread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                while (!btconnect) {
+                                                    ConsumptionActivity.graph_speed.speed = 99;
+                                                    ConsumptionActivity.graph_speed.invalidate();
+
+                                                    try {
+                                                        Thread.sleep(1000);
+                                                    } catch (InterruptedException e) {
+                                                        e.printStackTrace();
+                                                    }
+
+                                                    ConsumptionActivity.graph_speed.speed = 0;
+                                                    ConsumptionActivity.graph_speed.invalidate();
+
+                                                    // 1초에 한 번 깜빡임
+                                                    try {
+                                                        Thread.sleep(1000);
+                                                    } catch (InterruptedException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                }
+                                            }
+                                        }).start();
+
+
+                                        editor = device_preferences.edit();  //Editor를 preferences에 쓰겠다고 연결
+                                        if (settings_preferences.getBoolean("s3", true)) {
+                                            editor.putString("last_address", device_preferences.getString("address", ""));
+                                            editor.putString("last_name", device_preferences.getString("name", ""));
+                                        }
+                                        editor.putString("address", "");
+                                        editor.putString("name", "");
+                                        editor.commit();
+
+                                        bluetoothScanner.startScan(scanPeriod);
+                                    }
                                 }
                             }
                         } catch (Exception e) {

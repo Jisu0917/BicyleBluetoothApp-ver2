@@ -217,6 +217,7 @@ public class ConsumptionActivity extends AppCompatActivity {
         final LocationListener gpsLocationListener = new LocationListener() {
             @Override
             public void onLocationChanged(@NonNull Location location) {
+
                 double currentLat = location.getLatitude(); // 현재 위도
                 double currentLon = location.getLongitude(); // 현재 경도
 
@@ -234,6 +235,12 @@ public class ConsumptionActivity extends AppCompatActivity {
 
                 // 주행 속도
                 speed = (int) location.getSpeed();
+                tv_speed.setText(speed + "");
+                // 주행 속도 화면에 반영
+                graph_speed.speed = speed;
+                graph_speed.invalidate();  //그래프 화면 갱신
+
+                Toast.makeText(mContext, "speed:" + speed, Toast.LENGTH_SHORT).show();
                 if (btconnect && speed > 0)  {
                     HM10ConnectionService.btStartFlag = true;
 
@@ -270,13 +277,6 @@ public class ConsumptionActivity extends AppCompatActivity {
                         //BeepPlayer.playBeep(getApplicationContext());
                         startService(new Intent(getApplicationContext(), BeepService.class));
                     }
-
-
-                    // 주행 속도 화면에 반영
-                    graph_speed.speed = speed;
-                    graph_speed.invalidate();  //그래프 화면 갱신
-
-                    tv_speed.setText(speed + "");
 
                     if (speed > 25) {
                         tv_speed.setTextColor(Color.rgb(255, 192, 0));
