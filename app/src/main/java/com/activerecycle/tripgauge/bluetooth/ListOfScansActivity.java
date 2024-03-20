@@ -26,6 +26,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -104,12 +106,14 @@ public class ListOfScansActivity extends AppCompatActivity {
             }
         });
 
+        final Animation rotation =
+                AnimationUtils.loadAnimation(ListOfScansActivity.this, R.anim.rotate);
+
         btn_reload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //BleScanServices.scanForDevices(true,mLeScanCallback);
-
                 bluetoothScanner.startScan(scanPeriod);
+                view.startAnimation(rotation);
             }
         });
 
