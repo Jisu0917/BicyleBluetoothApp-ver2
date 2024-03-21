@@ -59,7 +59,7 @@ public class HM10ConnectionService extends Service {
 
     public static SharedPreferences odo_preferences, settings_preferences, device_preferences;
 
-    final int STOP_COUNT_DOWN = 10; //600000 나누기 2000 = 300
+    final int STOP_COUNT_DOWN = 300; //10분 == 600000 나누기 2000 == 300
     int stopCountDown = STOP_COUNT_DOWN;
 
     @Override

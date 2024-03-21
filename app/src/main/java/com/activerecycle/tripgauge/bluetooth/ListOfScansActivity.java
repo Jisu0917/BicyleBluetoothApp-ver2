@@ -14,7 +14,6 @@ import static com.activerecycle.tripgauge.bluetooth.HM10ConnectionService.saveTr
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
@@ -41,6 +40,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.activerecycle.tripgauge.ConsumptionActivity;
+import com.activerecycle.tripgauge.MyAnimation;
 import com.activerecycle.tripgauge.SettingsActivity;
 import com.activerecycle.tripgauge.TripLogActivity;
 
@@ -75,8 +75,19 @@ public class ListOfScansActivity extends AppCompatActivity {
     static Context mContext;
 
     @Override
+    public void finish() {
+        super.finish();
+
+        overridePendingTransition(0, 0); //0 for no animation
+        MyAnimation.fadeOut(findViewById(R.id.content), 500);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_connection); // Set the content to a layout with list view
+
+        MyAnimation.fadeIn(findViewById(R.id.content), 500);
 
         mContext = ListOfScansActivity.this;
 
@@ -94,7 +105,6 @@ public class ListOfScansActivity extends AppCompatActivity {
         m_bleScanServices = new BleScanServices(this);
         m_bleScanServices.checkBluetoothEnabled(this);
 
-        setContentView(R.layout.activity_connection); // Set the content to a layout with list view
 
         btn_menu = (ImageButton) findViewById(R.id.btn_menu);
         btn_reload = (ImageButton) findViewById(R.id.btn_reload);
@@ -124,6 +134,8 @@ public class ListOfScansActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(ListOfScansActivity.this, SettingsActivity.class);
                 startActivity(intent);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);  // 액티비티를 띄울 때 애니메이션 없애기
+                overridePendingTransition(0,0); //0 for no animation
             }
         });
 
@@ -132,6 +144,8 @@ public class ListOfScansActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(ListOfScansActivity.this, TripLogActivity.class);
                 startActivity(intent);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);  // 액티비티를 띄울 때 애니메이션 없애기
+                overridePendingTransition(0,0); //0 for no animation
             }
         });
 
@@ -362,42 +376,31 @@ public class ListOfScansActivity extends AppCompatActivity {
         super.onResume();
         bluetoothScanner.startScan(scanPeriod);
         //BleScanServices.scanForDevices(true,mLeScanCallback);
+
+        MyAnimation.fadeIn(findViewById(R.id.content), 500);
     }
 
 //    @Override
 //    protected void onDestroy() {
 //        super.onDestroy();
 //
-//        Intent intent = new Intent(this, BleConnectionService.class);
-//        stopService(intent);
-//
-//        SharedPreferences.Editor editor = preferences.edit();  //Editor를 preferences에 쓰겠다고 연결
-//        editor.putString("address", "");
-//        editor.putString("name", "");
-//
-//        editor.commit();  //항상 commit & apply 를 해주어야 저장이 된다.
+//        MyAnimation.fadeOut(findViewById(R.id.content), 500);
 //    }
-
+//
 //    @Override
 //    protected void onPause() {
 //        super.onPause();
 //
-//        SharedPreferences.Editor editor = preferences.edit();  //Editor를 preferences에 쓰겠다고 연결
-//        editor.putString("address", pref_address);
-//
-//        editor.commit();  //항상 commit & apply 를 해주어야 저장이 된다.
+//        MyAnimation.fadeOut(findViewById(R.id.content), 500);
 //    }
 //
 //    @Override
 //    protected void onStop() {
 //        super.onStop();
 //
-//        SharedPreferences.Editor editor = preferences.edit();  //Editor를 preferences에 쓰겠다고 연결
-//        editor.putString("address", pref_address);
-//
-//        editor.commit();  //항상 commit & apply 를 해주어야 저장이 된다.
+//        MyAnimation.fadeOut(findViewById(R.id.content), 500);
 //    }
-//
+
 
 
 //    private void onClickDevice(View view) {

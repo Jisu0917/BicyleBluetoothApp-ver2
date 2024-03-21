@@ -63,9 +63,19 @@ public class TripLogActivity extends AppCompatActivity {
     String tripName;
 
     @Override
+    public void finish() {
+        super.finish();
+
+        overridePendingTransition(0, 0); //0 for no animation
+        MyAnimation.fadeOut(findViewById(R.id.content), 500);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_triplog);
+
+        MyAnimation.fadeIn(findViewById(R.id.content), 500);
 
         dbHelper = new DBHelper(TripLogActivity.this, 1);
 

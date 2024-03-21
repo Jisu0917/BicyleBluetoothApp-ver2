@@ -136,6 +136,8 @@ public class MainActivity extends AppCompatActivity {
         isAppRunning = true;
         Intent intent = new Intent(MainActivity.this, ConsumptionActivity.class);
         startActivity(intent);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);  // 액티비티를 띄울 때 애니메이션 없애기
+        overridePendingTransition(0,0); //0 for no animation
     }
 
     @Override

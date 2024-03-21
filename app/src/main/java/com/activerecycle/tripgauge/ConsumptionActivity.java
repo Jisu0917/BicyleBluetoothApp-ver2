@@ -95,11 +95,21 @@ public class ConsumptionActivity extends AppCompatActivity {
     static SharedPreferences odo_preferences, device_preferences, settings_preferences;
 
     @Override
+    public void finish() {
+        super.finish();
+
+        overridePendingTransition(0, 0); //0 for no animation
+        MyAnimation.fadeOut(findViewById(R.id.content), 500);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_consumption);
 
         mContext = getApplicationContext();
+
+        MyAnimation.fadeIn(findViewById(R.id.content), 500);
 
         //SettingsActivity.socFlag = SettingsActivity.preferences.getBoolean("s4", true);
 
@@ -136,6 +146,8 @@ public class ConsumptionActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(ConsumptionActivity.this, ListOfScansActivity.class);
                 startActivity(intent);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);  // 액티비티를 띄울 때 애니메이션 없애기
+                overridePendingTransition(0,0); //0 for no animation
             }
         });
 
@@ -439,6 +451,7 @@ public class ConsumptionActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+        MyAnimation.fadeIn(findViewById(R.id.content), 500);
     }
 
     @Override
