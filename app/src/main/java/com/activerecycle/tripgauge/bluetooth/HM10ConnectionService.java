@@ -4,6 +4,7 @@ import static com.activerecycle.tripgauge.ConsumptionActivity.autoSave;
 import static com.activerecycle.tripgauge.ConsumptionActivity.blinkThread;
 import static com.activerecycle.tripgauge.ConsumptionActivity.btconnect;
 import static com.activerecycle.tripgauge.ConsumptionActivity.graph_battery;
+import static com.activerecycle.tripgauge.ConsumptionActivity.graph_speed;
 import static com.activerecycle.tripgauge.ConsumptionActivity.speed;
 import static com.activerecycle.tripgauge.ConsumptionActivity.totalDistance;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_KPH;
@@ -35,6 +36,7 @@ import android.widget.Toast;
 import com.activerecycle.tripgauge.BeepService;
 import com.activerecycle.tripgauge.ConsumptionActivity;
 import com.activerecycle.tripgauge.DBHelper;
+import com.activerecycle.tripgauge.SpeedGraph;
 import com.activerecycle.tripgauge.TripLogActivity;
 
 import java.time.LocalDate;
@@ -175,9 +177,11 @@ public class HM10ConnectionService extends Service {
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
+                                graph_speed.cancelAnimation();
                                 while (true) {
-                                    ConsumptionActivity.graph_speed.speed = 99;
-                                    ConsumptionActivity.graph_speed.invalidate();
+                                    SpeedGraph.previousSpeed = 0;
+                                    SpeedGraph.speed = 99;
+                                    graph_speed.invalidate();
 
                                     try {
                                         Thread.sleep(1000);
@@ -185,8 +189,9 @@ public class HM10ConnectionService extends Service {
                                         e.printStackTrace();
                                     }
 
-                                    ConsumptionActivity.graph_speed.speed = 0;
-                                    ConsumptionActivity.graph_speed.invalidate();
+                                    SpeedGraph.previousSpeed = 99;
+                                    SpeedGraph.speed = 0;
+                                    graph_speed.invalidate();
 
                                     // 1초에 한 번 깜빡임
                                     try {
@@ -427,9 +432,11 @@ public class HM10ConnectionService extends Service {
                                         new Thread(new Runnable() {
                                             @Override
                                             public void run() {
+                                                graph_speed.cancelAnimation();
                                                 while (!btconnect) {
-                                                    ConsumptionActivity.graph_speed.speed = 99;
-                                                    ConsumptionActivity.graph_speed.invalidate();
+                                                    SpeedGraph.previousSpeed = 0;
+                                                    SpeedGraph.speed = 99;
+                                                    graph_speed.invalidate();
 
                                                     try {
                                                         Thread.sleep(1000);
@@ -437,8 +444,9 @@ public class HM10ConnectionService extends Service {
                                                         e.printStackTrace();
                                                     }
 
-                                                    ConsumptionActivity.graph_speed.speed = 0;
-                                                    ConsumptionActivity.graph_speed.invalidate();
+                                                    SpeedGraph.previousSpeed = 99;
+                                                    SpeedGraph.speed = 0;
+                                                    graph_speed.invalidate();
 
                                                     // 1초에 한 번 깜빡임
                                                     try {

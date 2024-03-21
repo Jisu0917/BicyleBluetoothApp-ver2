@@ -94,6 +94,9 @@ public class ConsumptionActivity extends AppCompatActivity {
 
     static SharedPreferences odo_preferences, device_preferences, settings_preferences;
 
+    // 칼만 필터 변수
+    private KalmanFilter kalmanFilter;
+
     @Override
     public void finish() {
         super.finish();
@@ -203,7 +206,8 @@ public class ConsumptionActivity extends AppCompatActivity {
             @Override
             public void run() {
                 while (!btconnect) {
-                    graph_speed.speed = 99;
+                    SpeedGraph.previousSpeed = 0;
+                    SpeedGraph.speed = 99;
                     graph_speed.invalidate();
 
                     try {
@@ -212,7 +216,8 @@ public class ConsumptionActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
 
-                    graph_speed.speed = 0;
+                    SpeedGraph.previousSpeed = 99;
+                    SpeedGraph.speed = 0;
                     graph_speed.invalidate();
 
                     try {
@@ -226,6 +231,8 @@ public class ConsumptionActivity extends AppCompatActivity {
         blinkThread.start();
 
 
+
+        kalmanFilter = new KalmanFilter(0.01, 0.1);
 
         // gps 주행 속도 측정
         final LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -249,10 +256,21 @@ public class ConsumptionActivity extends AppCompatActivity {
                 previousLon = currentLon;
 
                 // 주행 속도
-                speed = (int) location.getSpeed();// 테스트 : * 10;
+                speed = (int) location.getSpeed() + 13;// 테스트 : * 10;
+
+//                // 칼만 필터를 사용하여 속도와 거리를 추정
+//                double[] measuredValues = {speed, totalDistance, tripADistance, tripBDistance}; // 측정값
+//                speed = (int) kalmanFilter.applyFilter(measuredValues[0])[0]; // 칼만 필터 적용
+//                totalDistance = kalmanFilter.applyFilter(measuredValues[1])[0]; // 칼만 필터 적용
+//                tripADistance = kalmanFilter.applyFilter(measuredValues[2])[0]; // 칼만 필터 적용
+//                tripBDistance = kalmanFilter.applyFilter(measuredValues[3])[0]; // 칼만 필터 적용
+
                 tv_speed.setText(speed + "");
                 // 주행 속도 화면에 반영
                 graph_speed.speed = speed;
+                if (btconnect && HM10ConnectionService.btStartFlag && speed == 0) {
+                    graph_speed.invalidate();
+                }
 //                graph_speed.invalidate();  //그래프 화면 갱신
 
                 if (btconnect && speed > 0)  {

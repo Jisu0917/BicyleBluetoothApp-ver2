@@ -3,6 +3,7 @@ package com.activerecycle.tripgauge.bluetooth;
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 import static com.activerecycle.tripgauge.ConsumptionActivity.btconnect;
 import static com.activerecycle.tripgauge.ConsumptionActivity.graph_battery;
+import static com.activerecycle.tripgauge.ConsumptionActivity.graph_speed;
 import static com.activerecycle.tripgauge.ConsumptionActivity.totalDistance;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_distance;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_percent;
@@ -42,6 +43,7 @@ import androidx.core.app.ActivityCompat;
 import com.activerecycle.tripgauge.ConsumptionActivity;
 import com.activerecycle.tripgauge.MyAnimation;
 import com.activerecycle.tripgauge.SettingsActivity;
+import com.activerecycle.tripgauge.SpeedGraph;
 import com.activerecycle.tripgauge.TripLogActivity;
 
 import java.time.LocalDate;
@@ -258,13 +260,7 @@ public class ListOfScansActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
                         ConsumptionActivity.btconnect = false;
-
-                        HM10ConnectionService.m_bleConnectionService.disconnect();
-                        Intent intent1 = new Intent(context, HM10ConnectionService.class);
-                        context.stopService(intent1);
-                        Intent intent2 = new Intent(context, BleConnectionService.class);
-                        context.stopService(intent2);
-
+                        
                         LayoutInflater layoutInflater = LayoutInflater.from(context);
                         View customView = layoutInflater.inflate(R.layout.row, null);
 
@@ -273,6 +269,34 @@ public class ListOfScansActivity extends AppCompatActivity {
                         ((TextView) customView.findViewById(R.id.tv_connected)).setTextColor(Color.rgb(34, 177, 77));  //green
                         ((TextView) customView.findViewById(R.id.tv_connected)).setText("Available to connect");
 
+                        SharedPreferences.Editor editor = preferences.edit();  //Editor를 preferences에 쓰겠다고 연결
+                        if (settings_preferences.getBoolean("s3", true)) {
+                            editor.putString("last_address", preferences.getString("address", ""));
+                            editor.putString("last_name", preferences.getString("name", ""));
+                        }
+                        editor.putString("address", "");
+                        editor.putString("name", "");
+                        editor.commit();
+
+                        SharedPreferences.Editor editor1 = odo_preferences.edit();
+                        editor1.putFloat("ODO", (float) totalDistance);
+                        editor1.commit();
+
+                        bluetoothScanner.startScan(scanPeriod);
+
+                        try {
+                            //여기서 disconnect() 할 때 try catch Exception 에러 발생!
+                            HM10ConnectionService.m_bleConnectionService.disconnect();
+                            Intent intent1 = new Intent(context, HM10ConnectionService.class);
+                            context.stopService(intent1);
+                            Intent intent2 = new Intent(context, BleConnectionService.class);
+                            context.stopService(intent2);
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+
+                            return;
+                        }
                         //------------------------------------------------------------//
 
                         tv_percent.setTextColor(Color.WHITE);
@@ -306,9 +330,11 @@ public class ListOfScansActivity extends AppCompatActivity {
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
+                                graph_speed.cancelAnimation();
                                 while (!btconnect) {
-                                    ConsumptionActivity.graph_speed.speed = 99;
-                                    ConsumptionActivity.graph_speed.invalidate();
+                                    SpeedGraph.previousSpeed = 0;
+                                    SpeedGraph.speed = 99;
+                                    graph_speed.invalidate();
 
                                     try {
                                         Thread.sleep(1000);
@@ -316,8 +342,9 @@ public class ListOfScansActivity extends AppCompatActivity {
                                         e.printStackTrace();
                                     }
 
-                                    ConsumptionActivity.graph_speed.speed = 0;
-                                    ConsumptionActivity.graph_speed.invalidate();
+                                    SpeedGraph.previousSpeed = 99;
+                                    SpeedGraph.speed = 0;
+                                    graph_speed.invalidate();
 
                                     // 1초에 한 번 깜빡임
                                     try {
@@ -330,20 +357,6 @@ public class ListOfScansActivity extends AppCompatActivity {
                         }).start();
 
 
-                        SharedPreferences.Editor editor = preferences.edit();  //Editor를 preferences에 쓰겠다고 연결
-                        if (settings_preferences.getBoolean("s3", true)) {
-                            editor.putString("last_address", preferences.getString("address", ""));
-                            editor.putString("last_name", preferences.getString("name", ""));
-                        }
-                        editor.putString("address", "");
-                        editor.putString("name", "");
-                        editor.commit();
-
-                        SharedPreferences.Editor editor1 = odo_preferences.edit();
-                        editor1.putFloat("ODO", (float) totalDistance);
-                        editor1.commit();
-
-                        bluetoothScanner.startScan(scanPeriod);
                         //getDeviceListInfo(context);
                         //setDeviceListView(context);
                     }

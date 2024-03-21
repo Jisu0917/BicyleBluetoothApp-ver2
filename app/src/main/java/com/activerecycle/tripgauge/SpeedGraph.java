@@ -18,14 +18,14 @@ public class SpeedGraph extends View {
     }
 
     final int MAX_SPEED = 25;
-    public int speed;
+    public static int speed;
     int sweepAngle;
     int maxAngle;
     private ValueAnimator animator;
     private float sweepingAngle = 0;
-    boolean btconnected = false;
+    //boolean btconnected = false;
 
-    static int previousSpeed = 0;
+    public static int previousSpeed = 0;
 
     @Override
     protected void onDraw(android.graphics.Canvas canvas) {
@@ -34,10 +34,9 @@ public class SpeedGraph extends View {
         if (speed == 99) {
             // 블루투스 연결 안 된 상태를 나타냄
             sweepAngle = 3;
-            btconnected = false;
-            previousSpeed = getSpeedByAngle(3);
+            //btconnected = false;
         } else {
-            btconnected = true;
+            //btconnected = true;
             sweepAngle = getSweepAngle(speed);
         }
         maxAngle = getSweepAngle(MAX_SPEED);
@@ -62,8 +61,17 @@ public class SpeedGraph extends View {
         rect.set(screenWidth/2 - 500, 30, screenWidth/2 + 500, 980);
         canvas.drawArc(rect, 140, 260, false, pnt_gray);
 
-        if (!btconnected) {
-            previousSpeed = getSpeedByAngle(3);
+        if (!ConsumptionActivity.btconnect) {
+            cancelAnimation();
+            if (speed == 0) {
+                previousSpeed = 99;
+                animator = ValueAnimator.ofFloat(0, 3); // 시작 각도와 종료 각도 설정
+                sweepAngle = 0;
+            } else {
+                previousSpeed = 0;
+                animator = ValueAnimator.ofFloat(0, 3); // 시작 각도와 종료 각도 설정
+                sweepAngle = 3;
+            }
 
             Paint pnt_red = new Paint();
             pnt_red.setStrokeWidth(50f);
@@ -72,15 +80,13 @@ public class SpeedGraph extends View {
 
             canvas.drawArc(rect, 140, sweepAngle, false, pnt_red);
 
-            previousSpeed = getSpeedByAngle(3);
-
         } else {
             if (speed <= 30) {
                 animator = ValueAnimator.ofFloat(getSweepAngle(previousSpeed), sweepAngle); // 시작 각도와 종료 각도 설정
             } else {
                 animator = ValueAnimator.ofFloat(getSweepAngle(previousSpeed), getSweepAngle(30)); // 시작 각도와 종료 각도 설정
             }
-            animator.setDuration(3000); // 애니메이션 지속 시간 설정
+            animator.setDuration(5000); // 애니메이션 지속 시간 설정
             animator.setInterpolator(new AccelerateDecelerateInterpolator()); // 가속도와 감속도를 조절하는 인터폴레이터 설정
             animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
@@ -122,9 +128,21 @@ public class SpeedGraph extends View {
         }
     }
 
+    public void cancelAnimation() {
+        try {
+            animator.cancel();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private int getSweepAngle(int speed) {
 
-        return 260 * speed / 30;
+        if (speed <= 30) {
+            return 260 * speed / 30;
+        } else {
+            return 260;
+        }
     }
 
     private int getSpeedByAngle(int angle) {
