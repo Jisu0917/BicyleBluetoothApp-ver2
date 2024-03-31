@@ -27,6 +27,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.FileProvider;
 
+import com.activerecycle.tripgauge.bluetooth.HM10ConnectionService;
 import com.activerecycle.tripgauge.bluetooth.R;
 
 import java.io.File;
@@ -61,6 +62,8 @@ public class TripLogActivity extends AppCompatActivity {
 
     int TABLE_ID = -1;
     String tripName;
+
+    public static boolean otherListClicked = false;
 
     @Override
     public void finish() {
@@ -104,7 +107,11 @@ public class TripLogActivity extends AppCompatActivity {
         tv_untitled.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showTripReviseDialog();
+                String tag = view.getTag().toString();
+                int tripId = Integer.parseInt(tag);
+                if (tripId != -1) {  //실시간 트립은 제목을 수정할 수 없다.
+                    showTripReviseDialog();
+                }
             }
         });
 
@@ -342,6 +349,35 @@ public class TripLogActivity extends AppCompatActivity {
         LayoutInflater layoutInflater = LayoutInflater.from(TripLogActivity.this);
         //LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
+        if (ConsumptionActivity.btconnect && HM10ConnectionService.btStartFlag) {
+            // 실시간 그래프 그려지는 중이면
+            // 초록색으로 Connect 표시하기
+            View customView = layoutInflater.inflate(R.layout.custom_record_info, null);
+            ((LinearLayout) customView.findViewById(R.id.container)).setTag(-1 + "");  // 실시간 그래프는 tripId가 -1이다.
+            ((TextView) customView.findViewById(R.id.tv_name)).setText("LIVE DATA");
+            ((TextView) customView.findViewById(R.id.tv_date)).setText("CURRENT");
+
+            ((LinearLayout) customView.findViewById(R.id.color_contianer)).setBackgroundResource(R.drawable.background_rounding_green_2);
+            ((TextView) customView.findViewById(R.id.tv_name)).setTextColor(Color.BLACK);
+            ((TextView) customView.findViewById(R.id.tv_date)).setTextColor(Color.BLACK);
+
+            ((LinearLayout) customView.findViewById(R.id.container)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    try {
+                        showCurrentTrip(dbHelper);  //실시간 그래프 보여주기
+                        otherListClicked = false;
+
+                        tv_untitled.setTag(view.getTag());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        //Toast.makeText(mContext, "아직 주행이 시작되지 않았습니다.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+            recordlist_layout.addView(customView);
+        }
+
         if (statList != null) {
             Map map;
             int tripID;
@@ -380,7 +416,10 @@ public class TripLogActivity extends AppCompatActivity {
     public void onClickRecord(View view) {
         TABLE_ID = Integer.parseInt(view.getTag().toString());
 
+        tv_untitled.setTag(view.getTag());
+
         setTripInfo(TABLE_ID);
+        otherListClicked = true;
     }
 
     private Bitmap getBitmapFromView(View view, int height, int width) {

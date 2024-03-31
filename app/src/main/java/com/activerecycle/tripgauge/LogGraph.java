@@ -55,6 +55,10 @@ public class LogGraph extends View {
         ArrayList<Integer> original_wList = (ArrayList<Integer>) map.get("W");
         n = original_wList.size();
 
+        if (n == 0) {
+            return;
+        }
+
         System.out.println("@@@@@ original_wList : " + original_wList);
 
         usedW = original_wList.get(0) - original_wList.get(n-1);
@@ -201,11 +205,11 @@ public class LogGraph extends View {
 
     private float getPointY(float y) {
         adjustY = 0;
-        adjustC = 0.9f;
+        adjustC = 0.8f;
         //return bottom - (y * max / adjustC) + adjustY;  //
         // barLength = (bottom - top) * v / max;
         if (y == 0) return BOTTOM;
-        return BOTTOM - ( ( BOTTOM - TOP ) * (y / max) * adjustC);
+        return BOTTOM - ( ( BOTTOM - TOP ) * (y / max) * adjustC);  //adjustC 값이 커질수록 그래프가 커진다.
         //return bottom - ((y/max)*(maxW/DEFINED_MAX_W)) * adjustC;  // bottom - 0 = bottom.
     }
 }

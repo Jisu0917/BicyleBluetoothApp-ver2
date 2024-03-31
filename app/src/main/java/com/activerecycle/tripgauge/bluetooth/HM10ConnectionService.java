@@ -13,6 +13,7 @@ import static com.activerecycle.tripgauge.ConsumptionActivity.tv_percent;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_ready;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_speed;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_w;
+import static com.activerecycle.tripgauge.TripLogActivity.otherListClicked;
 import static com.activerecycle.tripgauge.bluetooth.ListOfScansActivity.bluetoothScanner;
 import static com.activerecycle.tripgauge.bluetooth.ListOfScansActivity.mContext;
 import static com.activerecycle.tripgauge.bluetooth.ListOfScansActivity.scanPeriod;
@@ -291,7 +292,6 @@ public class HM10ConnectionService extends Service {
                     stopCountDown = STOP_COUNT_DOWN;
                     ConsumptionActivity.tripADistance = 0;
 
-
                     break;
                 case StaticResources.BROADCAST_NAME_TX_CHARATERISTIC_CHANGED:
                     final String txData = intent.getStringExtra(StaticResources.EXTRAS_TX_DATA);
@@ -362,7 +362,9 @@ public class HM10ConnectionService extends Service {
                                     //------------------확인을 위한 출력 코드-------------//
 
 
-                                    tripLogActivity.showCurrentTrip(dbHelper);  //실시간 그래프 보여주기
+                                    if (!otherListClicked) {
+                                        tripLogActivity.showCurrentTrip(dbHelper);  //실시간 그래프 보여주기
+                                    }
                                 }
                                 if (speed > 0) {
                                     stopCountDown = STOP_COUNT_DOWN;

@@ -13,6 +13,7 @@
     android:id="@+id/container">
 
     <LinearLayout
+        android:id="@+id/color_contianer"
         android:padding="10dp"
         android:background="@drawable/background_rounding_white_2"
         android:layout_width="match_parent"

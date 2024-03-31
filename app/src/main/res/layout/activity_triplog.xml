@@ -102,7 +102,7 @@
                 android:layout_marginStart="25dp"
                 android:layout_marginTop="5dp"
                 android:paddingBottom="10dp"
-                android:text="----.--.-- (Current)"
+                android:text="----.--.--"
                 android:textAllCaps="true"
                 android:textColor="@color/lightgreen"
                 android:textSize="22sp"
