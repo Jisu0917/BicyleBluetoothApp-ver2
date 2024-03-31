@@ -224,7 +224,7 @@ public class ListOfScansActivity extends AppCompatActivity {
                     //TODO: background_rounding_white
                     ((LinearLayout) customView.findViewById(R.id.color_contianer)).setBackgroundResource(R.drawable.background_rounding_white);
                     ((TextView) customView.findViewById(R.id.text1)).setTextColor(Color.BLACK);
-                    ((TextView) customView.findViewById(R.id.tv_connected)).setTextColor(Color.rgb(34, 177, 77));  //green
+                    ((TextView) customView.findViewById(R.id.tv_connected)).setTextColor(Color.parseColor("#4CAF50"));  //green
                     ((TextView) customView.findViewById(R.id.tv_connected)).setText("Available to connect");
                     ((TextView) customView.findViewById(R.id.tv_connected)).setTypeface(typeface);
 
@@ -266,25 +266,27 @@ public class ListOfScansActivity extends AppCompatActivity {
 
                         ((LinearLayout) customView.findViewById(R.id.color_contianer)).setBackgroundResource(R.drawable.background_rounding_white);
                         ((TextView) customView.findViewById(R.id.text1)).setTextColor(Color.BLACK);
-                        ((TextView) customView.findViewById(R.id.tv_connected)).setTextColor(Color.rgb(34, 177, 77));  //green
+                        ((TextView) customView.findViewById(R.id.tv_connected)).setTextColor(Color.parseColor("#4CAF50"));  //green
                         ((TextView) customView.findViewById(R.id.tv_connected)).setText("Available to connect");
 
-                        SharedPreferences.Editor editor = preferences.edit();  //Editor를 preferences에 쓰겠다고 연결
-                        if (settings_preferences.getBoolean("s3", true)) {
-                            editor.putString("last_address", preferences.getString("address", ""));
-                            editor.putString("last_name", preferences.getString("name", ""));
-                        }
-                        editor.putString("address", "");
-                        editor.putString("name", "");
-                        editor.commit();
-
-                        SharedPreferences.Editor editor1 = odo_preferences.edit();
-                        editor1.putFloat("ODO", (float) totalDistance);
-                        editor1.commit();
-
-                        bluetoothScanner.startScan(scanPeriod);
-
                         try {
+                            //디바이스 목록 새로고침
+                            bluetoothScanner.startScan(scanPeriod);
+
+                            SharedPreferences.Editor editor = preferences.edit();  //Editor를 preferences에 쓰겠다고 연결
+                            if (settings_preferences.getBoolean("s3", true)) {
+                                editor.putString("last_address", preferences.getString("address", ""));
+                                editor.putString("last_name", preferences.getString("name", ""));
+                            }
+                            editor.putString("address", "");
+                            editor.putString("name", "");
+                            editor.commit();
+
+                            //여기서도 Exception 에러 발생!
+                            SharedPreferences.Editor editor1 = odo_preferences.edit();
+                            editor1.putFloat("ODO", (float) totalDistance);
+                            editor1.commit();
+
                             //여기서 disconnect() 할 때 try catch Exception 에러 발생!
                             HM10ConnectionService.m_bleConnectionService.disconnect();
                             Intent intent1 = new Intent(context, HM10ConnectionService.class);
@@ -393,12 +395,6 @@ public class ListOfScansActivity extends AppCompatActivity {
         MyAnimation.fadeIn(findViewById(R.id.content), 500);
     }
 
-//    @Override
-//    protected void onDestroy() {
-//        super.onDestroy();
-//
-//        MyAnimation.fadeOut(findViewById(R.id.content), 500);
-//    }
 //
 //    @Override
 //    protected void onPause() {

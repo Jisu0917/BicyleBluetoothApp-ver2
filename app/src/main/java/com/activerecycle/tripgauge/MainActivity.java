@@ -138,6 +138,9 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);  // 액티비티를 띄울 때 애니메이션 없애기
         overridePendingTransition(0,0); //0 for no animation
+
+        Intent serviceIntent = new Intent(this, BackgroundService.class);
+        startService(serviceIntent);
     }
 
     @Override

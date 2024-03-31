@@ -55,6 +55,9 @@
         <service android:name=".HM10ConnectionService"
             android:enabled="true"
             android:exported="false" />
+        <service android:name="com.activerecycle.tripgauge.BackgroundService"
+            android:enabled="true"
+            android:exported="false" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

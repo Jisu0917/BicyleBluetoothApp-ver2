@@ -233,7 +233,7 @@ public class HM10ConnectionService extends Service {
 
                         ((LinearLayout) customView.findViewById(R.id.color_contianer)).setBackgroundResource(R.drawable.background_rounding_white);
                         ((TextView) customView.findViewById(R.id.text1)).setTextColor(Color.BLACK);
-                        ((TextView) customView.findViewById(R.id.tv_connected)).setTextColor(Color.rgb(34, 177, 77));  //green
+                        ((TextView) customView.findViewById(R.id.tv_connected)).setTextColor(Color.parseColor("#4CAF50"));  //green
                         ((TextView) customView.findViewById(R.id.tv_connected)).setText("Available to connect");
 
                         ConsumptionActivity.btconnect = false;
@@ -391,7 +391,7 @@ public class HM10ConnectionService extends Service {
 
                                         ((LinearLayout) customView.findViewById(R.id.color_contianer)).setBackgroundResource(R.drawable.background_rounding_white);
                                         ((TextView) customView.findViewById(R.id.text1)).setTextColor(Color.BLACK);
-                                        ((TextView) customView.findViewById(R.id.tv_connected)).setTextColor(Color.rgb(34, 177, 77));  //green
+                                        ((TextView) customView.findViewById(R.id.tv_connected)).setTextColor(Color.parseColor("#4CAF50"));  //green
                                         ((TextView) customView.findViewById(R.id.tv_connected)).setText("Available to connect");
 
                                         //------------------------------------------------------------//
