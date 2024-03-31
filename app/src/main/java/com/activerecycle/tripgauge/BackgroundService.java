@@ -6,6 +6,9 @@ import static com.activerecycle.tripgauge.ConsumptionActivity.odo_preferences;
 import static com.activerecycle.tripgauge.ConsumptionActivity.settings_preferences;
 import static com.activerecycle.tripgauge.ConsumptionActivity.showDialog;
 import static com.activerecycle.tripgauge.ConsumptionActivity.totalDistance;
+import static com.activerecycle.tripgauge.ConsumptionActivity.tripADistance;
+import static com.activerecycle.tripgauge.ConsumptionActivity.tripBDistance;
+import static com.activerecycle.tripgauge.ConsumptionActivity.tripOnceDistance;
 import static com.activerecycle.tripgauge.bluetooth.HM10ConnectionService.saveTrip;
 import static com.activerecycle.tripgauge.bluetooth.HM10ConnectionService.tripId;
 
@@ -76,8 +79,10 @@ public class BackgroundService extends Service {
 
                 SharedPreferences.Editor editor1 = odo_preferences.edit();
                 editor1.putFloat("ODO", (float) totalDistance);
+                editor1.putFloat("TRIPA", (float) tripADistance);
+                editor1.putFloat("TRIPB", (float) tripBDistance);
                 editor1.commit();
-                ConsumptionActivity.tripADistance = 0;
+                tripOnceDistance = 0;
 
             } else {
                 //TODO: #init 으로 되어있는 트립 삭제
@@ -95,9 +100,10 @@ public class BackgroundService extends Service {
 
                 SharedPreferences.Editor editor1 = odo_preferences.edit();
                 editor1.putFloat("ODO", (float) totalDistance);
+                editor1.putFloat("TRIPA", (float) tripADistance);
+                editor1.putFloat("TRIPB", (float) tripBDistance);
                 editor1.commit();
-                ConsumptionActivity.tripADistance = 0;
-
+                tripOnceDistance = 0;
             }
 
         }

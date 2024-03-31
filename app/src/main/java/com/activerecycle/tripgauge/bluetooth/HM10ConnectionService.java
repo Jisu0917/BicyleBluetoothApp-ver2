@@ -7,6 +7,9 @@ import static com.activerecycle.tripgauge.ConsumptionActivity.graph_battery;
 import static com.activerecycle.tripgauge.ConsumptionActivity.graph_speed;
 import static com.activerecycle.tripgauge.ConsumptionActivity.speed;
 import static com.activerecycle.tripgauge.ConsumptionActivity.totalDistance;
+import static com.activerecycle.tripgauge.ConsumptionActivity.tripADistance;
+import static com.activerecycle.tripgauge.ConsumptionActivity.tripBDistance;
+import static com.activerecycle.tripgauge.ConsumptionActivity.tripOnceDistance;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_KPH;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_distance;
 import static com.activerecycle.tripgauge.ConsumptionActivity.tv_percent;
@@ -269,8 +272,10 @@ public class HM10ConnectionService extends Service {
 
                     SharedPreferences.Editor editor1 = odo_preferences.edit();
                     editor1.putFloat("ODO", (float) totalDistance);
+                    editor1.putFloat("TRIPA", (float) tripADistance);
+                    editor1.putFloat("TRIPB", (float) tripBDistance);
                     editor1.commit();
-                    ConsumptionActivity.tripADistance = 0;
+                    tripOnceDistance = 0;
 
                     tv_ready.setText("Ready");
                     tv_ready.setTextColor(Color.rgb(146, 208, 80));  //green
@@ -290,7 +295,7 @@ public class HM10ConnectionService extends Service {
                     amp = 0;
                     soc = 10;
                     stopCountDown = STOP_COUNT_DOWN;
-                    ConsumptionActivity.tripADistance = 0;
+                    tripOnceDistance = 0;
 
                     break;
                 case StaticResources.BROADCAST_NAME_TX_CHARATERISTIC_CHANGED:
@@ -472,8 +477,9 @@ public class HM10ConnectionService extends Service {
 
                                         editor1 = odo_preferences.edit();
                                         editor1.putFloat("ODO", (float) totalDistance);
-                                        editor1.commit();
-                                        ConsumptionActivity.tripADistance = 0;
+                                        editor1.putFloat("TRIPA", (float) tripADistance);
+                                        editor1.putFloat("TRIPB", (float) tripBDistance);editor1.commit();
+                                        tripOnceDistance = 0;
 
                                         bluetoothScanner.startScan(scanPeriod);
                                     }
@@ -494,7 +500,7 @@ public class HM10ConnectionService extends Service {
 
 //        if (tripName == null) { tripName = "Untitled"; }
         if (dbHelper.getAvgPwrW(tripId) == -999 || dbHelper.getUsedW(tripId) == -999 || dbHelper.getMaxW(tripId) == -2) return;
-        dbHelper.update_TripSTATS(tripId, nowTime, dbHelper.getMaxW(tripId), dbHelper.getUsedW(tripId), (int)(ConsumptionActivity.tripADistance * 1000), dbHelper.getAvgPwrW(tripId));
+        dbHelper.update_TripSTATS(tripId, nowTime, dbHelper.getMaxW(tripId), dbHelper.getUsedW(tripId), (int)(tripOnceDistance * 1000), dbHelper.getAvgPwrW(tripId));
         dbHelper.update_TripName(tripId, "Untitled");
 
         //Toast.makeText(ConsumptionActivity.this, "트립이 저장되었습니다.", Toast.LENGTH_SHORT).show();

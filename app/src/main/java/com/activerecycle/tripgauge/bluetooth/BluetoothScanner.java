@@ -39,10 +39,7 @@ public class BluetoothScanner {
                 BluetoothDevice device = result.getDevice();
                 // 찾은 디바이스를 처리하거나 저장하는 등의 작업 수행
                 if (device != null && device.getName() != null &&
-                        ( device.getName().toLowerCase(Locale.ROOT).contains("arduino")
-                        || device.getName().toLowerCase(Locale.ROOT).contains("jdy")
-                        || device.getName().toLowerCase(Locale.ROOT).contains("ble")
-                        || device.getName().toLowerCase(Locale.ROOT).contains("recycle"))
+                        device.getName().toLowerCase(Locale.ROOT).contains("jdy")
                 ) { deviceList.add(device); }
 
                 // deviceList 중복제거

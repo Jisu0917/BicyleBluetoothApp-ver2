@@ -65,7 +65,8 @@ public class ConsumptionActivity extends AppCompatActivity {
     double previousLon = 0.0; // 이전 경도
     public static double totalDistance; // 총 이동 거리
     public static double tripADistance = 0.0;
-    double tripBDistance = 0.0;
+    public static double tripBDistance = 0.0;
+    public static double tripOnceDistance = 0.0;
     double bef_lat, bef_long;
     public static boolean btconnect = false;
 
@@ -156,6 +157,8 @@ public class ConsumptionActivity extends AppCompatActivity {
 
         odo_preferences = getSharedPreferences("ODO Info", MODE_PRIVATE);
         totalDistance = odo_preferences.getFloat("ODO", 0.0f);
+        tripADistance = odo_preferences.getFloat("TRIPA", 0.0f);
+        tripBDistance = odo_preferences.getFloat("TRIPB", 0.0f);
 
         settings_preferences = getSharedPreferences("Setting Info", MODE_PRIVATE);
         device_preferences = getSharedPreferences("Device Info", MODE_PRIVATE);
@@ -249,6 +252,7 @@ public class ConsumptionActivity extends AppCompatActivity {
                     totalDistance += distance;
                     tripADistance += distance;
                     tripBDistance += distance;
+                    tripOnceDistance += distance;
                 }
 
                 // 현재 위치를 이전 위치로 설정
@@ -373,8 +377,9 @@ public class ConsumptionActivity extends AppCompatActivity {
             @Override
             public boolean onLongClick(View view) {
                 if (tv_odo.getText().equals("ODO")) {
-                    totalDistance = 0.0;
-                    Toast.makeText(ConsumptionActivity.this, "ODO를 초기화 합니다.", Toast.LENGTH_SHORT).show();
+                    // ODO는 초기화 할 수 없음
+//                    totalDistance = 0.0;
+//                    Toast.makeText(ConsumptionActivity.this, "ODO를 초기화 합니다.", Toast.LENGTH_SHORT).show();
                     return true;
                 } else if (tv_odo.getText().equals("TRIPA")) {
                     tripADistance = 0.0;
@@ -521,8 +526,10 @@ public class ConsumptionActivity extends AppCompatActivity {
 
                             SharedPreferences.Editor editor1 = odo_preferences.edit();
                             editor1.putFloat("ODO", (float) totalDistance);
+                            editor1.putFloat("TRIPA", (float) tripADistance);
+                            editor1.putFloat("TRIPB", (float) tripBDistance);
                             editor1.commit();
-                            ConsumptionActivity.tripADistance = 0;
+                            tripOnceDistance = 0;
 
                             //메인 액티비티로 !!
                             Intent intent = new Intent(context, MainActivity.class);
@@ -545,8 +552,10 @@ public class ConsumptionActivity extends AppCompatActivity {
 
                             SharedPreferences.Editor editor1 = odo_preferences.edit();
                             editor1.putFloat("ODO", (float) totalDistance);
+                            editor1.putFloat("TRIPA", (float) tripADistance);
+                            editor1.putFloat("TRIPB", (float) tripBDistance);
                             editor1.commit();
-                            ConsumptionActivity.tripADistance = 0;
+                            tripOnceDistance = 0;
 
                             //메인 액티비티로 !!
                             Intent intent = new Intent(context, MainActivity.class);
