@@ -45,6 +45,7 @@ import com.activerecycle.tripgauge.TripLogActivity;
 
 import java.time.LocalDate;
 
+// 블루투스 스캔 된 기기를 선택(클릭)했을 때 실행되는 서비스
 public class HM10ConnectionService extends Service {
 
     private static final String TAG = "HM10ConnectionService";
@@ -72,7 +73,7 @@ public class HM10ConnectionService extends Service {
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "Service created");
-        // 여기에서 필요한 초기화 작업을 수행합니다.
+        // 초기화 작업 수행
         tripLogActivity = new TripLogActivity();
 
         dbHelper = new DBHelper(HM10ConnectionService.this, 1);
@@ -85,7 +86,7 @@ public class HM10ConnectionService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "Service started");
-        // 여기에서 백그라운드 작업을 수행합니다.
+        // 백그라운드 작업 수행
         mDeviceName = intent.getStringExtra(StaticResources.EXTRAS_DEVICE_NAME);
         m_deviceAddress = intent.getStringExtra(StaticResources.EXTRAS_DEVICE_ADDRESS);
         System.out.println("mDeviceName: " + mDeviceName + ", m_deviceAddress: " + m_deviceAddress);
@@ -99,7 +100,6 @@ public class HM10ConnectionService extends Service {
         filterMaster.addAction(StaticResources.BROADCAST_NAME_TX_CHARATERISTIC_CHANGED);
         registerReceiver(m_bleBroadcastReceiver, filterMaster);
 
-        // 작업이 완료되면 stopSelf()를 호출하여 서비스를 종료할 수 있습니다.
         return START_STICKY;
     }
 
@@ -134,20 +134,18 @@ public class HM10ConnectionService extends Service {
             {
                 case StaticResources.BROADCAST_NAME_CONNECTION_UPDATE:
                     final String connection = intent.getStringExtra(StaticResources.EXTRAS_CONNECTION_STATE);
-//                    textSerialConnection.setText(connection);
-//                    tv_what_do_u_saying.setText(connection);
                     // connection : EXTRAS_CONNECTION_STATE
-                    //TODO : 연결되었을 때! connection = CONNECTION_STATE_CONNECTED = "Connected
+                    // 연결되었을 때! connection = CONNECTION_STATE_CONNECTED = "Connected
                     // 또는 연결 중일 때! connection = CONNECTION_STATE_CONNECTING = "Connecting"
                     // 또는 연결이 끊겼을 때! connection = CONNECTION_STATE_DISCONNECTED = "Disconnected"
 
-                    //TODO : 연결되었을 때!
+                    // 연결되었을 때!
                     if (connection.equals(StaticResources.CONNECTION_STATE_CONNECTED)) {
 
                     }
 
 
-                    //TODO : 연결이 끊어졌을 때
+                    // 연결이 끊어졌을 때
                     // 1) DB에 트립 저장
                     // 2) 원호 그래프 깜빡이는 애니메이션, 배터리 00%
                     else if (connection.equals(StaticResources.CONNECTION_STATE_DISCONNECTED)) {
@@ -177,7 +175,7 @@ public class HM10ConnectionService extends Service {
                         tv_distance.setText("00.00");
 
 
-                        //TODO: 그래프 깜빡깜빡 거리는 애니메이션!
+                        // 그래프 깜빡깜빡 거리는 애니메이션!
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
@@ -215,10 +213,6 @@ public class HM10ConnectionService extends Service {
                             }
                         }).start();
 
-
-                        LayoutInflater layoutInflater = LayoutInflater.from(context);
-                        View customView = layoutInflater.inflate(R.layout.row, null);
-
                         SharedPreferences.Editor editor = device_preferences.edit();  //Editor를 preferences에 쓰겠다고 연결
                         if (settings_preferences.getBoolean("s3", true)) {
                             editor.putString("last_address", m_deviceAddress);
@@ -234,11 +228,6 @@ public class HM10ConnectionService extends Service {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-
-                        ((LinearLayout) customView.findViewById(R.id.color_contianer)).setBackgroundResource(R.drawable.background_rounding_white);
-                        ((TextView) customView.findViewById(R.id.text1)).setTextColor(Color.BLACK);
-                        ((TextView) customView.findViewById(R.id.tv_connected)).setTextColor(Color.parseColor("#4CAF50"));  //green
-                        ((TextView) customView.findViewById(R.id.tv_connected)).setText("Available to connect");
 
                         ConsumptionActivity.btconnect = false;
                         tv_ready.setText("Connect");
@@ -258,7 +247,7 @@ public class HM10ConnectionService extends Service {
                         m_hasSerial = true;
                     }
                     // serial : "Communication Characteristic Found"
-                    //TODO : 브로드캐스트 서비스를 찾았을 때!
+                    // 브로드캐스트 서비스를 찾았을 때!
                     ConsumptionActivity.btconnect = true;
                     blinkThread.interrupt();
 
@@ -270,6 +259,7 @@ public class HM10ConnectionService extends Service {
                     editor.putString("name", mDeviceName);
                     editor.commit();
 
+                    // 세 가지 주행 거리 정보를 저장하고 이번 주행에 대한 거리 변수를 0으로 초기화한다.
                     SharedPreferences.Editor editor1 = odo_preferences.edit();
                     editor1.putFloat("ODO", (float) totalDistance);
                     editor1.putFloat("TRIPA", (float) tripADistance);
@@ -287,7 +277,7 @@ public class HM10ConnectionService extends Service {
                     }
 
 
-                    //TODO : -- DB - TripSTATS 테이블 row 하나 생성
+                    // -- DB - TripSTATS 테이블 row 하나 생성
                     tripId = dbHelper.init_TripSTATS();
                     countFlag = 0;
 
@@ -300,13 +290,16 @@ public class HM10ConnectionService extends Service {
                     break;
                 case StaticResources.BROADCAST_NAME_TX_CHARATERISTIC_CHANGED:
                     final String txData = intent.getStringExtra(StaticResources.EXTRAS_TX_DATA);
-//                    final String txData = "Tx data received from HM10";
-//                    Toast.makeText(context, txData, Toast.LENGTH_SHORT).show();
+
                     Log.i("Broadcast Received",
                             "TxData = " + txData + ";");
-//                    tv_what_do_u_saying.setText(txData);
 
-                    // txData : v=00/a=00/s=00
+                    /**
+                     * 아두이노에서 보내는 데이터 형식은
+                     * "v=00/a=00/s=00"
+                     * 이어야합니다.
+                     * */
+
                     if (btStartFlag) {
                         try {
                             String voltStr = txData.split("/")[0];
@@ -325,7 +318,7 @@ public class HM10ConnectionService extends Service {
                                 soc = Integer.parseInt(socStr.split("=")[1]);
                             }
 
-                            //TODO: 배터리 5% 이하 경고음
+                            // 배터리 5% 이하 경고음
                             if (soc <= 5 && settings_preferences.getBoolean("s4", true)) {//SettingsActivity.socFlag &&
                                 startService(new Intent(getApplicationContext(), BeepService.class));
                             }
@@ -354,6 +347,7 @@ public class HM10ConnectionService extends Service {
                                 graph_battery.invalidate();
                             }
 
+                            // Settings(설정 페이지)에서 트립기록 자동저장 설정이 켜져있다면
                             if (autoSave) {
                                 countFlag++;
                                 if (countFlag % 5 == 0) {  //5번마다 (10초 단위로) 로그를 저장함
@@ -380,9 +374,8 @@ public class HM10ConnectionService extends Service {
                                     stopCountDown--;
                                     System.out.println("stopCountDown: " + stopCountDown);
                                     if (stopCountDown < 0) {
-                                        //TODO: 블루투스 연결 해제
+                                        // 블루투스 연결 해제
                                         Toast.makeText(context, "10분 이상 주행이 없어 블루투스 연결이 해제되었습니다.", Toast.LENGTH_SHORT).show();
-                                        System.out.println("stopCountDown == 0 !!!!!!");
 
                                         ConsumptionActivity.btconnect = false;
                                         btStartFlag = false;
@@ -393,26 +386,18 @@ public class HM10ConnectionService extends Service {
                                         Intent intent2 = new Intent(context, BleConnectionService.class);
                                         context.stopService(intent2);
 
-                                        LayoutInflater layoutInflater = LayoutInflater.from(context);
-                                        View customView = layoutInflater.inflate(R.layout.row, null);
-
-                                        ((LinearLayout) customView.findViewById(R.id.color_contianer)).setBackgroundResource(R.drawable.background_rounding_white);
-                                        ((TextView) customView.findViewById(R.id.text1)).setTextColor(Color.BLACK);
-                                        ((TextView) customView.findViewById(R.id.tv_connected)).setTextColor(Color.parseColor("#4CAF50"));  //green
-                                        ((TextView) customView.findViewById(R.id.tv_connected)).setText("Available to connect");
-
                                         //------------------------------------------------------------//
 
                                         tv_percent.setTextColor(Color.WHITE);
 
                                         if (settings_preferences.getBoolean("s2", true)) {
-                                            //TODO: 트립 저장
+                                            // 트립 저장
                                             LocalDate currentDate = LocalDate.now();
                                             String now = currentDate.toString();
                                             String nowTime = now.replaceAll("-", ".");
                                             saveTrip(HM10ConnectionService.tripId, nowTime);
                                         } else {
-                                            //TODO: #init 으로 되어있는 트립 삭제
+                                            // 트립 제목 #init 으로 되어있는 트립 삭제
                                             dbHelper.deleteGarbage();
                                         }
 
@@ -435,7 +420,7 @@ public class HM10ConnectionService extends Service {
                                         tv_distance.setText("00.00");
 
 
-                                        //TODO: 그래프 깜빡깜빡 거리는 애니메이션!
+                                        // 그래프 깜빡깜빡 거리는 애니메이션!
                                         new Thread(new Runnable() {
                                             @Override
                                             public void run() {
@@ -475,6 +460,7 @@ public class HM10ConnectionService extends Service {
                                         editor.putString("name", "");
                                         editor.commit();
 
+                                        // 세 가지 주행 거리 정보를 저장하고 이번 주행에 대한 거리 변수를 0으로 초기화한다.
                                         editor1 = odo_preferences.edit();
                                         editor1.putFloat("ODO", (float) totalDistance);
                                         editor1.putFloat("TRIPA", (float) tripADistance);
@@ -498,12 +484,9 @@ public class HM10ConnectionService extends Service {
 
     public static void saveTrip(int tripId, String nowTime) {
 
-//        if (tripName == null) { tripName = "Untitled"; }
         if (dbHelper.getAvgPwrW(tripId) == -999 || dbHelper.getUsedW(tripId) == -999 || dbHelper.getMaxW(tripId) == -2) return;
         dbHelper.update_TripSTATS(tripId, nowTime, dbHelper.getMaxW(tripId), dbHelper.getUsedW(tripId), (int)(tripOnceDistance * 1000), dbHelper.getAvgPwrW(tripId));
         dbHelper.update_TripName(tripId, "Untitled");
-
-        //Toast.makeText(ConsumptionActivity.this, "트립이 저장되었습니다.", Toast.LENGTH_SHORT).show();
 
         String allTrip = dbHelper.getTripSTATS();
         System.out.println(allTrip);

@@ -30,6 +30,7 @@ import com.activerecycle.tripgauge.bluetooth.R;
 import java.time.LocalDate;
 import java.util.regex.Pattern;
 
+// 앱의 시작과 종료 - 메인 액티비티
 public class MainActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_CODE = 100;
 
@@ -119,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // 모든 권한이 허가된 경우에만 true를 리턴한다.
     private boolean areAllPermissionsGranted(int[] grantResults) {
         for (int result : grantResults) {
             System.out.println("result : " + result);
@@ -129,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    // (권한이 허가된 경우) Consumption 액티비티와 Background 서비스를 실행시키는 함수
     private void performRequiredTasks() {
         // 필요한 작업을 수행
         // 이 메서드 내에서만 권한이 허용된 것을 가정하고 작업을 수행
@@ -154,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         try {
-            // Consumption 액티비티에서 돌아왔을 때
+            // Consumption 액티비티에서 돌아왔을 때 - 앱을 종료
             Intent intent = getIntent();
             String context = intent.getStringExtra("CONTEXT");
             if (context.equals("CONSUMPTION")) {

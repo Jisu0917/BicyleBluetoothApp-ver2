@@ -1,9 +1,6 @@
 package com.activerecycle.tripgauge.bluetooth;
 
-/**
- * Created by Owner on 7/29/2018.
- */
-
+// 블루투스 스캔 및 연결에 필요한 리소스
 public class StaticResources {
 
     public static final String UNIQUE_PACKAGE_NAME = "com.activerecycle.tripgauge";

@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
+// 블루투스 기기 스캔 클래스
 public class BluetoothScanner {
     private BluetoothAdapter bluetoothAdapter;
     private BluetoothLeScanner bluetoothLeScanner;

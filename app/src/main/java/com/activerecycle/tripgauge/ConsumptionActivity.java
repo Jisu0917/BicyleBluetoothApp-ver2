@@ -52,14 +52,12 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
 
+// Consumption 페이지
 public class ConsumptionActivity extends AppCompatActivity {
     static String EXTERNAL_STORAGE_PATH = "";
-    static int saveFlagOfLog = 0;
     public static boolean autoSave = true;
     public static boolean autoConnect;
 
-
-    // 앱에서 디바이스에게 주는 데이터
     public static int speed = 0;
     double previousLat = 0.0; // 이전 위도
     double previousLon = 0.0; // 이전 경도
@@ -67,7 +65,6 @@ public class ConsumptionActivity extends AppCompatActivity {
     public static double tripADistance = 0.0;
     public static double tripBDistance = 0.0;
     public static double tripOnceDistance = 0.0;
-    double bef_lat, bef_long;
     public static boolean btconnect = false;
 
     public static Thread blinkThread;
@@ -79,7 +76,7 @@ public class ConsumptionActivity extends AppCompatActivity {
 
     // w = volt * amp;
 
-    public static TextView tv_title, tv_w, tv_ready, tv_speed, tv_KPH, tv_percent, tv_soc, tv_odo, tv_distance, tv_distFlag;
+    public static TextView tv_w, tv_ready, tv_speed, tv_KPH, tv_percent, tv_odo, tv_distance, tv_distFlag;
     ImageButton btn_menu;
     public static SpeedGraph graph_speed;
     public static BatteryGraph graph_battery;
@@ -87,22 +84,17 @@ public class ConsumptionActivity extends AppCompatActivity {
     // DBHelper
     static DBHelper dbHelper;
     static String tripName;
-//    static int tripId;
-
-    static Map dataMap = new HashMap();
 
     public static Context mContext;
 
     static SharedPreferences odo_preferences, device_preferences, settings_preferences;
 
-    // 칼만 필터 변수
-    private KalmanFilter kalmanFilter;
-
     @Override
     public void finish() {
         super.finish();
-
+        // 기본 애니메이션 없애기
         overridePendingTransition(0, 0); //0 for no animation
+        //MyAnimation 클래스 이용해 페이지 사라질 때 전체 Layout에 fadeOut 애니매이션 줌
         MyAnimation.fadeOut(findViewById(R.id.content), 500);
     }
 
@@ -113,11 +105,9 @@ public class ConsumptionActivity extends AppCompatActivity {
 
         mContext = getApplicationContext();
 
+        //MyAnimation 클래스 이용해 페이지 나타날 때 전체 Layout에 fadeIn 애니매이션 줌
         MyAnimation.fadeIn(findViewById(R.id.content), 500);
 
-        //SettingsActivity.socFlag = SettingsActivity.preferences.getBoolean("s4", true);
-
-        // For Record Activity
         String state = Environment.getExternalStorageState();
         if (!state.equals(Environment.MEDIA_MOUNTED)) {
             Toast.makeText(getApplicationContext(), "외장 메모리가 마운트 되지 않았습니다.", Toast.LENGTH_LONG).show();
@@ -155,11 +145,13 @@ public class ConsumptionActivity extends AppCompatActivity {
             }
         });
 
+        // 주행거리 정보(ODO, TripA, TripB)를 가져온다.
         odo_preferences = getSharedPreferences("ODO Info", MODE_PRIVATE);
         totalDistance = odo_preferences.getFloat("ODO", 0.0f);
         tripADistance = odo_preferences.getFloat("TRIPA", 0.0f);
         tripBDistance = odo_preferences.getFloat("TRIPB", 0.0f);
 
+        // 마지막으로 연결했던 디바이스 정보(이름, 주소)를 가져온다.
         settings_preferences = getSharedPreferences("Setting Info", MODE_PRIVATE);
         device_preferences = getSharedPreferences("Device Info", MODE_PRIVATE);
         String connectedAddress = device_preferences.getString("last_address", "");
@@ -167,6 +159,7 @@ public class ConsumptionActivity extends AppCompatActivity {
         autoConnect = !connectedAddress.equals("") && settings_preferences.getBoolean("s3", true) && MainActivity.isAppRunning;
         System.out.println("connectedAddress: " + connectedAddress + ", autoConnect: " + autoConnect);
 
+        // 블루투스 자동 연결 설정이 켜져있으면 - 마지막으로 연결했던 디바이스와 연결을 시도한다.
         if (autoConnect) {
             Toast.makeText(mContext, "AutoConnect Mode...", Toast.LENGTH_SHORT).show();
 //            BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -185,7 +178,7 @@ public class ConsumptionActivity extends AppCompatActivity {
         }
 
 
-        //TODO: 블루투스 연결 되기 전, 초기 상태일 때!
+        // 블루투스 연결 되기 전, 초기 상태일 때!
         // Connect 여부 표시
         tv_ready.setText("Connect");
         tv_ready.setTextColor(Color.rgb(255, 0, 0));  //red
@@ -204,7 +197,7 @@ public class ConsumptionActivity extends AppCompatActivity {
         tv_percent.setText("00%");
 
 
-        //TODO: 그래프 깜빡깜빡 거리는 애니메이션!
+        // 그래프 깜빡깜빡 거리는 애니메이션!
         blinkThread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -234,9 +227,6 @@ public class ConsumptionActivity extends AppCompatActivity {
         blinkThread.start();
 
 
-
-        kalmanFilter = new KalmanFilter(0.01, 0.1);
-
         // gps 주행 속도 측정
         final LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         final LocationListener gpsLocationListener = new LocationListener() {
@@ -260,15 +250,8 @@ public class ConsumptionActivity extends AppCompatActivity {
                 previousLon = currentLon;
 
                 // 주행 속도
-                speed = (int) location.getSpeed() + 13;// 테스트 : * 10;
-
-//                // 칼만 필터를 사용하여 속도와 거리를 추정
-//                double[] measuredValues = {speed, totalDistance, tripADistance, tripBDistance}; // 측정값
-//                speed = (int) kalmanFilter.applyFilter(measuredValues[0])[0]; // 칼만 필터 적용
-//                totalDistance = kalmanFilter.applyFilter(measuredValues[1])[0]; // 칼만 필터 적용
-//                tripADistance = kalmanFilter.applyFilter(measuredValues[2])[0]; // 칼만 필터 적용
-//                tripBDistance = kalmanFilter.applyFilter(measuredValues[3])[0]; // 칼만 필터 적용
-
+                speed = (int) location.getSpeed() + 10;// 테스트 : * 10;
+                
                 tv_speed.setText(speed + "");
                 // 주행 속도 화면에 반영
                 graph_speed.speed = speed;
@@ -282,7 +265,7 @@ public class ConsumptionActivity extends AppCompatActivity {
 
                     graph_speed.startAnimation();
 
-                    // 총 이동 거리 화면에 반영
+                    // 주행 거리를 옵션에 따라 화면에 반영한다.
                     if (tv_odo.getText().equals("ODO")) {
                         if (settings_preferences.getString("distFlag", "").equals("Mi")) {
                             tv_distance.setText(String.format("%.2f", totalDistance));
@@ -309,10 +292,8 @@ public class ConsumptionActivity extends AppCompatActivity {
                         }
                     }
 
-
-                    //TODO: 속도 MAX 이상 경고음
+                    // 속도 MAX 이상 경고음
                     if (SettingsActivity.speedFlag && ConsumptionActivity.speed >= 25) {
-                        //BeepPlayer.playBeep(getApplicationContext());
                         startService(new Intent(getApplicationContext(), BeepService.class));
                     }
 
@@ -324,12 +305,12 @@ public class ConsumptionActivity extends AppCompatActivity {
                         tv_KPH.setTextColor(Color.WHITE);
                     }
                 } else if (!btconnect) {
+                    // 블루투스 연결이 안 되었을 때
                     HM10ConnectionService.btStartFlag = false;
                     tv_speed.setText("0");
                     tv_speed.setTextColor(Color.WHITE);
                     graph_speed.speed = 0;
                     graph_speed.invalidate();
-//                    graph_speed.startAnimation();
                     tv_KPH.setTextColor(Color.WHITE);
                     tv_distance.setText("00.00");
                 }
@@ -337,11 +318,10 @@ public class ConsumptionActivity extends AppCompatActivity {
             }
         };
 
-        if (Build.VERSION.SDK_INT >= 23
-                && ContextCompat.checkSelfPermission(
-                        getApplicationContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
+        //TODO: SDK >= 23
+        if (ContextCompat.checkSelfPermission(
+                getApplicationContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(ConsumptionActivity.this, new String[] {
                     Manifest.permission.ACCESS_FINE_LOCATION}, 0);
             // 위치 정보를 원하는 시간, 거리마다 갱신해준다.
@@ -378,8 +358,6 @@ public class ConsumptionActivity extends AppCompatActivity {
             public boolean onLongClick(View view) {
                 if (tv_odo.getText().equals("ODO")) {
                     // ODO는 초기화 할 수 없음
-//                    totalDistance = 0.0;
-//                    Toast.makeText(ConsumptionActivity.this, "ODO를 초기화 합니다.", Toast.LENGTH_SHORT).show();
                     return true;
                 } else if (tv_odo.getText().equals("TRIPA")) {
                     tripADistance = 0.0;
@@ -448,27 +426,7 @@ public class ConsumptionActivity extends AppCompatActivity {
         dig.setCancelable(false);
         dig.show();
     }
-
-
-//    private static void saveTrip(int tripId, String nowTime) {
-//
-////        if (tripName == null) { tripName = "Untitled"; }
-//        if (dbHelper.getAvgPwrW(tripId) == -999 || dbHelper.getUsedW(tripId) == -999 || dbHelper.getMaxW(tripId) == -2) return;
-//        dbHelper.update_TripSTATS(tripId, nowTime, dbHelper.getMaxW(tripId), dbHelper.getUsedW(tripId), (int)(totalDistance * 1000), dbHelper.getAvgPwrW(tripId));
-//        dbHelper.update_TripName(tripId, "Untitled");
-//
-//        //Toast.makeText(ConsumptionActivity.this, "트립이 저장되었습니다.", Toast.LENGTH_SHORT).show();
-//
-//        String allTrip = dbHelper.getTripSTATS();
-//        System.out.println(allTrip);
-//
-//
-//        // Trip 기록 개수 20개 넘으면 자동 삭제
-//        dbHelper.deleteGarbage();  //일단 찌꺼기 로그부터 삭제하고나서 개수 세기
-//        if (dbHelper.getProfileCount("TripSTATS") + 1 > 20) {
-//            dbHelper.deleteTrip();
-//        }
-//    }
+    
 
     @Override
     protected void onResume() {
@@ -480,7 +438,7 @@ public class ConsumptionActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
-        //TODO: 뒤로가기 버튼 눌렀을 때!
+        // 뒤로가기 버튼 눌렀을 때!
         if (btconnect) {
             showDialog(ConsumptionActivity.this, "Are you sure want to exit?", "확인을 누르면 앱과 함께 블루투스 연결이 종료됩니다.");
         } else {
@@ -492,6 +450,7 @@ public class ConsumptionActivity extends AppCompatActivity {
 
     }
 
+    // 다이얼로그를 화면에 띄워주는 함수 - 블루투스 연결을 해제하고 앱을 종료하는 것을 확인하는 데에 쓰인다.
     public static void showDialog(Context context, String title, String message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(title)
@@ -508,13 +467,13 @@ public class ConsumptionActivity extends AppCompatActivity {
 
                         if (settings_preferences.getBoolean("s2", true)) { // Auto Save Trip
 
-                            //TODO: 트립 저장
+                            // 트립 저장
                             LocalDate currentDate = LocalDate.now();
                             String now = currentDate.toString();
                             String nowTime = now.replaceAll("-", ".");
                             saveTrip(tripId, nowTime);
 
-                            //TODO: 마지막으로 연결한 디바이스 정보 저장
+                            // 마지막으로 연결한 디바이스 정보 저장
                             SharedPreferences.Editor editor = device_preferences.edit();  //Editor를 preferences에 쓰겠다고 연결
                             if (settings_preferences.getBoolean("s3", true)) {// Auto Connect
                                 editor.putString("last_address", device_preferences.getString("address", ""));
@@ -524,6 +483,7 @@ public class ConsumptionActivity extends AppCompatActivity {
                             editor.putString("name", "");
                             editor.commit();  //항상 commit & apply 를 해주어야 저장이 된다.
 
+                            // 세 가지 주행 거리 정보를 저장하고 이번 주행에 대한 거리 변수를 0으로 초기화한다.
                             SharedPreferences.Editor editor1 = odo_preferences.edit();
                             editor1.putFloat("ODO", (float) totalDistance);
                             editor1.putFloat("TRIPA", (float) tripADistance);
@@ -537,10 +497,10 @@ public class ConsumptionActivity extends AppCompatActivity {
                             context.startActivity(intent);
 
                         } else {
-                            //TODO: #init 으로 되어있는 트립 삭제
+                            // #init 으로 되어있는 트립 삭제
                             dbHelper.deleteGarbage();
 
-                            //TODO: 마지막으로 연결한 디바이스 정보 저장
+                            // 마지막으로 연결한 디바이스 정보 저장
                             SharedPreferences.Editor editor = device_preferences.edit();  //Editor를 preferences에 쓰겠다고 연결
                             if (settings_preferences.getBoolean("s3", true)) {// Auto Connect
                                 editor.putString("last_address", device_preferences.getString("address", ""));
@@ -550,6 +510,7 @@ public class ConsumptionActivity extends AppCompatActivity {
                             editor.putString("name", "");
                             editor.commit();  //항상 commit & apply 를 해주어야 저장이 된다.
 
+                            // 세 가지 주행 거리 정보를 저장하고 이번 주행에 대한 거리 변수를 0으로 초기화한다.
                             SharedPreferences.Editor editor1 = odo_preferences.edit();
                             editor1.putFloat("ODO", (float) totalDistance);
                             editor1.putFloat("TRIPA", (float) tripADistance);
@@ -564,9 +525,10 @@ public class ConsumptionActivity extends AppCompatActivity {
                         }
                     }
                 });
-        builder.setNegativeButton("취소", null);
+        builder.setNegativeButton("취소", null);  // 취소를 누르면 아무 작업도 하지 않음.
         AlertDialog dialog = builder.show();
 
+        // 다이얼로그 메시지의 글꼴 지정
         TextView textView = (TextView) dialog.findViewById(android.R.id.message);
         Typeface typeface = Typeface.createFromAsset(context.getResources().getAssets(), "gmarket_sans_medium.ttf");
         textView.setTypeface(typeface);

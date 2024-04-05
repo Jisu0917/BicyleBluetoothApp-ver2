@@ -5,6 +5,7 @@ import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 
+// 주행 거리를 계산하기 위한 클래스
 public class GpsUtils {
     private static final double EARTH_RADIUS = 6371; // 지구의 반지름 (단위: km)
 

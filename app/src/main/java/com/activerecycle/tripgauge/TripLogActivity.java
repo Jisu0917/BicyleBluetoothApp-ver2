@@ -41,6 +41,7 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
 
+// TripLog 페이지
 public class TripLogActivity extends AppCompatActivity {
 
     final String APP_NAME = "RECYCLE-Trip_gauge";
@@ -68,8 +69,9 @@ public class TripLogActivity extends AppCompatActivity {
     @Override
     public void finish() {
         super.finish();
-
+        // 기본 애니메이션 없애기
         overridePendingTransition(0, 0); //0 for no animation
+        //MyAnimation 클래스 이용해 페이지 사라질 때 전체 Layout에 fadeOut 애니매이션 줌
         MyAnimation.fadeOut(findViewById(R.id.content), 500);
     }
 
@@ -95,6 +97,7 @@ public class TripLogActivity extends AppCompatActivity {
         tv_dist_km = (TextView) findViewById(R.id.tv_dist_km);
         tv_avrpwr_w = (TextView) findViewById(R.id.tv_avrpwr_w);
 
+        // 블루투스 연결된 상태이면 (현재 주행 중이면) - 날짜 칸에 (Current) 표시
         if (ConsumptionActivity.btconnect) {
             LocalDate currentDate = LocalDate.now();
             String now = currentDate.toString();
@@ -130,10 +133,12 @@ public class TripLogActivity extends AppCompatActivity {
             }
         });
 
+        // 트립 제목, 날짜부터 그래프, 그래프 하단 usedW, dist, avrpwr 까지 이미지로 저장해 공유하는 기능
         btn_share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
+                // 공유 버튼은 이미지에 포함하지 않는다.
                 btn_share.setVisibility(View.INVISIBLE);
                 Bitmap bitmap = getBitmapFromView(container, container.getHeight(), container.getWidth());
                 btn_share.setVisibility(View.VISIBLE);
@@ -199,20 +204,14 @@ public class TripLogActivity extends AppCompatActivity {
             }
         });
 
-        setTripInfo(999);
-        getTripListInfo();
-
-//        if (dbHelper.getProfileCount("TripLogTable") > 0) {
-//            setTripInfo(999);
-//            getTripListInfo();
-//        }
+        setTripInfo(999);  // 999 : 마지막으로 저장된 최신 트립 불러오기 옵션
+        getTripListInfo();  // 모든 트립 리스트(목록) 정보 불러오기
     }
 
+    // 실시간 Current 그래프 그리기
     public void showCurrentTrip(DBHelper dbHelper) {
-        //TODO: 실시간 Current 그래프 그리기!! time.sleep(1000)으로 invalidate();
         if (ConsumptionActivity.btconnect) {  // 블루투스가 연결되어있는 동안에는 주행하므로
-            // 수행할 작업
-            graph_log.map = dbHelper.getTripLogW(dataMap, -1);
+            graph_log.map = dbHelper.getW(dataMap, -1);
 
             if (graph_log != null) {
                 graph_log.invalidate();
@@ -237,11 +236,11 @@ public class TripLogActivity extends AppCompatActivity {
         }
     }
 
+    // 트립 정보 불러와서 그래프 띄워주는 함수
     private void setTripInfo(int tableId) {
         if (tableId == 999) {
             if (ConsumptionActivity.btconnect) {
-                //TODO: 마지막으로 저장된 최신 트립 불러오기
-                //마지막 트립 불러오기
+                //마지막으로 저장된 최신 트립 불러오기
                 try {
                     int tripLogTableLastId = dbHelper.get_latestTripId();
                     tableId = tripLogTableLastId;
@@ -250,21 +249,11 @@ public class TripLogActivity extends AppCompatActivity {
                     return;
                 }
             }
-//            else {
-//                // 이게 자꾸 호출됨!!!!
-//                long mNow = System.currentTimeMillis();
-//                Date mDate = new Date(mNow);
-//                SimpleDateFormat mFormat = new SimpleDateFormat("yyyy.MM.dd hh:mm:ss");
-//                mFormat.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
-//                String nowTime = mFormat.format(mDate);
-//                //showSaveTripDialog(dbHelper.getTripLogLastId() + 1, nowTime);
-//                saveTrip(nowTime);
-//                return; }
         }
 
         graph_log.maxW = dbHelper.getMaxW(tableId);
         if (graph_log.maxW != -1 && graph_log.maxW != -2) {
-            graph_log.map = dbHelper.getTripLogW(dataMap, tableId);
+            graph_log.map = dbHelper.getW(dataMap, tableId);
             graph_log.invalidate();
             graph_log.setVisibility(View.VISIBLE);
 
@@ -311,6 +300,7 @@ public class TripLogActivity extends AppCompatActivity {
         }
     }
 
+    // 트립 리스트를 불러오는 함수
     private void getTripListInfo() {
         statList = new ArrayList<>();
         int tripLogTableLastId = (int) dbHelper.get_latestTripId();
@@ -343,6 +333,7 @@ public class TripLogActivity extends AppCompatActivity {
         }
     }
 
+    // 불러온 트립 리스트 정보를 토대로 레이아웃을 형성하는 함수
     private void setTripListView() {
         recordlist_layout.removeAllViews();
 
@@ -422,6 +413,7 @@ public class TripLogActivity extends AppCompatActivity {
         otherListClicked = true;
     }
 
+    // 특정 뷰를 비트맵으로 변환해주는 함수
     private Bitmap getBitmapFromView(View view, int height, int width) {
         Bitmap bitmap = Bitmap.createBitmap(width+190, height,Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
@@ -434,6 +426,7 @@ public class TripLogActivity extends AppCompatActivity {
         return bitmap;
     }
 
+    // 트립 제목(name)을 수정하는 다이얼로그를 띄워주는 함수
     private void showTripReviseDialog() {
         View dialogView = (View) View.inflate(
                 TripLogActivity.this, R.layout.dialog_savetrip, null);
@@ -477,67 +470,8 @@ public class TripLogActivity extends AppCompatActivity {
         dig.show();
 
     }
-
-//    private void showSaveTripDialog(final String nowTime) {
-//        View dialogView = (View) View.inflate(
-//                TripLogActivity.this, R.layout.dialog_savetrip, null);
-//        android.app.AlertDialog.Builder dig = new android.app.AlertDialog.Builder(TripLogActivity.this, R.style.Theme_Dialog);
-//        dig.setView(dialogView);
-//        dig.setTitle("Save this trip!");
-//
-//        if ( getApplicationContext().equals(TripLogActivity.this) ) {
-//            Toast.makeText(getApplicationContext(), "한글, 영문, 숫자만 입력 가능합니다.", Toast.LENGTH_SHORT).show();
-//        }
-//        final EditText editText = (EditText) dialogView.findViewById(R.id.editText_tripTitle);
-//        editText.setFilters(new InputFilter[]{new InputFilter() {
-//            @Override
-//            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-//                Pattern ps = Pattern.compile("^[a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ :()_+]+$");
-//                if (source.equals("") || ps.matcher(source).matches()) {
-//                    return source;
-//                }
-//                return "";
-//            }
-//        }});
-//
-//        dig.setNegativeButton("Cancel", null);
-//        dig.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//
-//                tripName = String.valueOf(editText.getText());
-//
-//                saveTrip(nowTime);
-//
-//            }
-//        });
-//
-//        dig.setCancelable(false);
-//        dig.show();
-//    }
-
-    private void saveTrip(String nowTime) {
-
-        int tripId = dbHelper.get_latestTripId();
-
-//        if (tripName == null) { tripName = "Untitled"; }
-        if (dbHelper.getAvgPwrW(tripId) == -999 || dbHelper.getUsedW(tripId) == -999 || dbHelper.getMaxW(tripId) == -2) return;
-        dbHelper.update_TripSTATS(tripId, nowTime, dbHelper.getMaxW(tripId), dbHelper.getUsedW(tripId), (int)(ConsumptionActivity.tripOnceDistance * 1000), dbHelper.getAvgPwrW(tripId));
-        dbHelper.update_TripName(tripId, "Untitled");
-
-        Toast.makeText(getApplicationContext(), "트립이 저장되었습니다.", Toast.LENGTH_SHORT).show();
-
-        String allTrip = dbHelper.getTripSTATS();
-        System.out.println(allTrip);
-
-
-        // Trip 기록 개수 20개 넘으면 자동 삭제
-        dbHelper.deleteGarbage();  //일단 찌꺼기 로그부터 삭제하고나서 개수 세기
-        if (dbHelper.getProfileCount("TripSTATS") + 1 > 20) {
-            dbHelper.deleteTrip();
-        }
-    }
-
+    
+    // 현재 시각을 반환하는 함수
     private String getNowTime() {
 
         SimpleDateFormat mFormat = new SimpleDateFormat("yyyy.MM.dd.hh.mm.ss");

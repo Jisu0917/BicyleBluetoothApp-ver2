@@ -24,6 +24,7 @@ import com.activerecycle.tripgauge.bluetooth.HM10ConnectionService;
 
 import java.time.LocalDate;
 
+// 최근 앱 목록에서 사용자가 앱을 강제 종료하여도 기록되던 로그의 트립이 저장되도록 하는 백그라운드 서비스 (autoSave 모드일 때)
 public class BackgroundService extends Service {
 
     @Override
@@ -61,13 +62,13 @@ public class BackgroundService extends Service {
 
             if (settings_preferences.getBoolean("s2", true)) { // Auto Save Trip
 
-                //TODO: 트립 저장
+                // 트립 저장
                 LocalDate currentDate = LocalDate.now();
                 String now = currentDate.toString();
                 String nowTime = now.replaceAll("-", ".");
                 saveTrip(tripId, nowTime);
 
-                //TODO: 마지막으로 연결한 디바이스 정보 저장
+                // 마지막으로 연결한 디바이스 정보 저장
                 SharedPreferences.Editor editor = device_preferences.edit();  //Editor를 preferences에 쓰겠다고 연결
                 if (settings_preferences.getBoolean("s3", true)) {// Auto Connect
                     editor.putString("last_address", device_preferences.getString("address", ""));
@@ -77,6 +78,7 @@ public class BackgroundService extends Service {
                 editor.putString("name", "");
                 editor.commit();  //항상 commit & apply 를 해주어야 저장이 된다.
 
+                // 세 가지 주행 거리 정보를 저장하고 이번 주행에 대한 거리 변수를 0으로 초기화한다.
                 SharedPreferences.Editor editor1 = odo_preferences.edit();
                 editor1.putFloat("ODO", (float) totalDistance);
                 editor1.putFloat("TRIPA", (float) tripADistance);
@@ -85,10 +87,10 @@ public class BackgroundService extends Service {
                 tripOnceDistance = 0;
 
             } else {
-                //TODO: #init 으로 되어있는 트립 삭제
+                // 트립 제목 #init 으로 되어있는 트립 삭제
                 dbHelper.deleteGarbage();
 
-                //TODO: 마지막으로 연결한 디바이스 정보 저장
+                // 마지막으로 연결한 디바이스 정보 저장
                 SharedPreferences.Editor editor = device_preferences.edit();  //Editor를 preferences에 쓰겠다고 연결
                 if (settings_preferences.getBoolean("s3", true)) {// Auto Connect
                     editor.putString("last_address", device_preferences.getString("address", ""));
@@ -98,6 +100,7 @@ public class BackgroundService extends Service {
                 editor.putString("name", "");
                 editor.commit();  //항상 commit & apply 를 해주어야 저장이 된다.
 
+                // 세 가지 주행 거리 정보를 저장하고 이번 주행에 대한 거리 변수를 0으로 초기화한다.
                 SharedPreferences.Editor editor1 = odo_preferences.edit();
                 editor1.putFloat("ODO", (float) totalDistance);
                 editor1.putFloat("TRIPA", (float) tripADistance);

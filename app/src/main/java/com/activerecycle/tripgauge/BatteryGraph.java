@@ -11,6 +11,7 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
+// Consumption 페이지의 배터리 막대 그래프를 그리는 뷰
 public class BatteryGraph extends View {
 
     public int soc;

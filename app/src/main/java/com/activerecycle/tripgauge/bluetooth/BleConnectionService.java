@@ -18,10 +18,7 @@ import android.widget.Toast;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * Created by Owner on 8/4/2018.
- */
-
+// 블루투스 연결을 위한 서비스
 public class BleConnectionService {
 
     private BluetoothManager m_bleManager;

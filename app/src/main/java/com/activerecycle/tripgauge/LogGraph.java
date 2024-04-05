@@ -19,13 +19,14 @@ import androidx.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Map;
 
+// TripLog 그래프를 그리기 위한 뷰
 public class LogGraph extends View {
 
     static Map map;
-    static int n = 0, m = 0;  // 카테고리 개수
+    static int n = 0, m = 0;
     static float max, min;
     static int maxW, usedW, avrW, sumW;
-    final static int DEFINED_MAX_W = 750;  // 버그 - 650에서 그래프 상단에 닿음. -> adjustY를 +100 낮추자.
+    final static int DEFINED_MAX_W = 750;
     int top, bottom, adjustY;
     int TOP, BOTTOM;
 
@@ -40,14 +41,10 @@ public class LogGraph extends View {
         super.onDraw(canvas);
         canvas.drawColor(Color.BLACK);
 
-        map = TripLogActivity.dataMap;  // - 그래프 확인을 위해 주석 처리 해둠.
-//        /*
-//         * Log 그래프 확인 위한 코드 - 지우기!
-//         * */
-//        map = ConnectionActivity.dataMap;
+        map = TripLogActivity.dataMap;
 
         // 데이터가 비어있으면 그래프를 그릴 수 없다.
-        if (map == null || map.size() == 0) {
+        if (map == null || map.size() == 0 || map.get("W") == null) {
             System.out.println("!!! map size is 0.");
             return;
         }
@@ -55,12 +52,11 @@ public class LogGraph extends View {
         ArrayList<Integer> original_wList = (ArrayList<Integer>) map.get("W");
         n = original_wList.size();
 
+        // 데이터가 비어있으면 그래프를 그릴 수 없다.
         if (n == 0) {
             return;
         }
-
-        System.out.println("@@@@@ original_wList : " + original_wList);
-
+        // usedW, avrpwr, maxW 구하기
         usedW = original_wList.get(0) - original_wList.get(n-1);
         if (usedW < 0) { usedW = -usedW; }
         maxW = original_wList.get(0);
@@ -71,14 +67,13 @@ public class LogGraph extends View {
         }
         avrW = sumW / n;
 
+        // 그래프를 절댓값이 아닌 상댓값으로 하여 그래프 상자 크기에 맞게 값을 조정한다.
         ArrayList<Float> value = new ArrayList<>();
         float fitC = 0.5f;
         for (int i = 0; i < n; i++) {
             int k = original_wList.get(i);
             value.add(k * fitC);
         }
-
-        System.out.println("@@@@@ adjust wList : " + value);
 
         // 최대값, 최소값 구하기
         max = value.get(0);
@@ -102,8 +97,8 @@ public class LogGraph extends View {
         final int firstDotX = 80 + margin + dotDistance/2;
 
 
-        adjustC = 0.6f * DEFINED_MAX_W;  // 0.5f에서 0.6f로 수정 -> C로 나누기 때문에 C가 커질수록 그래프가 높아진다.
-        adjustY = 330;  // 버그 잡기 위해 230에서 330으로 수정
+        adjustC = 0.6f * DEFINED_MAX_W;  // C로 나누기 때문에 C가 커질수록 그래프가 높아진다.
+        adjustY = 330;
 
 
         Paint dotPaint = new Paint();
@@ -203,13 +198,12 @@ public class LogGraph extends View {
         canvas.drawText("CONSUMPTION LOG", getWidth() - 80, 160, txtPaint);
     }
 
+    // Y 포인트 지점 값을 반환하는 함수
     private float getPointY(float y) {
         adjustY = 0;
         adjustC = 0.8f;
-        //return bottom - (y * max / adjustC) + adjustY;  //
-        // barLength = (bottom - top) * v / max;
+
         if (y == 0) return BOTTOM;
         return BOTTOM - ( ( BOTTOM - TOP ) * (y / max) * adjustC);  //adjustC 값이 커질수록 그래프가 커진다.
-        //return bottom - ((y/max)*(maxW/DEFINED_MAX_W)) * adjustC;  // bottom - 0 = bottom.
     }
 }

@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.activerecycle.tripgauge.bluetooth.R;
 
+// Settings 페이지
 public class SettingsActivity extends AppCompatActivity {
 
     ImageButton imgbtn_back;
@@ -32,6 +33,7 @@ public class SettingsActivity extends AppCompatActivity {
     public void finish() {
         super.finish();
 
+        // 기본 애니메이션 없애기
         overridePendingTransition(0, 0); //0 for no animation
     }
 
@@ -57,6 +59,7 @@ public class SettingsActivity extends AppCompatActivity {
         imgbtn_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Connection 페이지로 돌아감
                 finish();
             }
         });
@@ -64,6 +67,7 @@ public class SettingsActivity extends AppCompatActivity {
         tv_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Connection 페이지로 돌아감
                 finish();
             }
         });
@@ -71,6 +75,7 @@ public class SettingsActivity extends AppCompatActivity {
         btn_mph.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // KPH <-> MPH 토글 구현
                 if (btn_mph.getText().equals("MPH")) {
                     distFlag = "Km";
                     btn_mph.setText("KPH");
@@ -91,6 +96,7 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
+        // 로그 리셋 버튼 - 모든 트립 삭제하기
         btn_reset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -107,6 +113,7 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
+        // 주행 거리 리셋 버튼 - ODO 초기화하기
         btn_clear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -168,7 +175,6 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) { // 오른쪽
-                    //TODO: 경고음 재생
                     //b4 = true;
                     socFlag = true;
                 } else { // 왼쪽
@@ -183,6 +189,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     //Preferences에서 꺼내오는 메소드
     private void getPreferences(){
+        // 저장된 설정 정보들을 가져와서 셋팅해준다.
         switch1.setChecked(preferences.getBoolean("s1", true));
         switch2.setChecked(preferences.getBoolean("s2", false));
         switch3.setChecked(preferences.getBoolean("s3", true));
@@ -207,13 +214,13 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
+        // 모든 설정 정보를 저장한다.
         SharedPreferences.Editor editor = preferences.edit();  //Editor를 preferences에 쓰겠다고 연결
         editor.putBoolean("s1", speedFlag);  //putString(KEY,VALUE)
         editor.putBoolean("s2", b2);  //putString(KEY,VALUE)
         editor.putBoolean("s3", b3);  //putString(KEY,VALUE)
         editor.putBoolean("s4", socFlag);  //putString(KEY,VALUE)
-        editor.putString("distFlag", distFlag);
+        editor.putString("distFlag", distFlag);  //putString(KEY,VALUE)
 
         editor.commit();  //항상 commit & apply 를 해주어야 저장이 된다.
     }
@@ -222,6 +229,7 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+        // 모든 설정 정보를 가져와서 셋팅한다.
         getPreferences();
     }
 }

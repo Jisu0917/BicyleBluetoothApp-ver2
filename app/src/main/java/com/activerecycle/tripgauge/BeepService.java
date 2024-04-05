@@ -6,6 +6,7 @@ import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.IBinder;
 
+// 경고음 재생 서비스
 public class BeepService extends Service {
 
     private ToneGenerator toneGenerator;

@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 
+// 블루투스 스캔을 위한 권한 체크를 위한 서비스
 public class BleScanServices {
 
     public static BluetoothAdapter bleAdapter;
