@@ -251,8 +251,11 @@ public class ConsumptionActivity extends AppCompatActivity {
 
                 // 주행 속도
                 speed = (int) location.getSpeed() + 10;// 테스트 : * 10;
-                
-                tv_speed.setText(speed + "");
+                if (settings_preferences.getString("distFlag", "").equals("Mi")) {
+                    tv_speed.setText(String.format("%.1f", KPHtoMPH(speed)));
+                } else {
+                    tv_speed.setText(speed + "");
+                }
                 // 주행 속도 화면에 반영
                 graph_speed.speed = speed;
                 if (btconnect && HM10ConnectionService.btStartFlag && speed == 0) {
