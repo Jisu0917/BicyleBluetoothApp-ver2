@@ -84,8 +84,8 @@ public class DBHelper extends SQLiteOpenHelper {
     // 전체 트립의 개수가 20개를 넘으면 오래된 트립을 삭제해주는 함수
     public void deleteTrip() {
         SQLiteDatabase db = getWritableDatabase();
-        db.execSQL("DELETE FROM TripLog WHERE tripId <= (SELECT MAX(tripId) -20 FROM tripSTATS )");
-        db.execSQL("DELETE FROM TripSTATS WHERE tripId <= (SELECT MAX(tripId) -20 FROM tripSTATS ) ");
+        db.execSQL("DELETE FROM TripLog WHERE tripId <= (SELECT MAX(tripId) -20 FROM TripSTATS )");
+        db.execSQL("DELETE FROM TripSTATS WHERE tripId <= (SELECT MAX(tripId) -20 FROM TripSTATS ) ");
 //        if (db != null && db.isOpen()) db.close();
     }
 
@@ -93,7 +93,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void deleteAllTrip() {
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("DELETE FROM TripLog");
-        db.execSQL("DELETE FROM TripSTATS");
+        db.execSQL("DELETE FROM TripSTATS WHERE name != (SELECT '#Init' FROM TripSTATS ) ");
 //        if (db != null && db.isOpen()) db.close();
     }
 
