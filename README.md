@@ -1,6 +1,5 @@
 # This is BicyleBluetoothApp-ver2
 
-의뢰자 요구사항
 ![recycle-tripgauge+interactive+concept_1](https://github.com/Jisu0917/BicyleBluetoothApp-ver2/assets/57223927/2d5acb25-d08e-43c3-935e-b1a4d0546fec)
 ![recycle-tripgauge+interactive+concept_2](https://github.com/Jisu0917/BicyleBluetoothApp-ver2/assets/57223927/87071826-6ead-42c7-863d-4600f420e212)
 ![recycle-tripgauge+interactive+concept_3](https://github.com/Jisu0917/BicyleBluetoothApp-ver2/assets/57223927/945f04a6-b754-4c9f-a515-8bb990de50a6)
